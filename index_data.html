@@ -1,0 +1,2061 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Конструктор СОУТ — реквизиты + рабочие места</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Roboto, system-ui, sans-serif; background: #e9eff5; padding: 24px 16px 60px; color: #111; }
+  .container { max-width: 1400px; margin: 0 auto; }
+
+  .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
+  .header h1 { font-size: 24px; color: #003366; display: flex; align-items: center; gap: 10px; }
+  .header h1 small { font-size: 14px; font-weight: 400; color: #4a6f8f; }
+  .header-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn { padding: 8px 18px; border: none; border-radius: 40px; font-size: 13.5px; font-weight: 600; cursor: pointer; transition: 0.15s; white-space: nowrap; }
+  .btn-primary { background: #003366; color: #fff; }
+  .btn-primary:hover { background: #002244; }
+  .btn-success { background: #1e8b4c; color: #fff; }
+  .btn-success:hover { background: #15703d; }
+  .btn-excel { background: #1f7244; color: #fff; }
+  .btn-excel:hover { background: #155533; }
+  .btn-word { background: #2b5797; color: #fff; }
+  .btn-word:hover { background: #1d3f6e; }
+  .btn-danger { background: #b33; color: #fff; }
+  .btn-danger:hover { background: #922; }
+  .btn-ghost { background: #e3edf7; color: #003366; }
+  .btn-ghost:hover { background: #d0e0f0; }
+  .btn-sm { padding: 4px 12px; font-size: 12px; border-radius: 30px; }
+  .btn-icon { padding: 4px 8px; font-size: 12px; border-radius: 6px; background: #eef3f9; color: #003366; cursor: pointer; border: none; }
+  .btn-icon:hover { background: #d8e6f4; }
+  .btn-icon.danger { background: #fde8e8; color: #b33; }
+  .btn-icon.danger:hover { background: #f8d0d0; }
+  .btn-icon.auto { background: #fff4d6; color: #8a5a00; font-size: 11px; padding: 3px 8px; border-radius: 5px; }
+  .btn-icon.auto:hover { background: #ffe9a8; }
+
+  .org-card { background: #fff; border-radius: 20px; box-shadow: 0 6px 24px rgba(0,30,60,0.08); margin-bottom: 22px; overflow: hidden; border-left: 6px solid #003366; }
+  .org-card-header { display: flex; align-items: center; justify-content: space-between; padding: 18px 26px; cursor: pointer; user-select: none; background: linear-gradient(90deg,#f0f7fe,#fff); transition: 0.15s; }
+  .org-card-header:hover { background: #e8f2fc; }
+  .org-card-header h2 { font-size: 17px; color: #003366; display: flex; align-items: center; gap: 10px; }
+  .org-card-header .badge-ok { font-size: 11.5px; font-weight: 600; padding: 2px 12px; border-radius: 20px; background: #e1f3e6; color: #1a6e3a; }
+  .org-card-header .badge-warn { font-size: 11.5px; font-weight: 600; padding: 2px 12px; border-radius: 20px; background: #fde8e8; color: #b33; }
+  .org-card-header .chev { font-size: 20px; color: #2b7bb6; transition: 0.2s; }
+  .org-card.open .chev { transform: rotate(180deg); }
+  .org-card-body { display: none; padding: 4px 26px 24px; }
+  .org-card.open .org-card-body { display: block; }
+
+  .org-section { margin-top: 18px; }
+  .org-section-title { font-size: 13px; font-weight: 700; color: #4a6f8f; text-transform: uppercase; letter-spacing: 0.6px; border-bottom: 2px solid #e6f0fa; padding-bottom: 6px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+  .org-section-title .note { font-size: 11.5px; font-weight: 600; color: #b33; text-transform: none; letter-spacing: 0; }
+  .org-section-title .toggle-1emp { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: #1a3a5f; text-transform: none; letter-spacing: 0; cursor: pointer; background: #f0f7fe; padding: 4px 12px; border-radius: 20px; border: 1px solid #b8d9f5; }
+  .org-section-title .toggle-1emp input[type="checkbox"] { accent-color: #003366; cursor: pointer; }
+  .org-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px 16px; }
+  .org-grid .span2 { grid-column: span 2; }
+  .field label { display: block; font-size: 12px; font-weight: 600; color: #1a3a5f; margin-bottom: 3px; }
+  .field label .num { color: #7a94ab; font-weight: 500; }
+  .field label .req { color: #b33; }
+  .field label .note { color: #7a94ab; font-weight: 500; font-style: italic; }
+  .field input, .field select, .field textarea { width: 100%; padding: 7px 11px; border: 1px solid #d0dcec; border-radius: 8px; font-size: 13.5px; transition: 0.15s; background: #fff; font-family: inherit; }
+  .field input:focus, .field select:focus, .field textarea:focus { border-color: #2b7bb6; outline: none; box-shadow: 0 0 0 3px rgba(43,123,182,0.12); }
+  .field textarea { resize: vertical; min-height: 38px; }
+  .field input.err { border-color: #e28c8c; background: #fff7f7; }
+  .field input.warn-field { border-color: #e2c88c; background: #fffbf0; }
+  .field .hint { font-size: 11px; color: #7a94ab; font-style: italic; margin-top: 3px; }
+
+  .num-field-row { display: grid; grid-template-columns: 1fr auto; gap: 6px; align-items: center; }
+
+  .dadata-block { background: #f0f7fe; border: 1px solid #b8d9f5; border-radius: 12px; padding: 12px 14px; margin-bottom: 16px; }
+  .dadata-block label { font-size: 12.5px; font-weight: 700; color: #003366; display: block; margin-bottom: 6px; }
+  .dadata-row { display: flex; gap: 8px; }
+  .dadata-row input { flex: 1; padding: 8px 12px; border: 1px solid #b8d9f5; border-radius: 8px; font-size: 13.5px; }
+  .dadata-row input:focus { border-color: #2b7bb6; outline: none; }
+  .dadata-hint { font-size: 11px; color: #7a94ab; margin-top: 5px; }
+
+  .addr-list, .comm-list { display: flex; flex-direction: column; gap: 8px; }
+  .addr-row { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; padding: 8px 12px; background: #f8faff; border: 1px solid #dce8f5; border-radius: 10px; }
+  .addr-row.auto { background: #eef6ff; border-color: #b8d9f5; }
+  .addr-row.auto input { background: transparent; border-color: transparent; color: #003366; font-weight: 600; cursor: default; }
+  .addr-row.auto input:focus { border-color: transparent; box-shadow: none; }
+  .addr-row .addr-info { display: flex; flex-direction: column; gap: 2px; }
+  .addr-row input { padding: 6px 10px; font-size: 13px; border: 1px solid #d0dcec; border-radius: 7px; width: 100%; }
+  .addr-row .addr-count { font-size: 11.5px; color: #4a6f8f; }
+  .addr-row .addr-count b { color: #003366; }
+  .addr-row .addr-source { font-size: 10.5px; color: #2b7bb6; font-style: italic; font-weight: 600; margin-left: 6px; }
+  .addr-row .addr-actions { display: flex; gap: 5px; }
+
+  .comm-row { display: grid; grid-template-columns: 1fr 1fr 34px; gap: 8px; align-items: center; }
+  .comm-row input { padding: 6px 10px; font-size: 13px; border: 1px solid #d0dcec; border-radius: 7px; width: 100%; }
+  .comm-warn { font-size: 12px; color: #b33; margin-top: 6px; display: none; }
+  .comm-warn.show { display: block; }
+  .comm-ok { font-size: 12px; color: #1a6e3a; margin-top: 6px; display: none; }
+  .comm-ok.show { display: block; }
+  .comm-hidden { display: none !important; }
+
+  .dept { background: #fff; border-radius: 20px; padding: 18px 22px; box-shadow: 0 6px 24px rgba(0,30,60,0.07); margin-bottom: 20px; border-left: 5px solid #2b7bb6; }
+  .dept-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
+  .dept-field { display: flex; flex-direction: column; gap: 3px; }
+  .dept-field.dept-title { flex: 1; min-width: 240px; }
+  .dept-field.dept-addr { flex: 1.5; min-width: 280px; }
+  .dept-field input { font-size: 14px; padding: 7px 12px; border: 1px solid #d0dcec; border-radius: 8px; width: 100%; font-family: inherit; }
+  .dept-field.dept-title input { font-size: 16px; font-weight: 700; color: #003366; border: 2px solid transparent; background: #f0f7fe; }
+  .dept-field.dept-title input:focus { border-color: #2b7bb6; background: #fff; }
+  .dept-hint { font-size: 10.5px; color: #7a94ab; font-style: italic; padding-left: 2px; }
+  .dept-actions { display: flex; gap: 6px; padding-top: 20px; }
+
+  .wp-card { background: #f8faff; border: 1px solid #dce8f5; border-radius: 14px; padding: 16px 18px; margin-bottom: 14px; position: relative; }
+  .wp-card .wp-head { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
+  .wp-card .wp-num-block { display: flex; align-items: center; gap: 6px; background: #003366; color: #fff; padding: 4px 12px; border-radius: 20px; font-weight: 700; font-size: 13px; }
+  .wp-card .wp-num-block .num-input { background: transparent; border: none; color: #fff; font-weight: 700; font-size: 13px; width: 46px; padding: 0; text-align: center; outline: none; font-family: inherit; }
+  .wp-card .wp-num-block .num-input::placeholder { color: rgba(255,255,255,0.6); }
+  .wp-card .wp-num-block .num-input:disabled { color: #fff; cursor: default; }
+  .wp-card .wp-num-block .num-toggle { background: rgba(255,255,255,0.15); border: none; color: #fff; font-size: 11px; padding: 2px 6px; border-radius: 5px; cursor: pointer; }
+  .wp-card .wp-num-block .num-toggle:hover { background: rgba(255,255,255,0.3); }
+  .wp-card .wp-num-block .num-toggle.active { background: #ffc107; color: #000; }
+  .wp-card .prev-num-block { display: flex; align-items: center; gap: 6px; font-size: 12.5px; }
+  .wp-card .prev-num-block label { color: #4a6f8f; font-weight: 600; }
+  .wp-card .prev-num-block input { padding: 4px 10px; font-size: 12.5px; border: 1px solid #d0dcec; border-radius: 6px; width: 140px; font-family: inherit; }
+  .wp-card .wp-actions { position: absolute; top: 12px; right: 14px; display: flex; gap: 5px; }
+  .wp-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px 14px; }
+  .wp-grid .span2 { grid-column: span 2; }
+  .wp-grid .span3 { grid-column: span 3; }
+  .wp-grid .span4 { grid-column: span 4; }
+
+  /* ЯРКИЕ ЗАГОЛОВКИ РАЗДЕЛОВ */
+  .wp-section-label {
+    font-size: 12.5px;
+    font-weight: 800;
+    color: #003366;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    margin: 18px 0 10px;
+    grid-column: span 4;
+    background: linear-gradient(90deg, #e8f2fc 0%, #f5faff 100%);
+    border-left: 5px solid #2b7bb6;
+    padding: 8px 14px;
+    border-radius: 6px;
+  }
+  .wp-section-label .note { font-size: 11px; font-weight: 500; color: #4a6f8f; text-transform: none; letter-spacing: 0; font-style: italic; }
+
+  .yesno { display: flex; gap: 10px; align-items: center; padding-top: 4px; }
+  .yesno label { display: flex; align-items: center; gap: 4px; font-size: 13px; cursor: pointer; }
+  .yesno input[type="radio"] { width: auto; accent-color: #003366; }
+
+  .ac-wrap { position: relative; }
+  .ac-list { position: absolute; top: 100%; left: 0; right: 0; background: #fff; border: 1px solid #b8d9f5; border-radius: 8px; box-shadow: 0 8px 24px rgba(0,30,60,0.15); max-height: 260px; overflow-y: auto; z-index: 50; display: none; }
+  .ac-list.open { display: block; }
+  .ac-item { padding: 7px 12px; font-size: 13px; cursor: pointer; border-bottom: 1px solid #f0f4f8; }
+  .ac-item:last-child { border-bottom: none; }
+  .ac-item:hover, .ac-item.active { background: #e8f2fc; }
+  .ac-item .ac-code { color: #7a94ab; font-size: 11.5px; margin-right: 6px; }
+  .ac-item .ac-src { color: #b8c8d8; font-size: 10.5px; float: right; }
+  .ac-loading { padding: 8px 12px; font-size: 12px; color: #7a94ab; text-align: center; }
+  .ac-input-wrap { display: flex; gap: 6px; align-items: center; }
+  .ac-input-wrap input { flex: 1; }
+
+  .zone-list, .equip-list, .order29n-list { display: flex; flex-direction: column; gap: 5px; }
+  .zone-row, .equip-row, .order29n-row { display: grid; gap: 6px; align-items: center; }
+  .zone-row { grid-template-columns: 1fr 80px 30px; }
+  .equip-row, .order29n-row { grid-template-columns: 1fr auto; }
+  .equip-row .ac-wrap, .order29n-row .ac-wrap { flex: 1; width: 100%; }
+  .zone-row input, .equip-row input, .order29n-row input { padding: 5px 9px; font-size: 12.5px; border: 1px solid #d0dcec; border-radius: 6px; width: 100%; }
+  .zone-row .pct { text-align: right; }
+  .zone-sum { font-size: 11.5px; color: #4a6f8f; margin-top: 4px; }
+  .zone-sum b { color: #003366; }
+  .zone-sum.warn b { color: #b33; }
+
+  .emp-block { grid-column: span 4; background: #fff; border: 1px solid #e2ecf7; border-radius: 10px; padding: 10px 12px; margin-top: 6px; }
+  .emp-block .emp-title { font-size: 12.5px; font-weight: 700; color: #003366; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
+  .emp-row { display: grid; grid-template-columns: 28px 1.2fr 150px auto 34px; gap: 8px; margin-bottom: 6px; align-items: center; }
+  .emp-row input[type="text"] { padding: 5px 10px; font-size: 13px; border: 1px solid #d0dcec; border-radius: 7px; width: 100%; }
+  .emp-gender { font-size: 18px; text-align: center; cursor: help; user-select: none; width: 28px; }
+  .emp-gender.male { color: #2b5797; }
+  .emp-gender.female { color: #c2185b; }
+  .emp-gender.unknown { color: #b8a44e; }
+  .emp-checks { display: flex; gap: 12px; align-items: center; white-space: nowrap; font-size: 12.5px; }
+  .emp-checks .emp-group { display: flex; align-items: center; gap: 4px; }
+  .emp-checks .emp-group-label { color: #4a6f8f; font-weight: 600; font-size: 11.5px; }
+  .emp-checks label { display: flex; align-items: center; gap: 3px; cursor: pointer; }
+  .emp-checks input[type="checkbox"] { accent-color: #003366; width: auto; }
+  .emp-checks input[type="radio"] { accent-color: #003366; width: auto; }
+
+  .totals { background: #003366; color: #fff; border-radius: 20px; padding: 20px 26px; margin-bottom: 22px; box-shadow: 0 6px 24px rgba(0,30,60,0.15); }
+  .totals h2 { font-size: 16px; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+  .totals-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; }
+  .total-item { background: rgba(255,255,255,0.08); border-radius: 12px; padding: 12px 16px; }
+  .total-item .num { font-size: 26px; font-weight: 700; }
+  .total-item .lbl { font-size: 12px; opacity: 0.85; margin-top: 2px; }
+
+  .warn { color: #b33; font-size: 11.5px; margin-top: 3px; display: none; }
+  .warn.show { display: block; }
+  .wp-card.has-error { border-color: #e28c8c; background: #fff7f7; }
+
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: #1e8b4c; color: #fff; padding: 12px 28px; border-radius: 40px; font-size: 14px; font-weight: 600; box-shadow: 0 8px 30px rgba(0,0,0,0.2); opacity: 0; transition: 0.3s; z-index: 9999; max-width: 90vw; text-align: center; }
+  .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+  .toast.error { background: #b33; }
+
+  .sticky-bar { position: sticky; bottom: 16px; z-index: 100; display: flex; justify-content: center; gap: 10px; margin-top: 24px; padding: 12px 20px; background: rgba(255,255,255,0.92); backdrop-filter: blur(10px); border-radius: 60px; box-shadow: 0 10px 40px rgba(0,30,60,0.18); flex-wrap: wrap; }
+
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,20,40,0.5); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 20px; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: #fff; border-radius: 16px; max-width: 700px; width: 100%; max-height: 85vh; display: flex; flex-direction: column; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+  .modal-header { padding: 16px 22px; border-bottom: 2px solid #e6f0fa; display: flex; justify-content: space-between; align-items: center; }
+  .modal-header h3 { font-size: 16px; color: #003366; }
+  .modal-body { padding: 16px 22px; overflow-y: auto; flex: 1; }
+  .modal-footer { padding: 12px 22px; border-top: 1px solid #e6f0fa; display: flex; justify-content: flex-end; gap: 8px; }
+  .modal-search { width: 100%; padding: 9px 12px; border: 1px solid #d0dcec; border-radius: 8px; font-size: 14px; margin-bottom: 12px; }
+  .modal-search:focus { border-color: #2b7bb6; outline: none; }
+  .modal-cat { font-size: 12px; font-weight: 700; color: #4a6f8f; text-transform: uppercase; letter-spacing: 0.5px; margin: 14px 0 6px; padding-bottom: 4px; border-bottom: 1px solid #e6f0fa; }
+  .modal-item { padding: 7px 10px; font-size: 13.5px; cursor: pointer; border-radius: 6px; }
+  .modal-item:hover { background: #e8f2fc; }
+  .modal-item.selected { background: #cfe3f5; }
+  .modal-item .m-code { color: #7a94ab; font-size: 11.5px; margin-right: 6px; }
+  .modal-empty { color: #7a94ab; font-size: 13px; text-align: center; padding: 20px; }
+  .modal-hint { font-size: 11.5px; color: #7a94ab; margin-bottom: 10px; font-style: italic; }
+
+  @media (max-width: 1000px) {
+    .wp-grid, .org-grid { grid-template-columns: repeat(2, 1fr); }
+    .wp-grid .span3, .wp-grid .span4, .org-grid .span2 { grid-column: span 2; }
+  }
+  @media (max-width: 600px) {
+    .wp-grid, .org-grid { grid-template-columns: 1fr; }
+    .wp-grid .span2, .wp-grid .span3, .wp-grid .span4, .org-grid .span2 { grid-column: span 1; }
+    .emp-row, .comm-row, .zone-row { grid-template-columns: 1fr; }
+    .emp-gender { width: auto; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h1>📋 Конструктор СОУТ <small>реквизиты + рабочие места</small></h1>
+    <div class="header-actions">
+      <button class="btn btn-ghost" id="addDeptBtn">➕ Подразделение</button>
+      <button class="btn btn-primary" id="saveBtn">💾 Сохранить</button>
+      <button class="btn btn-excel" id="excelBtn">📊 Excel</button>
+      <button class="btn btn-word" id="wordBtn">📄 Word</button>
+      <button class="btn btn-success" id="printBtn">🖨️ Печать</button>
+      <button class="btn btn-danger" id="resetBtn">🗑️ Сброс</button>
+    </div>
+  </div>
+
+  <div class="org-card open" id="orgCard">
+    <div class="org-card-header" id="orgCardToggle">
+      <h2>🏢 Карточка организации <span class="badge-warn" id="orgBadge">не заполнена</span></h2>
+      <span class="chev">▾</span>
+    </div>
+    <div class="org-card-body">
+
+      <div class="dadata-block">
+        <label>🔍 Автозаполнение по ИНН или названию (DaData)</label>
+        <div class="dadata-row">
+          <input type="text" id="dadataQuery" placeholder="Например: 7816309879 или Рыбка" />
+          <button class="btn btn-primary" id="dadataBtn" style="padding:6px 18px;font-size:13px;">Загрузить</button>
+        </div>
+        <div class="dadata-hint">Заполнит: наименование, ИНН, КПП, ОГРН, ОКПО, ОКОГУ, ОКВЭД, ОКТМО, юр. адрес, руководителя</div>
+      </div>
+
+      <div class="org-section">
+        <div class="org-section-title">Реквизиты</div>
+        <div class="org-grid">
+          <div class="field span2"><label><span class="num">1.</span> Полное наименование организации</label><input type="text" id="orgFullName" /></div>
+          <div class="field span2"><label><span class="num">2.</span> Сокращённое наименование организации</label><input type="text" id="orgShortName" /></div>
+          <div class="field span2"><label><span class="num">3.</span> ИНН</label><input type="text" id="orgInn" /></div>
+          <div class="field span2"><label><span class="num">4.</span> КПП</label><input type="text" id="orgKpp" /></div>
+          <div class="field span2"><label><span class="num">5.</span> ОКПО</label><input type="text" id="orgOkpo" /></div>
+          <div class="field span2"><label><span class="num">6.</span> ОКОГУ</label><input type="text" id="orgOkogu" /></div>
+          <div class="field span2"><label><span class="num">7.</span> ОКВЭД</label><input type="text" id="orgOkved" /></div>
+          <div class="field span2"><label><span class="num">8.</span> ОКТМО</label><input type="text" id="orgOktmo" /></div>
+          <div class="field span2"><label><span class="num">9.</span> ОГРН</label><input type="text" id="orgOgrn" /></div>
+        </div>
+      </div>
+
+      <div class="org-section">
+        <div class="org-section-title">Адреса</div>
+        <div class="org-grid">
+          <div class="field span2"><label><span class="num">10.</span> Юридический адрес</label><input type="text" id="orgLegalAddress" /></div>
+          <div class="field span2"><label><span class="num">11.</span> Фактический адрес (если отличается)</label><input type="text" id="orgActualAddress" /></div>
+        </div>
+      </div>
+
+      <div class="org-section">
+        <div class="org-section-title">Контакты</div>
+        <div class="org-grid">
+          <div class="field"><label><span class="num">12.</span> Телефон</label><input type="text" id="orgPhone" placeholder="+7 (___) ___-__-__" /></div>
+          <div class="field span2"><label><span class="num">14.</span> Электронная почта <span class="req">* обязательно указать</span></label><input type="text" id="orgEmail" placeholder="info@example.ru" /></div>
+        </div>
+      </div>
+
+      <div class="org-section">
+        <div class="org-section-title">
+          <span>Адреса проведения замеров <span style="color:#7a94ab;font-weight:500;text-transform:none;font-size:11.5px;">(автоматически из подразделений)</span></span>
+        </div>
+        <p style="font-size:12px;color:#7a94ab;margin-bottom:10px;">
+          <span class="num" style="color:#7a94ab;">16.</span> Адреса формируются автоматически из подразделений. Ручное добавление — для случаев, когда адрес есть, но подразделение ещё не заведено.
+        </p>
+        <div class="addr-list" id="addrList"></div>
+        <button class="btn btn-ghost btn-sm" id="addAddrBtn" style="margin-top:8px;">➕ Добавить адрес вручную</button>
+      </div>
+
+      <div class="org-section">
+        <div class="org-section-title">Руководитель и приказ</div>
+        <div class="org-grid">
+          <div class="field span2"><label><span class="num">17.</span> Руководитель организации (должность, ФИО полностью)</label><input type="text" id="orgDirector" /></div>
+          <div class="field span2"><label><span class="num">20.</span> Приказ о проведении СОУТ (номер и дата)</label><input type="text" id="orgOrder" placeholder="№ 15 от 01.02.2025" /></div>
+        </div>
+      </div>
+
+      <div class="org-section">
+        <div class="org-section-title">
+          <span>Комиссия по проведению СОУТ <span class="note" id="commNote">(минимум 3, нечётное количество)</span></span>
+          <label class="toggle-1emp">
+            <input type="checkbox" id="singleEmpToggle" />
+            <span>В организации 1 сотрудник / ИП</span>
+          </label>
+        </div>
+        <div class="org-grid">
+          <div class="field span2"><label><span class="num">21.</span> Председатель комиссии (должность, ФИО полностью)</label><input type="text" id="orgCommissionChair" /></div>
+          <div class="field span2" id="commMembersBlock">
+            <label><span class="num">22.</span> Члены комиссии (должность, ФИО полностью)</label>
+            <div class="comm-list" id="commList"></div>
+            <button class="btn btn-ghost btn-sm" id="addCommBtn" style="margin-top:8px;">➕ Добавить члена комиссии</button>
+            <div class="comm-warn" id="commWarn">⚠ Общее количество членов комиссии (включая председателя) должно быть нечётным и не менее 3</div>
+            <div class="comm-ok" id="commOk">✓ Количество членов комиссии корректно</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div id="deptsContainer"></div>
+
+  <button class="btn btn-ghost" id="addDeptBtn2" style="width:100%; padding:12px; font-size:15px; margin-bottom:22px;">➕ Добавить подразделение</button>
+
+  <div class="totals" id="totalsBlock">
+    <h2>📊 Итоги</h2>
+    <div class="totals-grid" id="totalsGrid"></div>
+  </div>
+
+  <div class="sticky-bar">
+    <button class="btn btn-primary" id="saveBtn2">💾 Сохранить</button>
+    <button class="btn btn-excel" id="excelBtn2">📊 Excel</button>
+    <button class="btn btn-word" id="wordBtn2">📄 Word</button>
+    <button class="btn btn-success" id="printBtn2">🖨️ Печать</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="dictModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="dictTitle">Справочник</h3>
+      <button class="btn-icon danger" id="dictClose">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="text" class="modal-search" id="dictSearch" placeholder="Поиск..." />
+      <div class="modal-hint" id="dictHint"></div>
+      <div id="dictContent"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="dictCancel">Отмена</button>
+      <button class="btn btn-primary" id="dictApply">Выбрать</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+<script>
+/* ============================================================
+   КОНСТАНТЫ
+   ============================================================ */
+const STORAGE_KEY = 'sout_constructor_v12';
+const USER_DICT_KEY = 'sout_user_dict_v1';
+const DADATA_API_KEY = 'f94f4386b5ec6bc654487fc994c0fba0fdad788c';
+const SHIFT_OPTIONS = ['1/3', '2/2', '5/2', '1/2', '3/3', '4/2', '1/1', 'другое'];
+
+const BENEFIT_LABELS = {
+  higherPay: 'Повышенная оплата труда',
+  extraVacation: 'Дополнительный отпуск',
+  shorterHours: 'Сокращённая продолжительность',
+  milk: 'Молоко / равноценные продукты',
+  therapeuticFood: 'Лечебно-профилактическое питание',
+  earlyPension: 'Право на досрочную пенсию',
+  medicalExams: 'Медосмотры'
+};
+
+/* ============================================================
+   ОПРЕДЕЛЕНИЕ ПОЛА
+   ============================================================ */
+const MALE_NAME_EXCEPTIONS = ['никита','илья','данила','данил','кузьма','фома','лука','савва','гоша','миша','гриша','паша','дима','лёша','леша','стёпа','степа','ваня','витя','коля','толя','юра','слава','сеня','боря','вася','петя','серёжа','сережа','андрюша','костя','рома'];
+const UNISEX_NAMES = ['саша','женя','валя','слава','паша','миша'];
+
+function detectGenderByFIO(fio) {
+  if (!fio) return { gender: '', confident: false };
+  const parts = fio.trim().split(/\s+/).filter(Boolean);
+  if (!parts.length) return { gender: '', confident: false };
+  if (parts.length >= 3) {
+    const patronymic = parts[2].toLowerCase();
+    if (/(вна|ична)$/.test(patronymic)) return { gender: 'female', confident: true };
+    if (/(вич|ич)$/.test(patronymic)) return { gender: 'male', confident: true };
+  }
+  let namePart = null;
+  if (parts.length >= 2) namePart = parts[1] ? parts[1].toLowerCase() : null;
+  if (namePart) {
+    if (MALE_NAME_EXCEPTIONS.includes(namePart)) return { gender: 'male', confident: true };
+    if (UNISEX_NAMES.includes(namePart)) return { gender: '', confident: false };
+    if (/(а|я)$/.test(namePart)) return { gender: 'female', confident: true };
+    if (/[бвгджзйклмнпрстфхцчшщь]$/.test(namePart)) return { gender: 'male', confident: true };
+  }
+  const surname = parts[0].toLowerCase();
+  if (/(ова|ева|ёва|ина|ына|ская|цкая|ая|яя)$/.test(surname)) return { gender: 'female', confident: true };
+  if (/(ов|ев|ёв|ин|ын|ский|цкий|ый|ой|ий)$/.test(surname)) return { gender: 'male', confident: true };
+  return { gender: '', confident: false };
+}
+
+/* ============================================================
+   СПРАВОЧНИКИ
+   ============================================================ */
+const DICT = {
+  positions: ['Генеральный директор','Директор','Исполнительный директор','Финансовый директор','Коммерческий директор','Технический директор','Заместитель директора','Начальник отдела','Начальник цеха','Начальник участка','Начальник смены','Заведующий складом','Заведующий производством','Руководитель проекта','Руководитель службы','Главный бухгалтер','Бухгалтер','Экономист','Юрисконсульт','Инженер','Инженер по охране труда','Инженер-технолог','Инженер-механик','Инженер-электрик','Инженер-программист','Программист','Системный администратор','Менеджер','Менеджер по продажам','Менеджер по персоналу','Специалист по кадрам','Специалист по охране труда','Технолог','Химик','Биолог','Эколог','Логист','Маркетолог','Аналитик','Диспетчер','Секретарь','Секретарь-референт','Делопроизводитель','Кассир','Администратор','Офис-менеджер','Оператор ПЭВМ','Оператор call-центра','Водитель автомобиля','Водитель погрузчика','Водитель электропогрузчика','Тракторист','Машинист крана','Машинист экскаватора','Машинист бульдозера','Машинист автогрейдера','Машинист компрессора','Машинист насосных установок','Слесарь','Слесарь-ремонтник','Слесарь-сантехник','Слесарь-электрик','Слесарь механосборочных работ','Электрик','Электромонтёр','Электромонтажник','Электрогазосварщик','Сварщик','Токарь','Фрезеровщик','Строгальщик','Шлифовщик','Сверловщик','Кузнец','Литейщик','Столяр','Плотник','Каменщик','Бетонщик','Арматурщик','Маляр','Штукатур','Плиточник','Монтажник','Наладчик оборудования','Оператор станков с ЧПУ','Оператор-наладчик','Аппаратчик','Оператор','Машинист','Упаковщик','Комплектовщик','Сборщик','Разнорабочий','Подсобный рабочий','Грузчик','Охранник','Сторож','Вахтёр','Контролёр','Уборщик','Уборщик производственных помещений','Уборщик служебных помещений','Уборщик территории','Дворник','Кладовщик','Курьер','Повар','Пекарь','Кондитер','Официант','Бармен','Продавец','Кассир торгового зала','Медицинская сестра','Врач','Фельдшер','Лаборант','Лаборант химического анализа'].map(name => ({ name, code: '' })),
+  equipment: [
+    { name: 'ПЭВМ (персональный компьютер)', cat: 'Оргтехника' }, { name: 'Ноутбук', cat: 'Оргтехника' },
+    { name: 'Монитор', cat: 'Оргтехника' }, { name: 'Принтер', cat: 'Оргтехника' },
+    { name: 'Сканер', cat: 'Оргтехника' }, { name: 'МФУ', cat: 'Оргтехника' },
+    { name: 'Копировальный аппарат', cat: 'Оргтехника' }, { name: 'Телефон', cat: 'Оргтехника' },
+    { name: 'Станок токарный', cat: 'Станки' }, { name: 'Станок фрезерный', cat: 'Станки' },
+    { name: 'Станок сверлильный', cat: 'Станки' }, { name: 'Станок шлифовальный', cat: 'Станки' },
+    { name: 'Станок с ЧПУ', cat: 'Станки' }, { name: 'Пресс гидравлический', cat: 'Станки' },
+    { name: 'Компрессор', cat: 'Станки' }, { name: 'Насос', cat: 'Станки' },
+    { name: 'Вентиляционная установка', cat: 'Станки' }, { name: 'Конвейер', cat: 'Станки' },
+    { name: 'Сварочный аппарат', cat: 'Инструмент' }, { name: 'Сварочный трансформатор', cat: 'Инструмент' },
+    { name: 'Дрель', cat: 'Инструмент' }, { name: 'Перфоратор', cat: 'Инструмент' },
+    { name: 'Болгарка (УШМ)', cat: 'Инструмент' }, { name: 'Электролобзик', cat: 'Инструмент' },
+    { name: 'Шлифмашина', cat: 'Инструмент' }, { name: 'Отбойный молоток', cat: 'Инструмент' },
+    { name: 'Бетономешалка', cat: 'Инструмент' }, { name: 'Пылесос', cat: 'Инструмент' },
+    { name: 'Мультиметр', cat: 'Измерительное' }, { name: 'Штангенциркуль', cat: 'Измерительное' },
+    { name: 'Микрометр', cat: 'Измерительное' }, { name: 'Рулетка', cat: 'Измерительное' },
+    { name: 'Термометр', cat: 'Измерительное' }, { name: 'Манометр', cat: 'Измерительное' },
+    { name: 'Весы', cat: 'Измерительное' }
+  ],
+  materials: [
+    { name: 'Бензин АИ-92', cat: 'ГСМ' }, { name: 'Бензин АИ-95', cat: 'ГСМ' },
+    { name: 'Дизельное топливо', cat: 'ГСМ' }, { name: 'Керосин', cat: 'ГСМ' },
+    { name: 'Масло моторное', cat: 'ГСМ' }, { name: 'Масло трансмиссионное', cat: 'ГСМ' },
+    { name: 'Смазка', cat: 'ГСМ' }, { name: 'Антифриз', cat: 'ГСМ' },
+    { name: 'Цемент', cat: 'Стройматериалы' }, { name: 'Песок', cat: 'Стройматериалы' },
+    { name: 'Щебень', cat: 'Стройматериалы' }, { name: 'Кирпич', cat: 'Стройматериалы' },
+    { name: 'Бетон', cat: 'Стройматериалы' }, { name: 'Арматура', cat: 'Стройматериалы' },
+    { name: 'Гипсокартон', cat: 'Стройматериалы' }, { name: 'Краска водоэмульсионная', cat: 'Стройматериалы' },
+    { name: 'Краска масляная', cat: 'Стройматериалы' }, { name: 'Эмаль', cat: 'Стройматериалы' },
+    { name: 'Лак', cat: 'Стройматериалы' }, { name: 'Шпаклёвка', cat: 'Стройматериалы' },
+    { name: 'Грунтовка', cat: 'Стройматериалы' }, { name: 'Клей', cat: 'Стройматериалы' },
+    { name: 'Сталь', cat: 'Металлы' }, { name: 'Алюминий', cat: 'Металлы' },
+    { name: 'Медь', cat: 'Металлы' }, { name: 'Чугун', cat: 'Металлы' },
+    { name: 'Металлопрокат', cat: 'Металлы' }, { name: 'Труба металлическая', cat: 'Металлы' },
+    { name: 'Кислота серная', cat: 'Химия' }, { name: 'Кислота соляная', cat: 'Химия' },
+    { name: 'Ацетон', cat: 'Химия' }, { name: 'Спирт', cat: 'Химия' },
+    { name: 'Растворитель', cat: 'Химия' }, { name: 'Моющее средство', cat: 'Химия' },
+    { name: 'Дезинфицирующее средство', cat: 'Химия' },
+    { name: 'Мука', cat: 'Пищепром' }, { name: 'Сахар', cat: 'Пищепром' },
+    { name: 'Соль', cat: 'Пищепром' }, { name: 'Специи', cat: 'Пищепром' },
+    { name: 'Масло растительное', cat: 'Пищепром' }, { name: 'Молоко', cat: 'Пищепром' },
+    { name: 'Мясо', cat: 'Пищепром' }, { name: 'Рыба', cat: 'Пищепром' },
+    { name: 'Бумага', cat: 'Канцелярия' }, { name: 'Картридж', cat: 'Канцелярия' },
+    { name: 'Тонер', cat: 'Канцелярия' }, { name: 'Ручка', cat: 'Канцелярия' },
+    { name: 'Перчатки', cat: 'Расходники' }, { name: 'Ветошь', cat: 'Расходники' },
+    { name: 'Электроды', cat: 'Расходники' }, { name: 'Изолента', cat: 'Расходники' },
+    { name: 'Кабель', cat: 'Расходники' }, { name: 'Провод', cat: 'Расходники' }
+  ],
+  order29n: [
+    { code: '1.1', name: 'Азота неорганические соединения', cat: 'I. Химические факторы' },
+    { code: '1.2', name: 'Азотсодержащие органические соединения', cat: 'I. Химические факторы' },
+    { code: '1.14.2', name: 'Пропан-2-он (ацетон)', cat: 'I. Химические факторы' },
+    { code: '1.29', name: 'Серы соединения', cat: 'I. Химические факторы' },
+    { code: '1.34.1', name: 'Дихлорметан (хлористый метилен)', cat: 'I. Химические факторы' },
+    { code: '1.51', name: 'Прочие химические факторы', cat: 'I. Химические факторы' },
+    { code: '2.4', name: 'Патогенные биологические агенты (ПБА)', cat: 'II. Биологические факторы' },
+    { code: '2.4.1', name: 'Возбудители особо опасных инфекций', cat: 'II. Биологические факторы' },
+    { code: '2.7', name: 'Прочие биологические факторы', cat: 'II. Биологические факторы' },
+    { code: '3.1', name: 'Аэрозоли преимущественно фиброгенного действия (АПФД)', cat: 'III. АПФД и пыли' },
+    { code: '3.2', name: 'Пыли прочие', cat: 'III. АПФД и пыли' },
+    { code: '4.1', name: 'Микроклимат (нагревающий/охлаждающий)', cat: 'IV. Физические факторы' },
+    { code: '4.2', name: 'Аэроионный состав воздуха', cat: 'IV. Физические факторы' },
+    { code: '4.3.1', name: 'Локальная вибрация', cat: 'IV. Физические факторы' },
+    { code: '4.3.2', name: 'Общая вибрация', cat: 'IV. Физические факторы' },
+    { code: '4.4', name: 'Шум', cat: 'IV. Физические факторы' },
+    { code: '4.5', name: 'Ультразвук', cat: 'IV. Физические факторы' },
+    { code: '4.6', name: 'Инфразвук', cat: 'IV. Физические факторы' },
+    { code: '4.7', name: 'Электромагнитное поле', cat: 'IV. Физические факторы' },
+    { code: '4.8', name: 'Лазерное излучение', cat: 'IV. Физические факторы' },
+    { code: '4.9', name: 'Ультрафиолетовое излучение', cat: 'IV. Физические факторы' },
+    { code: '4.10', name: 'Пониженное атмосферное давление', cat: 'IV. Физические факторы' },
+    { code: '4.11', name: 'Освещённость', cat: 'IV. Физические факторы' },
+    { code: '5.1', name: 'Тяжесть трудового процесса', cat: 'V. Факторы трудового процесса' },
+    { code: '5.2', name: 'Напряжённость трудового процесса', cat: 'V. Факторы трудового процесса' },
+    { code: '5.2.1', name: 'Работы с оптическими приборами', cat: 'V. Факторы трудового процесса' },
+    { code: '5.2.2', name: 'Нагрузка на голосовой аппарат', cat: 'V. Факторы трудового процесса' },
+    { code: '6', name: 'Работы на высоте', cat: 'VI. Выполняемые работы' },
+    { code: '6.1', name: 'Работы с высоким риском падения', cat: 'VI. Выполняемые работы' },
+    { code: '6.2', name: 'Прочие работы на высоте', cat: 'VI. Выполняемые работы' },
+    { code: '7', name: 'Работа лифтёра', cat: 'VI. Выполняемые работы' },
+    { code: '8', name: 'Работы крановщика', cat: 'VI. Выполняемые работы' },
+    { code: '9', name: 'Работы с электроустановками', cat: 'VI. Выполняемые работы' },
+    { code: '10', name: 'Валка, сплав, транспортировка леса', cat: 'VI. Выполняемые работы' },
+    { code: '11', name: 'Работы в особых географических регионах', cat: 'VI. Выполняемые работы' },
+    { code: '12', name: 'Работы в организациях пищевой промышленности', cat: 'VI. Выполняемые работы' },
+    { code: '13', name: 'Работы в организациях общественного питания', cat: 'VI. Выполняемые работы' },
+    { code: '14', name: 'Работы в организациях торговли', cat: 'VI. Выполняемые работы' },
+    { code: '15', name: 'Работы в организациях бытового обслуживания', cat: 'VI. Выполняемые работы' },
+    { code: '16', name: 'Работы в организациях связи', cat: 'VI. Выполняемые работы' },
+    { code: '17', name: 'Работы в организациях транспорта', cat: 'VI. Выполняемые работы' },
+    { code: '18.1', name: 'Управление наземными ТС (A, B, C)', cat: 'VI. Выполняемые работы' },
+    { code: '18.2', name: 'Управление наземными ТС (D, E)', cat: 'VI. Выполняемые работы' },
+    { code: '19', name: 'Работы в организациях медицинской промышленности', cat: 'VI. Выполняемые работы' },
+    { code: '20', name: 'Работы в организациях фармацевтической промышленности', cat: 'VI. Выполняемые работы' },
+    { code: '21', name: 'Работы в организациях химической промышленности', cat: 'VI. Выполняемые работы' },
+    { code: '22', name: 'Работы в организациях нефтяной и газовой промышленности', cat: 'VI. Выполняемые работы' },
+    { code: '23', name: 'Работы в организациях металлургии', cat: 'VI. Выполняемые работы' },
+    { code: '24', name: 'Работы в организациях строительства', cat: 'VI. Выполняемые работы' },
+    { code: '25', name: 'Работы в организациях энергетики', cat: 'VI. Выполняемые работы' },
+    { code: '26', name: 'Работы в организациях водного транспорта', cat: 'VI. Выполняемые работы' },
+    { code: '27', name: 'Работы в организациях воздушного транспорта', cat: 'VI. Выполняемые работы' }
+  ]
+};
+
+/* ============================================================
+   ДАННЫЕ ПО УМОЛЧАНИЮ
+   ============================================================ */
+const DEFAULT_DATA = {
+  org: {
+    fullName: '', shortName: 'ООО "Рыбка"',
+    inn: '', kpp: '', okpo: '', okogu: '', okved: '', oktmo: '', ogrn: '',
+    legalAddress: '111000, г. Спб, ул. Уличная, д.1', actualAddress: '',
+    phone: '', email: '',
+    manualAddresses: [],
+    director: '', order: '', commissionChair: '', singleEmployee: false,
+    commissionMembers: [
+      { id: 'cm-1', position: '', fio: '' },
+      { id: 'cm-2', position: '', fio: '' }
+    ]
+  },
+  departments: [
+    {
+      id: 'dept-admin', name: 'Администрация', address: '111000, г. Спб, ул. Уличная, д.1',
+      workplaces: [{
+        id: 'wp-1', num: 1, numManual: false, prevNum: '', position: 'Генеральный директор', okCode: '', shift: '5/2', shiftHours: 8,
+        description: 'Руководит в соответствии с действующим законодательством производственно-хозяйственной и финансово-экономической деятельностью предприятия',
+        workersCount: 1, women: 1, minors: 0, disabled: 0,
+        wcManual: false, wManual: false, mManual: false, dManual: false,
+        workZones: [{ name: 'кабинет, рабочий стол', percent: 100 }],
+        equipmentList: ['ПЭВМ, оргтехника'], vehicle: '', materials: 'отсутствуют', classConditions: '',
+        employees: [{ fio: 'Иванова Мария Ивановна', snils: '000-000-000 00', gender: 'female', genderManual: false, disabled: false, minor: false }],
+        benefits: { higherPay: 'no', extraVacation: 'no', shorterHours: 'no', milk: 'no', therapeuticFood: 'no', earlyPension: 'no', earlyPensionBasis: '', medicalExams: 'no' },
+        order29nList: ['']
+      }]
+    },
+    {
+      id: 'dept-transport', name: 'Транспортный цех', address: '111000, г. Спб, ул. Уличная, д.1',
+      workplaces: [{
+        id: 'wp-2', num: 2, numManual: false, prevNum: '', position: 'Тракторист', okCode: '19203', shift: '5/2', shiftHours: 8,
+        description: 'Управление транспортным средством, мелкий ремонт',
+        workersCount: 1, women: 1, minors: 0, disabled: 0,
+        wcManual: false, wManual: false, mManual: false, dManual: false,
+        workZones: [{ name: 'Мастерская', percent: 40 }, { name: 'Кабина трактора', percent: 60 }],
+        equipmentList: ['МТЗ - 80'], vehicle: 'МТЗ-80, 1989 г.в., г/н 26-05ХВ', materials: 'ГСМ', classConditions: '',
+        employees: [{ fio: 'Иванова Дарья Ивановна', snils: '000-000-000 00', gender: 'female', genderManual: false, disabled: false, minor: false }],
+        benefits: { higherPay: 'no', extraVacation: 'yes', shorterHours: 'no', milk: 'no', therapeuticFood: 'no', earlyPension: 'yes', earlyPensionBasis: 'ФЗ 400 статья 30 п.3', medicalExams: 'yes' },
+        order29nList: ['4.3.2', '4.4', '18.1']
+      }]
+    },
+    {
+      id: 'dept-security', name: 'Охрана', address: '110011, г. СПб, пр-кт. Ленина, д. 1',
+      workplaces: [{
+        id: 'wp-3', num: 3, numManual: false, prevNum: '', position: 'Охранник', okCode: '', shift: '1/3', shiftHours: 24,
+        description: 'Охрана предприятия. Обход территории',
+        workersCount: 4, women: 0, minors: 0, disabled: 1,
+        wcManual: false, wManual: false, mManual: false, dManual: false,
+        workZones: [{ name: 'пост охраны', percent: 100 }],
+        equipmentList: ['не предусмотренно'], vehicle: '', materials: 'отсутствуют', classConditions: '',
+        employees: [
+          { fio: 'Иванов Семен Иванович', snils: '000-000-000 00', gender: 'male', genderManual: false, disabled: false, minor: false },
+          { fio: 'Иванов Аркадий Иванович', snils: '000-000-000 00', gender: 'male', genderManual: false, disabled: false, minor: false },
+          { fio: 'Иванов Андрей Иванович', snils: '000-000-000 00', gender: 'male', genderManual: false, disabled: true, minor: false },
+          { fio: 'Иванов Сергей Иванович', snils: '000-000-000 00', gender: 'male', genderManual: false, disabled: false, minor: false }
+        ],
+        benefits: { higherPay: 'no', extraVacation: 'no', shorterHours: 'no', milk: 'no', therapeuticFood: 'no', earlyPension: 'no', earlyPensionBasis: '', medicalExams: 'yes' },
+        order29nList: ['5.1', '5.2']
+      }]
+    }
+  ]
+};
+
+let state = null;
+let uidCounter = 1;
+let userDict = { positions: [], equipment: [], materials: [], order29n: [] };
+
+function uid(prefix) { return prefix + '-' + Date.now() + '-' + (uidCounter++); }
+
+function loadUserDict() {
+  try { const raw = localStorage.getItem(USER_DICT_KEY); if (raw) {
+    userDict = Object.assign({ positions: [], equipment: [], materials: [], order29n: [] }, JSON.parse(raw));
+  }} catch(e) {}
+}
+function saveUserDict() { try { localStorage.setItem(USER_DICT_KEY, JSON.stringify(userDict)); } catch(e) {} }
+
+function migrateEmployee(emp) {
+  if (typeof emp.gender === 'undefined') emp.gender = '';
+  if (typeof emp.genderManual === 'undefined') emp.genderManual = false;
+  if (typeof emp.disabled === 'undefined') emp.disabled = false;
+  if (typeof emp.minor === 'undefined') emp.minor = false;
+  return emp;
+}
+
+function migrateWorkplace(wp) {
+  if (!Array.isArray(wp.workZones)) {
+    wp.workZones = wp.workZone ? [{ name: wp.workZone, percent: 100 }] : [{ name: '', percent: 100 }];
+    delete wp.workZone;
+  }
+  if (Array.isArray(wp.equipmentList)) { /* ok */ }
+  else if (typeof wp.equipment === 'string' && wp.equipment) { wp.equipmentList = [wp.equipment]; }
+  else { wp.equipmentList = ['']; }
+  delete wp.equipment;
+  if (typeof wp.vehicle === 'undefined') wp.vehicle = '';
+  if (typeof wp.numManual === 'undefined') wp.numManual = false;
+  if (typeof wp.prevNum === 'undefined') wp.prevNum = '';
+  if (typeof wp.wcManual === 'undefined') wp.wcManual = false;
+  if (typeof wp.wManual === 'undefined') wp.wManual = false;
+  if (typeof wp.mManual === 'undefined') wp.mManual = false;
+  if (typeof wp.dManual === 'undefined') wp.dManual = false;
+  // order29n: строка → массив
+  if (Array.isArray(wp.order29nList)) { /* ok */ }
+  else if (typeof wp.benefits.medicalExamsOrder29n === 'string' && wp.benefits.medicalExamsOrder29n) {
+    wp.order29nList = wp.benefits.medicalExamsOrder29n.split(',').map(s => s.trim()).filter(Boolean);
+  } else {
+    wp.order29nList = [''];
+  }
+  delete wp.benefits.medicalExamsOrder29n;
+  (wp.employees || []).forEach(migrateEmployee);
+  return wp;
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed.org && Array.isArray(parsed.org.measureAddresses) && !Array.isArray(parsed.org.manualAddresses)) {
+        parsed.org.manualAddresses = parsed.org.measureAddresses;
+      }
+      if (parsed.org && !Array.isArray(parsed.org.manualAddresses)) parsed.org.manualAddresses = [];
+      if (parsed.org && typeof parsed.org.singleEmployee === 'undefined') parsed.org.singleEmployee = false;
+      if (parsed.org && !Array.isArray(parsed.org.commissionMembers)) parsed.org.commissionMembers = JSON.parse(JSON.stringify(DEFAULT_DATA.org.commissionMembers));
+      parsed.departments.forEach(d => d.workplaces.forEach(migrateWorkplace));
+      return parsed;
+    }
+  } catch (e) { console.warn('load error', e); }
+  return JSON.parse(JSON.stringify(DEFAULT_DATA));
+}
+
+function saveState(silent) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    if (!silent) showToast('✅ Данные сохранены');
+    return true;
+  } catch (e) { showToast('❌ Ошибка сохранения: ' + e.message, true); return false; }
+}
+
+function showToast(msg, isError) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (isError ? ' error' : '');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => { t.className = 'toast' + (isError ? ' error' : ''); }, 2600);
+}
+
+/* ============================================================
+   АДРЕСА
+   ============================================================ */
+function getAutoAddresses() {
+  const seen = new Map();
+  state.departments.forEach(d => {
+    const addr = (d.address || '').trim();
+    if (!addr) return;
+    const key = addr.toLowerCase();
+    if (!seen.has(key)) seen.set(key, { address: addr, count: 0, auto: true });
+    seen.get(key).count += d.workplaces.length;
+  });
+  return Array.from(seen.values());
+}
+
+function getManualAddressesNormalized() {
+  return (state.org.manualAddresses || []).map(a => ({
+    id: a.id, address: (a.address || '').trim(), auto: false, count: countWorkplacesByAddress(a.address)
+  }));
+}
+
+function getAllAddressesForDisplay() {
+  const auto = getAutoAddresses();
+  const autoKeys = new Set(auto.map(a => a.address.toLowerCase()));
+  const manual = getManualAddressesNormalized().filter(m => m.address && !autoKeys.has(m.address.toLowerCase()));
+  return [...auto, ...manual];
+}
+
+function countWorkplacesByAddress(addr) {
+  if (!addr) return 0;
+  const norm = addr.trim().toLowerCase();
+  let n = 0;
+  state.departments.forEach(d => { if (d.address && d.address.trim().toLowerCase() === norm) n += d.workplaces.length; });
+  return n;
+}
+
+/* ============================================================
+   ОРГАНИЗАЦИЯ
+   ============================================================ */
+const ORG_FIELD_MAP = {
+  orgFullName: 'fullName', orgShortName: 'shortName',
+  orgInn: 'inn', orgKpp: 'kpp', orgOkpo: 'okpo', orgOkogu: 'okogu',
+  orgOkved: 'okved', orgOktmo: 'oktmo', orgOgrn: 'ogrn',
+  orgLegalAddress: 'legalAddress', orgActualAddress: 'actualAddress',
+  orgPhone: 'phone', orgEmail: 'email',
+  orgDirector: 'director', orgOrder: 'order', orgCommissionChair: 'commissionChair'
+};
+
+function renderOrg() {
+  Object.entries(ORG_FIELD_MAP).forEach(([elId, key]) => {
+    const el = document.getElementById(elId);
+    if (el) el.value = state.org[key] || '';
+  });
+  const toggle = document.getElementById('singleEmpToggle');
+  if (toggle) toggle.checked = !!state.org.singleEmployee;
+  renderAddresses();
+  renderCommission();
+  updateOrgBadge();
+  updateCommissionVisibility();
+  const emailEl = document.getElementById('orgEmail');
+  if (state.org.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(state.org.email)) emailEl.classList.add('err');
+  else emailEl.classList.remove('err');
+}
+
+function updateOrgBadge() {
+  const badge = document.getElementById('orgBadge');
+  const filled = state.org.shortName || state.org.fullName;
+  if (filled) { badge.textContent = 'заполнена'; badge.className = 'badge-ok'; }
+  else { badge.textContent = 'не заполнена'; badge.className = 'badge-warn'; }
+}
+
+function updateCommissionVisibility() {
+  const block = document.getElementById('commMembersBlock');
+  const note = document.getElementById('commNote');
+  const warn = document.getElementById('commWarn');
+  const ok = document.getElementById('commOk');
+  if (state.org.singleEmployee) {
+    block.classList.add('comm-hidden');
+    note.textContent = '(ИП / 1 сотрудник — только председатель)';
+    note.style.color = '#1a6e3a';
+    warn.classList.remove('show');
+    ok.classList.remove('show');
+  } else {
+    block.classList.remove('comm-hidden');
+    note.textContent = '(минимум 3, нечётное количество)';
+    note.style.color = '#b33';
+    validateCommission();
+  }
+}
+
+function renderAddresses() {
+  const list = document.getElementById('addrList');
+  list.innerHTML = '';
+  const all = getAllAddressesForDisplay();
+  if (!all.length) {
+    list.innerHTML = '<div style="font-size:12px;color:#7a94ab;font-style:italic;padding:8px 0;">Адресов пока нет. Добавьте подразделение с адресом или добавьте адрес вручную ниже.</div>';
+    return;
+  }
+  all.forEach(item => {
+    const row = document.createElement('div');
+    row.className = 'addr-row' + (item.auto ? ' auto' : '');
+    row.innerHTML = `
+      <div class="addr-info">
+        <input type="text" value="${escAttr(item.address)}" ${item.auto ? 'readonly' : ''} placeholder="Адрес проведения замеров" />
+        <div class="addr-count">Рабочих мест по этому адресу: <b>${item.count}</b>${item.auto ? '<span class="addr-source">🔗 из подразделений</span>' : ''}</div>
+      </div>
+      <div class="addr-actions">${item.auto ? '' : '<button class="btn-icon danger" title="Удалить">🗑</button>'}</div>
+    `;
+    if (!item.auto) {
+      const inp = row.querySelector('input');
+      const idx = state.org.manualAddresses.findIndex(a => a.id === item.id);
+      if (idx >= 0) {
+        inp.addEventListener('input', (e) => { state.org.manualAddresses[idx].address = e.target.value; renderAddresses(); scheduleSave(); });
+        row.querySelector('button').addEventListener('click', () => { state.org.manualAddresses.splice(idx, 1); renderAddresses(); scheduleSave(); });
+      }
+    }
+    list.appendChild(row);
+  });
+}
+
+function renderCommission() {
+  const list = document.getElementById('commList');
+  list.innerHTML = '';
+  state.org.commissionMembers.forEach((m, idx) => {
+    const row = document.createElement('div');
+    row.className = 'comm-row';
+    row.innerHTML = `
+      <input type="text" value="${escAttr(m.position)}" placeholder="Должность" />
+      <input type="text" value="${escAttr(m.fio)}" placeholder="ФИО полностью" />
+      <button class="btn-icon danger" title="Удалить">🗑</button>
+    `;
+    const [posInp, fioInp] = row.querySelectorAll('input');
+    posInp.addEventListener('input', (e) => { m.position = e.target.value; scheduleSave(); });
+    fioInp.addEventListener('input', (e) => { m.fio = e.target.value; scheduleSave(); });
+    row.querySelector('button').addEventListener('click', () => { state.org.commissionMembers.splice(idx, 1); renderCommission(); scheduleSave(); });
+    list.appendChild(row);
+  });
+  validateCommission();
+}
+
+function validateCommission() {
+  if (state.org.singleEmployee) return;
+  const warn = document.getElementById('commWarn');
+  const ok = document.getElementById('commOk');
+  const total = 1 + state.org.commissionMembers.length;
+  if (total < 3 || total % 2 === 0) { warn.classList.add('show'); ok.classList.remove('show'); }
+  else { warn.classList.remove('show'); ok.classList.add('show'); }
+}
+
+/* ============================================================
+   РЕНДЕР
+   ============================================================ */
+function render() {
+  renderOrg();
+  const container = document.getElementById('deptsContainer');
+  container.innerHTML = '';
+  state.departments.forEach((dept, dIdx) => container.appendChild(renderDepartment(dept, dIdx)));
+  renderTotals();
+  updateWorkplaceNumbers();
+}
+
+function renderDepartment(dept, dIdx) {
+  const el = document.createElement('div');
+  el.className = 'dept';
+  el.dataset.deptId = dept.id;
+  const defaultAddr = dept.address || state.org.actualAddress || state.org.legalAddress || '';
+  el.innerHTML = `
+    <div class="dept-header">
+      <div class="dept-field dept-title">
+        <input type="text" value="${escAttr(dept.name)}" placeholder="Наименование структурного подразделения (при наличии). По умолчанию — основное" data-role="dept-name" />
+        <span class="dept-hint">наименование структурного подразделения (при наличии). По умолчанию — основное</span>
+      </div>
+      <div class="dept-field dept-addr">
+        <input type="text" value="${escAttr(defaultAddr)}" placeholder="Адрес структурного подразделения (если отличается от фактического). По умолчанию — фактический адрес" data-role="dept-address" />
+        <span class="dept-hint">адрес структурного подразделения (если отличается от фактического). По умолчанию — фактический адрес</span>
+      </div>
+      <div class="dept-actions"><button class="btn-icon danger" data-action="del-dept" title="Удалить подразделение">🗑</button></div>
+    </div>
+    <div class="dept-workplaces"></div>
+    <button class="btn btn-ghost btn-sm" data-action="add-wp" style="margin-top:8px;">➕ Рабочее место</button>
+  `;
+  if (!dept.address && defaultAddr) dept.address = defaultAddr;
+
+  const wpContainer = el.querySelector('.dept-workplaces');
+  dept.workplaces.forEach((wp, wIdx) => wpContainer.appendChild(renderWorkplace(wp, dept.id, wIdx)));
+  el.querySelector('[data-role="dept-name"]').addEventListener('input', (e) => { dept.name = e.target.value; scheduleSave(); });
+  el.querySelector('[data-role="dept-address"]').addEventListener('input', (e) => { dept.address = e.target.value; renderAddresses(); scheduleSave(); });
+  el.querySelector('[data-action="del-dept"]').addEventListener('click', () => {
+    if (!confirm('Удалить подразделение «' + (dept.name || 'без названия') + '» со всеми рабочими местами?')) return;
+    state.departments.splice(dIdx, 1); render(); scheduleSave();
+  });
+  el.querySelector('[data-action="add-wp"]').addEventListener('click', () => { dept.workplaces.push(createEmptyWorkplace()); render(); scheduleSave(); });
+  return el;
+}
+
+function renderWorkplace(wp, deptId, wIdx) {
+  migrateWorkplace(wp);
+  const el = document.createElement('div');
+  el.className = 'wp-card';
+  el.dataset.wpId = wp.id;
+
+  el.innerHTML = `
+    <div class="wp-head">
+      <div class="wp-num-block">
+        <span>№</span>
+        <input type="text" class="num-input" value="${escAttr(wp.num || '')}" ${wp.numManual ? '' : 'disabled'} data-role="num-input" />
+        <button class="num-toggle ${wp.numManual ? 'active' : ''}" data-action="toggle-num" title="${wp.numManual ? 'Ручной номер — нажмите чтобы вернуть авто' : 'Нажмите чтобы ввести свой номер вручную'}">${wp.numManual ? '✎ ручной' : '✎ авто'}</button>
+      </div>
+      <div class="prev-num-block">
+        <label>№ по предыдущей СОУТ (если была):</label>
+        <input type="text" value="${escAttr(wp.prevNum)}" placeholder="например: 2-А" data-role="prev-num" />
+      </div>
+      <div class="wp-actions">
+        <button class="btn-icon" data-action="dup-wp" title="Дублировать">📋</button>
+        <button class="btn-icon" data-action="up-wp" title="Вверх">↑</button>
+        <button class="btn-icon" data-action="down-wp" title="Вниз">↓</button>
+        <button class="btn-icon danger" data-action="del-wp" title="Удалить">🗑</button>
+      </div>
+    </div>
+    <div class="wp-grid">
+      <div class="field span2">
+        <label>Наименование профессии / должности <span class="note">(подсказки из ОКПДТР)</span></label>
+        <div class="ac-wrap">
+          <div class="ac-input-wrap">
+            <input type="text" data-field="position" value="${escAttr(wp.position)}" autocomplete="off" placeholder="Начните вводить..." />
+            <button class="btn-icon" data-action="pick-position" title="Выбрать из справочника">📋</button>
+          </div>
+          <div class="ac-list" data-role="ac-position"></div>
+        </div>
+      </div>
+      <div class="field">
+        <label>Код по ОК-016-94 (ОКПДТР)</label>
+        <input type="text" data-field="okCode" value="${escAttr(wp.okCode)}" placeholder="—" />
+      </div>
+      <div class="field">
+        <label>Класс условий труда</label>
+        <select data-field="classConditions">
+          <option value="">— не указан —</option>
+          <option value="1">1 — оптимальный</option>
+          <option value="2">2 — допустимый</option>
+          <option value="3.1">3.1 — вредный 1 ст.</option>
+          <option value="3.2">3.2 — вредный 2 ст.</option>
+          <option value="3.3">3.3 — вредный 3 ст.</option>
+          <option value="3.4">3.4 — вредный 4 ст.</option>
+          <option value="4">4 — опасный</option>
+        </select>
+      </div>
+      <div class="field"><label>Сменность</label><select data-field="shift">${SHIFT_OPTIONS.map(o => `<option value="${o}" ${wp.shift === o ? 'selected' : ''}>${o}</option>`).join('')}</select></div>
+      <div class="field"><label>Рабочая смена (час)</label><input type="number" data-field="shiftHours" value="${wp.shiftHours}" min="1" max="24" step="0.5" /></div>
+      <div class="field span2">
+        <label>Кол-во работающих <span class="note" data-role="auto-hint-wc"></span></label>
+        <div class="num-field-row">
+          <input type="number" data-field="workersCount" value="${wp.workersCount}" min="0" />
+          <button class="btn-icon auto" data-action="reset-wc" title="Сбросить к авто">↺ Авто</button>
+        </div>
+      </div>
+      <div class="field span2">
+        <label>Из них женщин <span class="note" data-role="auto-hint-w"></span></label>
+        <div class="num-field-row">
+          <input type="number" data-field="women" value="${wp.women}" min="0" />
+          <button class="btn-icon auto" data-action="reset-w" title="Сбросить к авто">↺ Авто</button>
+        </div>
+      </div>
+      <div class="field span2">
+        <label>Из них несовершеннолетних <span class="note" data-role="auto-hint-m"></span></label>
+        <div class="num-field-row">
+          <input type="number" data-field="minors" value="${wp.minors}" min="0" />
+          <button class="btn-icon auto" data-action="reset-m" title="Сбросить к авто">↺ Авто</button>
+        </div>
+      </div>
+      <div class="field span2">
+        <label>Из них инвалидов <span class="note" data-role="auto-hint-d"></span></label>
+        <div class="num-field-row">
+          <input type="number" data-field="disabled" value="${wp.disabled}" min="0" />
+          <button class="btn-icon auto" data-action="reset-d" title="Сбросить к авто">↺ Авто</button>
+        </div>
+      </div>
+
+      <div class="wp-section-label">Рабочие зоны <span class="note">(наименование и % времени)</span></div>
+      <div class="field span3">
+        <div class="zone-list"></div>
+        <div class="zone-sum" data-role="zone-sum"></div>
+        <button class="btn btn-ghost btn-sm" data-action="add-zone" style="margin-top:6px;">➕ Добавить зону</button>
+      </div>
+
+      <div class="wp-section-label">Используемое оборудование <span class="note">(можно несколько)</span></div>
+      <div class="field span3">
+        <div class="equip-list"></div>
+        <button class="btn btn-ghost btn-sm" data-action="add-equip" style="margin-top:6px;">➕ Добавить оборудование</button>
+      </div>
+      <div class="field span1">
+        <label>Транспортное средство</label>
+        <input type="text" data-field="vehicle" value="${escAttr(wp.vehicle)}" placeholder="Марка, год, г/н" />
+      </div>
+
+      <div class="wp-section-label">Применяемые сырьё и материалы</div>
+      <div class="field span4">
+        <div class="ac-wrap">
+          <div class="ac-input-wrap">
+            <input type="text" data-field="materials" value="${escAttr(wp.materials)}" autocomplete="off" placeholder="Начните вводить..." />
+            <button class="btn-icon" data-action="pick-materials" title="Выбрать из справочника">📋</button>
+          </div>
+          <div class="ac-list" data-role="ac-materials"></div>
+        </div>
+      </div>
+      <div class="field span4"><label>Краткое описание работы</label><textarea data-field="description" rows="2">${escHtml(wp.description)}</textarea></div>
+      <div class="warn" data-role="workers-warn">⚠ Сумма (женщин + несоверш. + инвалидов) больше общего числа работающих</div>
+      <div class="warn" data-role="shift-warn">⚠ Смена более 12 часов — проверьте корректность (ТК РФ)</div>
+
+      <div class="wp-section-label">Сотрудники на рабочем месте</div>
+      <div class="emp-block">
+        <div class="emp-title"><span>👥 Сотрудники (<span data-role="emp-count">${wp.employees.length}</span>)</span><button class="btn-icon" data-action="add-emp">➕ Добавить</button></div>
+        <div class="emp-list"></div>
+      </div>
+
+      <div class="wp-section-label">Гарантии и компенсации <span class="note">(при классе условий труда 3.1 и выше по ранее проведённой СОУТ)</span></div>
+      <div class="field span4"><label>Повышенная оплата труда</label>${yesNoRadio('higherPay', wp.benefits.higherPay)}</div>
+      <div class="field span4"><label>Дополнительный отпуск</label>${yesNoRadio('extraVacation', wp.benefits.extraVacation)}</div>
+      <div class="field span4"><label>Сокращённая продолжительность рабочего времени</label>${yesNoRadio('shorterHours', wp.benefits.shorterHours)}</div>
+      <div class="field span4"><label>Молоко / равноценные пищевые продукты</label>${yesNoRadio('milk', wp.benefits.milk)}</div>
+      <div class="field span4"><label>Лечебно-профилактическое питание</label>${yesNoRadio('therapeuticFood', wp.benefits.therapeuticFood)}</div>
+      <div class="field span4"><label>Право на досрочную пенсию</label>${yesNoRadio('earlyPension', wp.benefits.earlyPension)}</div>
+      <div class="field span4"><label>Основание досрочной пенсии</label><input type="text" data-field="earlyPensionBasis" value="${escAttr(wp.benefits.earlyPensionBasis)}" placeholder="например: ФЗ 400 статья 30 п.3" /></div>
+      <div class="field span4"><label>Медосмотры</label>${yesNoRadio('medicalExams', wp.benefits.medicalExams)}</div>
+
+      <div class="field span4" id="order29n-block-${wp.id}" style="${wp.benefits.medicalExams === 'yes' ? '' : 'display:none;'}">
+        <label>Пункты приказа 29Н <span class="note">(обязательно указать при наличии медосмотров)</span></label>
+        <div class="order29n-list"></div>
+        <button class="btn btn-ghost btn-sm" data-action="add-order29n" style="margin-top:6px;">➕ Добавить пункт</button>
+        <div class="hint">Пункты из Приказа Минздрава РФ № 29Н от 28.01.2021</div>
+      </div>
+    </div>
+  `;
+
+  // num
+  const numInp = el.querySelector('[data-role="num-input"]');
+  numInp.addEventListener('input', (e) => { wp.num = e.target.value; wp.numManual = true; scheduleSave(); });
+  el.querySelector('[data-action="toggle-num"]').addEventListener('click', () => {
+    if (wp.numManual) { wp.numManual = false; wp.num = ''; render(); }
+    else {
+      wp.numManual = true;
+      render();
+      setTimeout(() => {
+        const inp = document.querySelector(`[data-wp-id="${wp.id}"] [data-role="num-input"]`);
+        if (inp) { inp.disabled = false; inp.focus(); inp.select(); }
+      }, 50);
+    }
+    scheduleSave();
+  });
+  el.querySelector('[data-role="prev-num"]').addEventListener('input', (e) => { wp.prevNum = e.target.value; scheduleSave(); });
+
+  // employees — точечное обновление без render()
+  const empList = el.querySelector('.emp-list');
+  wp.employees.forEach((emp, eIdx) => {
+    migrateEmployee(emp);
+    const row = document.createElement('div');
+    row.className = 'emp-row';
+    const g = emp.gender;
+    const genderIcon = g === 'male' ? '♂' : g === 'female' ? '♀' : '?';
+    const genderClass = g === 'male' ? 'male' : g === 'female' ? 'female' : 'unknown';
+    const genderTitle = emp.genderManual ? 'Указано вручную' : (g ? 'Определено автоматически по ФИО' : 'Не определено — укажите вручную');
+    row.innerHTML = `
+      <span class="emp-gender ${genderClass}" title="${genderTitle}">${genderIcon}</span>
+      <input type="text" data-emp="fio" value="${escAttr(emp.fio)}" placeholder="ФИО" />
+      <input type="text" data-emp="snils" value="${escAttr(emp.snils)}" placeholder="СНИЛС" />
+      <div class="emp-checks">
+        <div class="emp-group">
+          <span class="emp-group-label">Пол:</span>
+          <label title="Женщина"><input type="radio" name="g-${wp.id}-${eIdx}" value="female" data-emp-gender="female" ${emp.gender === 'female' ? 'checked' : ''}/> ж</label>
+          <label title="Мужчина"><input type="radio" name="g-${wp.id}-${eIdx}" value="male" data-emp-gender="male" ${emp.gender === 'male' ? 'checked' : ''}/> м</label>
+        </div>
+        <label title="Инвалид"><input type="checkbox" data-emp-disabled ${emp.disabled ? 'checked' : ''}/> Инвалид</label>
+        <label title="Несовершеннолетний"><input type="checkbox" data-emp-minor ${emp.minor ? 'checked' : ''}/> Несовершеннолетний</label>
+      </div>
+      <button class="btn-icon danger" data-action="del-emp" title="Удалить">🗑</button>
+    `;
+
+    const genderIconEl = row.querySelector('.emp-gender');
+    const fioInp = row.querySelector('[data-emp="fio"]');
+    const snilsInp = row.querySelector('[data-emp="snils"]');
+    const genderRadios = row.querySelectorAll('[data-emp-gender]');
+
+    function updateGenderIcon() {
+      const gg = emp.gender;
+      const icon = gg === 'male' ? '♂' : gg === 'female' ? '♀' : '?';
+      const cls = gg === 'male' ? 'male' : gg === 'female' ? 'female' : 'unknown';
+      const title = emp.genderManual ? 'Указано вручную' : (gg ? 'Определено автоматически по ФИО' : 'Не определено — укажите вручную');
+      genderIconEl.textContent = icon;
+      genderIconEl.className = 'emp-gender ' + cls;
+      genderIconEl.title = title;
+    }
+
+    fioInp.addEventListener('input', (e) => {
+      emp.fio = e.target.value;
+      if (!emp.genderManual) {
+        const det = detectGenderByFIO(emp.fio);
+        const newGender = det.gender || '';
+        if (newGender !== emp.gender) {
+          emp.gender = newGender;
+          // обновляем радио без render()
+          genderRadios.forEach(r => { r.checked = (r.value === emp.gender); });
+          updateGenderIcon();
+          // пересчёт авто-полей
+          applyAutoToFields(el, wp, false);
+        }
+      }
+      scheduleSave();
+    });
+    snilsInp.addEventListener('input', (e) => { emp.snils = e.target.value; scheduleSave(); });
+    genderRadios.forEach(r => {
+      r.addEventListener('change', () => {
+        if (r.checked) {
+          emp.gender = r.value;
+          emp.genderManual = true;
+          updateGenderIcon();
+          applyAutoToFields(el, wp, false);
+          scheduleSave();
+        }
+      });
+    });
+    row.querySelector('[data-emp-disabled]').addEventListener('change', (e) => {
+      emp.disabled = e.target.checked;
+      applyAutoToFields(el, wp, false);
+      scheduleSave();
+    });
+    row.querySelector('[data-emp-minor]').addEventListener('change', (e) => {
+      emp.minor = e.target.checked;
+      applyAutoToFields(el, wp, false);
+      scheduleSave();
+    });
+    row.querySelector('[data-action="del-emp"]').addEventListener('click', () => {
+      wp.employees.splice(eIdx, 1);
+      render(); scheduleSave();
+    });
+    empList.appendChild(row);
+  });
+
+  // equipment list
+  renderEquipment(el, wp);
+  // order29n list
+  renderOrder29n(el, wp);
+  // zones
+  renderZones(el, wp);
+
+  const sel = el.querySelector('[data-field="classConditions"]');
+  if (sel && wp.classConditions) sel.value = wp.classConditions;
+
+  el.querySelectorAll('[data-field]').forEach(inp => {
+    const field = inp.dataset.field;
+    inp.addEventListener('input', (e) => {
+      let v = e.target.value;
+      if (inp.type === 'number') v = v === '' ? 0 : parseFloat(v);
+      if (field === 'earlyPensionBasis') wp.benefits.earlyPensionBasis = v;
+      else wp[field] = v;
+      if (['workersCount','women','minors','disabled'].includes(field)) {
+        if (field === 'workersCount') wp.wcManual = true;
+        if (field === 'women') wp.wManual = true;
+        if (field === 'minors') wp.mManual = true;
+        if (field === 'disabled') wp.dManual = true;
+        validateWorkplace(el, wp); renderTotals(); updateAutoHints(el, wp);
+      }
+      if (field === 'shiftHours') validateShift(el, wp);
+      scheduleSave();
+    });
+    inp.addEventListener('change', (e) => { if (inp.tagName === 'SELECT') { wp[field] = e.target.value; scheduleSave(); } });
+  });
+
+  // reset-кнопки
+  el.querySelector('[data-action="reset-wc"]').addEventListener('click', () => { wp.wcManual = false; applyAutoToFields(el, wp, true); scheduleSave(); });
+  el.querySelector('[data-action="reset-w"]').addEventListener('click', () => { wp.wManual = false; applyAutoToFields(el, wp, true); scheduleSave(); });
+  el.querySelector('[data-action="reset-m"]').addEventListener('click', () => { wp.mManual = false; applyAutoToFields(el, wp, true); scheduleSave(); });
+  el.querySelector('[data-action="reset-d"]').addEventListener('click', () => { wp.dManual = false; applyAutoToFields(el, wp, true); scheduleSave(); });
+
+  el.querySelectorAll('input[type="radio"][data-bfield]').forEach(r => {
+    r.addEventListener('change', () => {
+      if (r.checked) {
+        wp.benefits[r.dataset.bfield] = r.value;
+        scheduleSave(); renderTotals();
+        if (r.dataset.bfield === 'medicalExams') {
+          const block = el.querySelector(`#order29n-block-${wp.id}`);
+          if (block) block.style.display = r.value === 'yes' ? '' : 'none';
+        }
+      }
+    });
+  });
+
+  el.querySelector('[data-action="add-emp"]').addEventListener('click', () => { wp.employees.push({ fio: '', snils: '', gender: '', genderManual: false, disabled: false, minor: false }); render(); scheduleSave(); });
+  el.querySelector('[data-action="add-zone"]').addEventListener('click', () => { wp.workZones.push({ name: '', percent: 0 }); render(); scheduleSave(); });
+  el.querySelector('[data-action="add-equip"]').addEventListener('click', () => { wp.equipmentList.push(''); render(); scheduleSave(); });
+  el.querySelector('[data-action="add-order29n"]').addEventListener('click', () => { wp.order29nList.push(''); render(); scheduleSave(); });
+  el.querySelector('[data-action="del-wp"]').addEventListener('click', () => {
+    if (!confirm('Удалить рабочее место № ' + wp.num + '?')) return;
+    const dept = state.departments.find(d => d.id === deptId);
+    if (dept) dept.workplaces.splice(wIdx, 1);
+    render(); scheduleSave();
+  });
+  el.querySelector('[data-action="dup-wp"]').addEventListener('click', () => {
+    const dept = state.departments.find(d => d.id === deptId);
+    if (!dept) return;
+    const copy = JSON.parse(JSON.stringify(wp));
+    copy.id = uid('wp'); copy.numManual = false; copy.num = '';
+    copy.employees = copy.employees.map(e => ({ ...e }));
+    copy.workZones = copy.workZones.map(z => ({ ...z }));
+    copy.equipmentList = copy.equipmentList.map(s => s);
+    copy.order29nList = (copy.order29nList || []).map(s => s);
+    dept.workplaces.splice(wIdx + 1, 0, copy);
+    render(); scheduleSave();
+  });
+  el.querySelector('[data-action="up-wp"]').addEventListener('click', () => {
+    if (wIdx === 0) return;
+    const dept = state.departments.find(d => d.id === deptId);
+    if (!dept) return;
+    [dept.workplaces[wIdx-1], dept.workplaces[wIdx]] = [dept.workplaces[wIdx], dept.workplaces[wIdx-1]];
+    render(); scheduleSave();
+  });
+  el.querySelector('[data-action="down-wp"]').addEventListener('click', () => {
+    const dept = state.departments.find(d => d.id === deptId);
+    if (!dept || wIdx >= dept.workplaces.length - 1) return;
+    [dept.workplaces[wIdx+1], dept.workplaces[wIdx]] = [dept.workplaces[wIdx], dept.workplaces[wIdx+1]];
+    render(); scheduleSave();
+  });
+
+  attachPositionAutocomplete(el, wp);
+  attachDictAutocomplete(el, wp, 'materials', 'ac-materials');
+
+  el.querySelector('[data-action="pick-position"]').addEventListener('click', () => openDictModal('positions', (item) => {
+    wp.position = item.name;
+    if (item.code) wp.okCode = item.code;
+    render(); scheduleSave();
+  }));
+  el.querySelector('[data-action="pick-materials"]').addEventListener('click', () => openDictModal('materials', (item) => { wp.materials = item.name; render(); scheduleSave(); }));
+
+  // инициализация: применяем авто к полям (если не ручные)
+  applyAutoToFields(el, wp, true);
+
+  validateWorkplace(el, wp);
+  validateShift(el, wp);
+  updateAutoHints(el, wp);
+  return el;
+}
+
+/* ============================================================
+   АВТО-ПОДСТАНОВКА ПОЛЕЙ ИЗ СОТРУДНИКОВ
+   ============================================================ */
+function getAutoCounts(wp) {
+  const emps = wp.employees || [];
+  return {
+    total: emps.length,
+    women: emps.filter(e => e.gender === 'female').length,
+    minors: emps.filter(e => e.minor).length,
+    disabled: emps.filter(e => e.disabled).length
+  };
+}
+
+function applyAutoToFields(el, wp, silent) {
+  const auto = getAutoCounts(wp);
+  if (wp.employees.length === 0) return; // нет сотрудников — не трогаем
+  const map = [
+    { field: 'workersCount', flag: 'wcManual', auto: auto.total },
+    { field: 'women', flag: 'wManual', auto: auto.women },
+    { field: 'minors', flag: 'mManual', auto: auto.minors },
+    { field: 'disabled', flag: 'dManual', auto: auto.disabled }
+  ];
+  map.forEach(m => {
+    if (!wp[m.flag]) {
+      wp[m.field] = m.auto;
+      const inp = el.querySelector(`[data-field="${m.field}"]`);
+      if (inp) inp.value = m.auto;
+    }
+  });
+  renderTotals();
+  updateAutoHints(el, wp);
+  if (!silent) scheduleSave();
+}
+
+function updateAutoHints(el, wp) {
+  const auto = getAutoCounts(wp);
+  if (!wp.employees || wp.employees.length === 0) {
+    el.querySelectorAll('[data-role="auto-hint-wc"], [data-role="auto-hint-w"], [data-role="auto-hint-m"], [data-role="auto-hint-d"]').forEach(x => x.textContent = '');
+    el.querySelectorAll('[data-field="workersCount"], [data-field="women"], [data-field="minors"], [data-field="disabled"]').forEach(x => x.classList.remove('warn-field'));
+    return;
+  }
+  const map = [
+    { field: 'workersCount', role: 'auto-hint-wc', auto: auto.total, flag: 'wcManual' },
+    { field: 'women', role: 'auto-hint-w', auto: auto.women, flag: 'wManual' },
+    { field: 'minors', role: 'auto-hint-m', auto: auto.minors, flag: 'mManual' },
+    { field: 'disabled', role: 'auto-hint-d', auto: auto.disabled, flag: 'dManual' }
+  ];
+  map.forEach(m => {
+    const inp = el.querySelector(`[data-field="${m.field}"]`);
+    const hint = el.querySelector(`[data-role="${m.role}"]`);
+    if (!inp || !hint) return;
+    const val = parseFloat(inp.value) || 0;
+    if (val !== m.auto) {
+      hint.textContent = '⚠ авто: ' + m.auto;
+      hint.style.color = '#b33';
+      inp.classList.add('warn-field');
+    } else {
+      hint.textContent = wp[m.flag] ? '✓ (ручной)' : '✓';
+      hint.style.color = '#1a6e3a';
+      inp.classList.remove('warn-field');
+    }
+  });
+}
+
+/* ============================================================
+   EQUIPMENT LIST
+   ============================================================ */
+function renderEquipment(el, wp) {
+  const list = el.querySelector('.equip-list');
+  if (!list) return;
+  list.innerHTML = '';
+  wp.equipmentList.forEach((val, idx) => {
+    const row = document.createElement('div');
+    row.className = 'equip-row';
+    row.innerHTML = `
+      <div class="ac-wrap">
+        <div class="ac-input-wrap">
+          <input type="text" value="${escAttr(val)}" autocomplete="off" placeholder="Наименование оборудования" />
+          <button class="btn-icon" data-action="pick-equip" data-idx="${idx}" title="Выбрать из справочника">📋</button>
+        </div>
+        <div class="ac-list" data-role="ac-equip-${idx}"></div>
+      </div>
+      <button class="btn-icon danger" data-action="del-equip" data-idx="${idx}" title="Удалить">🗑</button>
+    `;
+    const inp = row.querySelector('input');
+    inp.addEventListener('input', (e) => { wp.equipmentList[idx] = e.target.value; scheduleSave(); });
+    row.querySelector('[data-action="del-equip"]').addEventListener('click', () => {
+      if (wp.equipmentList.length <= 1) { wp.equipmentList[0] = ''; render(); }
+      else { wp.equipmentList.splice(idx, 1); render(); }
+      scheduleSave();
+    });
+    row.querySelector('[data-action="pick-equip"]').addEventListener('click', () => openDictModal('equipment', (item) => {
+      wp.equipmentList[idx] = item.name;
+      render(); scheduleSave();
+    }));
+    const acList = row.querySelector(`[data-role="ac-equip-${idx}"]`);
+    inp.addEventListener('input', () => {
+      const q = inp.value.trim().toLowerCase();
+      if (q.length < 1) { acList.classList.remove('open'); return; }
+      const base = DICT.equipment;
+      const user = userDict.equipment || [];
+      const all = [...user.map(u => ({ name: u.name, cat: 'своё' })), ...base];
+      const matches = all.filter(it => it.name.toLowerCase().includes(q)).slice(0, 12);
+      if (!matches.length) { acList.classList.remove('open'); return; }
+      acList.innerHTML = matches.map((it, i) => `
+        <div class="ac-item" data-idx="${i}">${escHtml(it.name)}<span class="ac-src">${it.cat || ''}</span></div>
+      `).join('');
+      acList.classList.add('open');
+      acList.querySelectorAll('.ac-item').forEach(item => {
+        item.addEventListener('click', () => {
+          const it = matches[+item.dataset.idx];
+          wp.equipmentList[idx] = it.name;
+          inp.value = it.name;
+          acList.classList.remove('open');
+          scheduleSave();
+        });
+      });
+    });
+    inp.addEventListener('blur', () => setTimeout(() => acList.classList.remove('open'), 250));
+    list.appendChild(row);
+  });
+}
+
+/* ============================================================
+   ORDER 29N LIST
+   ============================================================ */
+function renderOrder29n(el, wp) {
+  const list = el.querySelector('.order29n-list');
+  if (!list) return;
+  list.innerHTML = '';
+  if (!Array.isArray(wp.order29nList)) wp.order29nList = [''];
+  wp.order29nList.forEach((val, idx) => {
+    const row = document.createElement('div');
+    row.className = 'order29n-row';
+    row.innerHTML = `
+      <div class="ac-wrap">
+        <div class="ac-input-wrap">
+          <input type="text" value="${escAttr(val)}" autocomplete="off" placeholder="например: 4.4 или Шум" />
+          <button class="btn-icon" data-action="pick-29n" data-idx="${idx}" title="Выбрать из справочника 29Н">📋</button>
+        </div>
+        <div class="ac-list" data-role="ac-29n-${idx}"></div>
+      </div>
+      <button class="btn-icon danger" data-action="del-29n" data-idx="${idx}" title="Удалить">🗑</button>
+    `;
+    const inp = row.querySelector('input');
+    inp.addEventListener('input', (e) => { wp.order29nList[idx] = e.target.value; scheduleSave(); });
+    row.querySelector('[data-action="del-29n"]').addEventListener('click', () => {
+      if (wp.order29nList.length <= 1) { wp.order29nList[0] = ''; render(); }
+      else { wp.order29nList.splice(idx, 1); render(); }
+      scheduleSave();
+    });
+    row.querySelector('[data-action="pick-29n"]').addEventListener('click', () => openDictModal('order29n', (item) => {
+      wp.order29nList[idx] = item.code + ' — ' + item.name;
+      render(); scheduleSave();
+    }));
+    const acList = row.querySelector(`[data-role="ac-29n-${idx}"]`);
+    inp.addEventListener('input', () => {
+      const q = inp.value.trim().toLowerCase();
+      if (q.length < 1) { acList.classList.remove('open'); return; }
+      const base = DICT.order29n;
+      const user = userDict.order29n || [];
+      const all = [...user.map(u => ({ code: u.code, name: u.name, cat: 'своё' })), ...base];
+      const matches = all.filter(it => it.code.toLowerCase().includes(q) || it.name.toLowerCase().includes(q)).slice(0, 15);
+      if (!matches.length) { acList.classList.remove('open'); return; }
+      acList.innerHTML = matches.map((it, i) => `
+        <div class="ac-item" data-idx="${i}">
+          <span class="ac-code">${escHtml(it.code)}</span>${escHtml(it.name)}
+          <span class="ac-src">${it.cat || ''}</span>
+        </div>
+      `).join('');
+      acList.classList.add('open');
+      acList.querySelectorAll('.ac-item').forEach(item => {
+        item.addEventListener('click', () => {
+          const it = matches[+item.dataset.idx];
+          wp.order29nList[idx] = it.code + ' — ' + it.name;
+          inp.value = wp.order29nList[idx];
+          acList.classList.remove('open');
+          scheduleSave();
+        });
+      });
+    });
+    inp.addEventListener('blur', () => setTimeout(() => acList.classList.remove('open'), 250));
+    list.appendChild(row);
+  });
+}
+
+/* ============================================================
+   ZONES
+   ============================================================ */
+function renderZones(el, wp) {
+  const list = el.querySelector('.zone-list');
+  if (!list) return;
+  list.innerHTML = '';
+  wp.workZones.forEach((z, idx) => {
+    const row = document.createElement('div');
+    row.className = 'zone-row';
+    row.innerHTML = `
+      <input type="text" value="${escAttr(z.name)}" placeholder="Наименование рабочей зоны" data-zone="name" />
+      <input type="number" class="pct" value="${z.percent}" min="0" max="100" step="1" data-zone="percent" placeholder="%" />
+      <button class="btn-icon danger" title="Удалить">🗑</button>
+    `;
+    row.querySelector('[data-zone="name"]').addEventListener('input', (e) => { z.name = e.target.value; scheduleSave(); });
+    row.querySelector('[data-zone="percent"]').addEventListener('input', (e) => { z.percent = e.target.value === '' ? 0 : parseFloat(e.target.value); updateZoneSum(el, wp); scheduleSave(); });
+    row.querySelector('button').addEventListener('click', () => { wp.workZones.splice(idx, 1); render(); scheduleSave(); });
+    list.appendChild(row);
+  });
+  updateZoneSum(el, wp);
+}
+
+function updateZoneSum(el, wp) {
+  const sumEl = el.querySelector('[data-role="zone-sum"]');
+  if (!sumEl) return;
+  const sum = wp.workZones.reduce((s, z) => s + (+z.percent || 0), 0);
+  sumEl.innerHTML = `Сумма процентов: <b>${sum}%</b>${sum !== 100 ? ' <span style="color:#b33;">(должно быть 100%)</span>' : ''}`;
+  sumEl.classList.toggle('warn', sum !== 100);
+}
+
+function yesNoRadio(field, value) {
+  const yes = value === 'yes' ? 'checked' : '';
+  const no = value === 'no' ? 'checked' : '';
+  const name = field + '-' + Math.random().toString(36).slice(2,8);
+  return `<div class="yesno">
+    <label><input type="radio" name="${name}" value="yes" data-bfield="${field}" ${yes}/> да</label>
+    <label><input type="radio" name="${name}" value="no" data-bfield="${field}" ${no}/> нет</label>
+  </div>`;
+}
+
+/* ============================================================
+   АВТОКОМПЛИТ
+   ============================================================ */
+function attachPositionAutocomplete(el, wp) {
+  const input = el.querySelector('[data-field="position"]');
+  const list = el.querySelector('[data-role="ac-position"]');
+  if (!input || !list) return;
+  let timer = null, lastQuery = '';
+
+  input.addEventListener('input', () => {
+    const q = input.value.trim();
+    if (q === lastQuery) return;
+    lastQuery = q;
+    if (q.length < 3) { list.classList.remove('open'); return; }
+    clearTimeout(timer);
+    timer = setTimeout(async () => {
+      list.innerHTML = '<div class="ac-loading">Поиск в ОКПДТР...</div>';
+      list.classList.add('open');
+      try {
+        const items = await dadataOkpdtr(q);
+        if (!items.length) { list.innerHTML = '<div class="ac-loading">Ничего не найдено.</div>'; return; }
+        list.innerHTML = items.map((it, i) => `
+          <div class="ac-item" data-idx="${i}">
+            <span class="ac-code">${escHtml(it.code)}</span>${escHtml(it.name)}
+            <span class="ac-src">${it.src}</span>
+          </div>
+        `).join('');
+        list.querySelectorAll('.ac-item').forEach(item => {
+          item.addEventListener('click', () => {
+            const it = items[+item.dataset.idx];
+            wp.position = it.name;
+            if (it.code) wp.okCode = it.code;
+            input.value = it.name;
+            const okInp = el.querySelector('[data-field="okCode"]');
+            if (okInp && it.code) okInp.value = it.code;
+            list.classList.remove('open');
+            scheduleSave();
+          });
+        });
+      } catch (e) {
+        list.innerHTML = '<div class="ac-loading">Ошибка: ' + escHtml(e.message) + '</div>';
+      }
+    }, 350);
+  });
+
+  input.addEventListener('blur', () => { setTimeout(() => list.classList.remove('open'), 250); });
+  input.addEventListener('focus', () => { if (input.value.trim().length >= 3) input.dispatchEvent(new Event('input')); });
+}
+
+async function dadataOkpdtr(query) {
+  const headers = { 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': 'Token ' + DADATA_API_KEY };
+  async function tryApi(url) {
+    try {
+      const r = await fetch(url, { method: 'POST', headers, body: JSON.stringify({ query, count: 7 }) });
+      if (!r.ok) return [];
+      const data = await r.json();
+      return data.suggestions || [];
+    } catch (e) { return []; }
+  }
+  const [profs, posts] = await Promise.all([
+    tryApi('https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/okpdtr_profession'),
+    tryApi('https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/okpdtr_position')
+  ]);
+  const results = [];
+  profs.forEach(s => { const d = s.data || {}; results.push({ code: d.code || '', name: s.value || d.name || '', src: 'ОКПДТР (раб.)' }); });
+  posts.forEach(s => { const d = s.data || {}; results.push({ code: d.code || '', name: s.value || d.name || '', src: 'ОКПДТР (служ.)' }); });
+  userDict.positions.forEach(p => { if (p.name.toLowerCase().includes(query.toLowerCase())) results.push({ code: p.code || '', name: p.name, src: 'своё' }); });
+  return results.slice(0, 12);
+}
+
+function attachDictAutocomplete(el, wp, field, listRole) {
+  const input = el.querySelector(`[data-field="${field}"]`);
+  const list = el.querySelector(`[data-role="${listRole}"]`);
+  if (!input || !list) return;
+  input.addEventListener('input', () => {
+    const q = input.value.trim().toLowerCase();
+    wp[field] = input.value;
+    scheduleSave();
+    if (q.length < 1) { list.classList.remove('open'); return; }
+    const base = DICT[field] || [];
+    const user = userDict[field] || [];
+    const all = [...user.map(u => ({ name: u.name, cat: 'своё' })), ...base];
+    const matches = all.filter(it => it.name.toLowerCase().includes(q)).slice(0, 12);
+    if (!matches.length) { list.classList.remove('open'); return; }
+    list.innerHTML = matches.map((it, i) => `
+      <div class="ac-item" data-idx="${i}">${escHtml(it.name)}<span class="ac-src">${it.cat || ''}</span></div>
+    `).join('');
+    list.classList.add('open');
+    list.querySelectorAll('.ac-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const it = matches[+item.dataset.idx];
+        wp[field] = it.name;
+        input.value = it.name;
+        list.classList.remove('open');
+        scheduleSave();
+      });
+    });
+  });
+  input.addEventListener('blur', () => setTimeout(() => list.classList.remove('open'), 250));
+}
+
+/* ============================================================
+   МОДАЛЬНОЕ ОКНО
+   ============================================================ */
+let dictCallback = null, dictCurrentField = null;
+
+function openDictModal(field, callback) {
+  dictCurrentField = field;
+  dictCallback = callback;
+  const modal = document.getElementById('dictModal');
+  const titles = {
+    positions: 'Справочник должностей (ОКПДТР)',
+    equipment: 'Справочник оборудования',
+    materials: 'Справочник сырья и материалов',
+    order29n: 'Пункты Приказа Минздрава РФ № 29Н от 28.01.2021'
+  };
+  const hints = { order29n: 'Выберите пункт — он добавится в список. Приказ 29Н регулирует порядок проведения обязательных предварительных и периодических медицинских осмотров.' };
+  document.getElementById('dictTitle').textContent = titles[field] || 'Справочник';
+  document.getElementById('dictHint').textContent = hints[field] || '';
+  document.getElementById('dictSearch').value = '';
+  renderDictContent('');
+  modal.classList.add('open');
+  setTimeout(() => document.getElementById('dictSearch').focus(), 100);
+}
+
+function renderDictContent(query) {
+  const container = document.getElementById('dictContent');
+  const field = dictCurrentField;
+  const base = DICT[field] || [];
+  const user = (userDict[field] || []).map(u => ({ ...u, cat: 'своё' }));
+  const all = [...user, ...base];
+  const q = (query || '').trim().toLowerCase();
+  const filtered = q ? all.filter(it => {
+    if (field === 'order29n') return it.code.toLowerCase().includes(q) || it.name.toLowerCase().includes(q);
+    return it.name.toLowerCase().includes(q);
+  }) : all;
+  if (!filtered.length) { container.innerHTML = '<div class="modal-empty">Ничего не найдено</div>'; return; }
+
+  if (field === 'positions') {
+    container.innerHTML = filtered.map((it, i) => `
+      <div class="modal-item" data-idx="${i}">${it.code ? `<span class="m-code">${escHtml(it.code)}</span>` : ''}${escHtml(it.name)}</div>
+    `).join('');
+  } else if (field === 'order29n') {
+    const groups = {};
+    filtered.forEach(it => { const c = it.cat || 'Прочее'; (groups[c] = groups[c] || []).push(it); });
+    container.innerHTML = Object.entries(groups).map(([cat, items]) => `
+      <div class="modal-cat">${escHtml(cat)}</div>
+      ${items.map(it => `<div class="modal-item" data-code="${escAttr(it.code)}" data-name="${escAttr(it.name)}"><span class="m-code">${escHtml(it.code)}</span>${escHtml(it.name)}</div>`).join('')}
+    `).join('');
+  } else {
+    const groups = {};
+    filtered.forEach(it => { const c = it.cat || 'Прочее'; (groups[c] = groups[c] || []).push(it); });
+    container.innerHTML = Object.entries(groups).map(([cat, items]) => `
+      <div class="modal-cat">${escHtml(cat)}</div>
+      ${items.map(it => `<div class="modal-item" data-name="${escAttr(it.name)}">${escHtml(it.name)}</div>`).join('')}
+    `).join('');
+  }
+
+  container.querySelectorAll('.modal-item').forEach(item => {
+    item.addEventListener('click', () => {
+      container.querySelectorAll('.modal-item').forEach(x => x.classList.remove('selected'));
+      item.classList.add('selected');
+      if (field === 'positions') item._picked = filtered[+item.dataset.idx];
+      else if (field === 'order29n') item._picked = { code: item.dataset.code, name: item.dataset.name };
+      else item._picked = { name: item.dataset.name };
+    });
+    item.addEventListener('dblclick', () => {
+      const picked = item._picked || (field === 'positions' ? filtered[+item.dataset.idx] : field === 'order29n' ? { code: item.dataset.code, name: item.dataset.name } : { name: item.dataset.name });
+      if (dictCallback) dictCallback(picked);
+      document.getElementById('dictModal').classList.remove('open');
+    });
+  });
+}
+
+/* ============================================================
+   ВАЛИДАЦИЯ
+   ============================================================ */
+function validateWorkplace(el, wp) {
+  const warn = el.querySelector('[data-role="workers-warn"]');
+  if (!warn) return;
+  const sum = (+wp.women || 0) + (+wp.minors || 0) + (+wp.disabled || 0);
+  const total = +wp.workersCount || 0;
+  if (sum > total) { warn.classList.add('show'); el.classList.add('has-error'); }
+  else { warn.classList.remove('show'); el.classList.remove('has-error'); }
+}
+function validateShift(el, wp) {
+  const warn = el.querySelector('[data-role="shift-warn"]');
+  if (!warn) return;
+  if ((+wp.shiftHours || 0) > 12) warn.classList.add('show');
+  else warn.classList.remove('show');
+}
+
+/* ============================================================
+   НУМЕРАЦИЯ И ИТОГИ
+   ============================================================ */
+function updateWorkplaceNumbers() {
+  let n = 1;
+  state.departments.forEach(dept => dept.workplaces.forEach(wp => {
+    if (!wp.numManual) wp.num = n;
+    n++;
+  }));
+}
+
+function calcTotals() {
+  const t = { workplaces: 0, workers: 0, women: 0, minors: 0, disabled: 0,
+    higherPay: 0, extraVacation: 0, shorterHours: 0, milk: 0, therapeuticFood: 0, earlyPension: 0, medicalExams: 0 };
+  state.departments.forEach(dept => dept.workplaces.forEach(wp => {
+    t.workplaces++; t.workers += +wp.workersCount || 0;
+    t.women += +wp.women || 0; t.minors += +wp.minors || 0; t.disabled += +wp.disabled || 0;
+    if (wp.benefits.higherPay === 'yes') t.higherPay++;
+    if (wp.benefits.extraVacation === 'yes') t.extraVacation++;
+    if (wp.benefits.shorterHours === 'yes') t.shorterHours++;
+    if (wp.benefits.milk === 'yes') t.milk++;
+    if (wp.benefits.therapeuticFood === 'yes') t.therapeuticFood++;
+    if (wp.benefits.earlyPension === 'yes') t.earlyPension++;
+    if (wp.benefits.medicalExams === 'yes') t.medicalExams++;
+  }));
+  return t;
+}
+
+function renderTotals() {
+  const t = calcTotals();
+  const items = [
+    { num: t.workplaces, lbl: 'Рабочих мест' }, { num: t.workers, lbl: 'Работающих' },
+    { num: t.women, lbl: 'Женщин' }, { num: t.minors, lbl: 'Несовершеннолетних' },
+    { num: t.disabled, lbl: 'Инвалидов' }, { num: t.higherPay, lbl: 'Повыш. оплата труда' },
+    { num: t.extraVacation, lbl: 'Доп. отпуск' }, { num: t.shorterHours, lbl: 'Сокращ. время' },
+    { num: t.milk, lbl: 'Молоко / ЛПП' }, { num: t.therapeuticFood, lbl: 'Леч.-проф. питание' },
+    { num: t.earlyPension, lbl: 'Досрочная пенсия' }, { num: t.medicalExams, lbl: 'Медосмотры' }
+  ];
+  document.getElementById('totalsGrid').innerHTML = items.map(i =>
+    `<div class="total-item"><div class="num">${i.num}</div><div class="lbl">${i.lbl}</div></div>`
+  ).join('');
+}
+
+function createEmptyWorkplace() {
+  return {
+    id: uid('wp'), num: 0, numManual: false, prevNum: '', position: '', okCode: '', shift: '5/2', shiftHours: 8,
+    description: '', workersCount: 1, women: 0, minors: 0, disabled: 0,
+    wcManual: false, wManual: false, mManual: false, dManual: false,
+    workZones: [{ name: '', percent: 100 }],
+    equipmentList: [''], vehicle: '', materials: '', classConditions: '',
+    employees: [{ fio: '', snils: '', gender: '', genderManual: false, disabled: false, minor: false }],
+    benefits: { higherPay: 'no', extraVacation: 'no', shorterHours: 'no', milk: 'no', therapeuticFood: 'no', earlyPension: 'no', earlyPensionBasis: '', medicalExams: 'no' },
+    order29nList: ['']
+  };
+}
+
+let saveTimer = null;
+function scheduleSave() { clearTimeout(saveTimer); saveTimer = setTimeout(() => saveState(true), 800); }
+
+/* ============================================================
+   DADATA по ИНН
+   ============================================================ */
+async function loadFromDadata() {
+  const query = document.getElementById('dadataQuery').value.trim();
+  if (query.length < 3) { showToast('Введите ИНН или название (мин. 3 символа)', true); return; }
+  const btn = document.getElementById('dadataBtn');
+  btn.disabled = true; btn.textContent = 'Загрузка...';
+  const isInn = /^\d{9,12}$/.test(query);
+  const url = isInn ? 'https://suggestions.dadata.ru/suggestions/api/4_1/rs/findById/party' : 'https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/party';
+  try {
+    const resp = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': 'Token ' + DADATA_API_KEY }, body: JSON.stringify({ query, count: 1 }) });
+    if (resp.status === 403) throw new Error('Неверный API-ключ DaData');
+    if (resp.status === 429) throw new Error('Превышен лимит запросов DaData');
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    const data = await resp.json();
+    if (!data.suggestions || !data.suggestions.length) { showToast('Организация не найдена', true); return; }
+    const org = data.suggestions[0].data;
+    state.org.fullName = (org.name && org.name.full) || '';
+    state.org.shortName = (org.name && org.name.short) || (org.name && org.name.full) || '';
+    state.org.inn = org.inn || '';
+    state.org.kpp = org.kpp || '';
+    state.org.ogrn = org.ogrn || '';
+    state.org.okpo = org.okpo || '';
+    state.org.okogu = org.okogu || '';
+    state.org.okved = org.okved || '';
+    state.org.oktmo = org.oktmo || '';
+    state.org.legalAddress = (org.address && org.address.value) || '';
+    if (!state.org.actualAddress) state.org.actualAddress = state.org.legalAddress;
+    if (org.management) state.org.director = ((org.management.post || '') + ' ' + (org.management.name || '')).trim();
+    renderOrg(); renderAddresses(); updateOrgBadge(); scheduleSave();
+    showToast('✅ Данные загружены из DaData');
+  } catch (e) { showToast('❌ ' + e.message, true); }
+  finally { btn.disabled = false; btn.textContent = 'Загрузить'; }
+}
+
+/* ============================================================
+   ЭКСПОРТ EXCEL
+   ============================================================ */
+function applyWrapText(ws) {
+  if (!ws['!ref']) return;
+  const range = XLSX.utils.decode_range(ws['!ref']);
+  for (let R = range.s.r; R <= range.e.r; ++R) {
+    for (let C = range.s.c; C <= range.e.c; ++C) {
+      const cellAddr = XLSX.utils.encode_cell({ r: R, c: C });
+      const cell = ws[cellAddr];
+      if (cell && typeof cell.v === 'string' && cell.v.includes('\n')) {
+        cell.s = { alignment: { wrapText: true, vertical: 'top' } };
+      }
+    }
+  }
+}
+
+function exportExcel() {
+  if (typeof XLSX === 'undefined') { showToast('Библиотека XLSX не загружена', true); return; }
+  const wb = XLSX.utils.book_new();
+
+  const reqRows = [
+    ['№ п/п', 'Наименование данных', 'Данные организации'],
+    [1, 'Полное наименование организации', state.org.fullName || ''],
+    [2, 'Сокращенное наименование организации', state.org.shortName || ''],
+    [3, 'ИНН', state.org.inn || ''],
+    [4, 'КПП', state.org.kpp || ''],
+    [5, 'ОКПО', state.org.okpo || ''],
+    [6, 'ОКОГУ', state.org.okogu || ''],
+    [7, 'ОКВЭД', state.org.okved || ''],
+    [8, 'ОКТМО', state.org.oktmo || ''],
+    [9, 'ОГРН', state.org.ogrn || ''],
+    [10, 'Юридический адрес', state.org.legalAddress || ''],
+    [11, 'Фактический адрес', state.org.actualAddress || ''],
+    [12, 'Телефон', state.org.phone || ''],
+    [14, 'Электронная почта (обязательно)', state.org.email || ''],
+    [16, 'Адреса проведения замеров, кол-во РМ', getAllAddressesForDisplay().map(a => `${a.address} — ${a.count} раб. мест`).join('\n')],
+    [17, 'Руководитель (должность, ФИО)', state.org.director || ''],
+    [20, 'Приказ о проведении СОУТ', state.org.order || ''],
+    [21, 'Председатель комиссии', state.org.commissionChair || ''],
+    [22, 'Члены комиссии' + (state.org.singleEmployee ? ' (ИП / 1 сотрудник — нет)' : ''), state.org.singleEmployee ? '— (ИП / 1 сотрудник)' : state.org.commissionMembers.map(m => `${m.position}${m.position && m.fio ? ' — ' : ''}${m.fio}`).join('\n')]
+  ];
+  const wsReq = XLSX.utils.aoa_to_sheet(reqRows);
+  wsReq['!cols'] = [{ wch: 8 }, { wch: 55 }, { wch: 60 }];
+  applyWrapText(wsReq);
+  XLSX.utils.book_append_sheet(wb, wsReq, 'Реквизиты');
+
+  const headers = [
+    '№ п/п', '№ по пред. СОУТ', 'Должность', 'Код по ОК-016-94', 'Сменность', 'Смена (час)', 'Краткое описание',
+    'Работающих', 'Женщин', 'Несовершеннолетних', 'Инвалидов',
+    'Рабочие зоны', 'Используемое оборудование', 'Транспортное средство', 'Материалы', 'Класс УТ',
+    'ФИО сотрудников', 'СНИЛС сотрудников', 'Пол', 'Инвалид', 'Несоверш.',
+    'Гарантии и компенсации', 'Пункты приказа 29Н'
+  ];
+  const rows = [headers];
+  rows.push([`Организация: ${state.org.shortName || state.org.fullName || ''}`, ...new Array(headers.length - 1).fill('')]);
+  rows.push([`Адрес: ${state.org.legalAddress || ''}`, ...new Array(headers.length - 1).fill('')]);
+
+  state.departments.forEach(dept => {
+    const deptLine = new Array(headers.length).fill('');
+    deptLine[0] = dept.address ? `${dept.name} (${dept.address})` : dept.name;
+    rows.push(deptLine);
+    dept.workplaces.forEach(wp => {
+      const empFio = wp.employees.map(e => e.fio).filter(Boolean).join('\n');
+      const empSnils = wp.employees.map(e => e.snils).filter(Boolean).join('\n');
+      const empGender = wp.employees.map(e => e.gender === 'male' ? 'м' : e.gender === 'female' ? 'ж' : '?').join('\n');
+      const empDisabled = wp.employees.map(e => e.disabled ? 'да' : '').join('\n');
+      const empMinor = wp.employees.map(e => e.minor ? 'да' : '').join('\n');
+      const zones = (wp.workZones || []).map(z => `${z.name} — ${z.percent}%`).filter(s => s.trim() !== '— 0%').join('\n');
+      const equip = (wp.equipmentList || []).filter(Boolean).join('\n');
+      const order29n = (wp.order29nList || []).filter(Boolean).join('\n');
+
+      const b = wp.benefits;
+      const benLines = [
+        'Повышенная оплата труда: ' + (b.higherPay === 'yes' ? 'да' : 'нет'),
+        'Дополнительный отпуск: ' + (b.extraVacation === 'yes' ? 'да' : 'нет'),
+        'Сокращённая продолжительность: ' + (b.shorterHours === 'yes' ? 'да' : 'нет'),
+        'Молоко / ЛПП: ' + (b.milk === 'yes' ? 'да' : 'нет'),
+        'Лечебно-проф. питание: ' + (b.therapeuticFood === 'yes' ? 'да' : 'нет'),
+        'Право на досрочную пенсию: ' + (b.earlyPension === 'yes' ? 'да' : 'нет'),
+        'Основание: ' + (b.earlyPensionBasis || '—'),
+        'Медосмотры: ' + (b.medicalExams === 'yes' ? 'да' : 'нет')
+      ];
+      const benefitsStr = benLines.join('\n');
+
+      rows.push([
+        wp.num, wp.prevNum || '', wp.position, wp.okCode || '-', wp.shift, wp.shiftHours, wp.description,
+        wp.workersCount, wp.women, wp.minors, wp.disabled,
+        zones, equip, wp.vehicle || '', wp.materials, wp.classConditions || '',
+        empFio, empSnils, empGender, empDisabled, empMinor,
+        benefitsStr, order29n
+      ]);
+    });
+  });
+  const wsSout = XLSX.utils.aoa_to_sheet(rows);
+  wsSout['!cols'] = [
+    { wch: 8 }, { wch: 14 }, { wch: 28 }, { wch: 14 }, { wch: 10 }, { wch: 10 }, { wch: 40 },
+    { wch: 12 }, { wch: 10 }, { wch: 14 }, { wch: 10 }, { wch: 30 }, { wch: 30 }, { wch: 26 }, { wch: 20 }, { wch: 12 },
+    { wch: 30 }, { wch: 18 }, { wch: 8 }, { wch: 8 }, { wch: 10 },
+    { wch: 32 }, { wch: 22 }
+  ];
+  applyWrapText(wsSout);
+  XLSX.utils.book_append_sheet(wb, wsSout, 'СОУТ');
+
+  const fname = `СОУТ_${(state.org.shortName || 'организация').replace(/[^\wа-яё]/gi, '_')}_${new Date().toISOString().slice(0,10)}.xlsx`;
+  XLSX.writeFile(wb, fname);
+  showToast('📊 Excel сохранён');
+}
+
+/* ============================================================
+   ЭКСПОРТ WORD
+   ============================================================ */
+function exportWord() {
+  const t = calcTotals();
+  let html = `
+  <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+  <head><meta charset="utf-8"><title>СОУТ</title>
+  <style>
+    @page { size: A4 landscape; margin: 1.5cm 1cm; }
+    body { font-family: 'Times New Roman', serif; font-size: 10pt; }
+    h1 { font-size: 14pt; text-align: center; }
+    h2 { font-size: 12pt; margin-top: 16px; margin-bottom: 6px; }
+    table { border-collapse: collapse; width: 100%; margin: 6px 0; font-size: 9pt; }
+    th, td { border: 1px solid #000; padding: 4px 6px; vertical-align: top; }
+    th { background: #e6f0fa; text-align: center; font-weight: bold; }
+    .dept { background: #dce8f5; font-weight: bold; }
+    .center { text-align: center; }
+    .small { font-size: 8pt; color: #444; }
+    .req td { border: 1px solid #000; padding: 4px 8px; }
+    .req td:first-child { width: 40px; text-align: center; }
+    .req td:nth-child(2) { width: 45%; }
+    .totals td { border: 1px solid #000; padding: 4px 8px; }
+    .totals .num { font-weight: bold; font-size: 11pt; text-align: right; }
+  </style></head><body>
+  <h1>Карточка организации и данные СОУТ</h1>
+  <p><b>Организация:</b> ${escHtml(state.org.shortName || state.org.fullName || '—')}</p>
+  <p class="small">Дата формирования: ${new Date().toLocaleDateString('ru-RU')}</p>
+  <h2>1. Реквизиты организации</h2>
+  <table class="req">
+    <tr><td>1</td><td>Полное наименование</td><td>${escHtml(state.org.fullName)}</td></tr>
+    <tr><td>2</td><td>Сокращённое наименование</td><td>${escHtml(state.org.shortName)}</td></tr>
+    <tr><td>3</td><td>ИНН</td><td>${escHtml(state.org.inn)}</td></tr>
+    <tr><td>4</td><td>КПП</td><td>${escHtml(state.org.kpp)}</td></tr>
+    <tr><td>5</td><td>ОКПО</td><td>${escHtml(state.org.okpo)}</td></tr>
+    <tr><td>6</td><td>ОКОГУ</td><td>${escHtml(state.org.okogu)}</td></tr>
+    <tr><td>7</td><td>ОКВЭД</td><td>${escHtml(state.org.okved)}</td></tr>
+    <tr><td>8</td><td>ОКТМО</td><td>${escHtml(state.org.oktmo)}</td></tr>
+    <tr><td>9</td><td>ОГРН</td><td>${escHtml(state.org.ogrn)}</td></tr>
+    <tr><td>10</td><td>Юридический адрес</td><td>${escHtml(state.org.legalAddress)}</td></tr>
+    <tr><td>11</td><td>Фактический адрес</td><td>${escHtml(state.org.actualAddress)}</td></tr>
+    <tr><td>12</td><td>Телефон</td><td>${escHtml(state.org.phone)}</td></tr>
+    <tr><td>14</td><td>Email *</td><td>${escHtml(state.org.email)}</td></tr>
+    <tr><td>16</td><td>Адреса замеров</td><td>${getAllAddressesForDisplay().map(a => escHtml(a.address) + ' — ' + a.count + ' раб. мест').join('<br>')}</td></tr>
+    <tr><td>17</td><td>Руководитель</td><td>${escHtml(state.org.director)}</td></tr>
+    <tr><td>20</td><td>Приказ о СОУТ</td><td>${escHtml(state.org.order)}</td></tr>
+    <tr><td>21</td><td>Председатель комиссии</td><td>${escHtml(state.org.commissionChair)}</td></tr>
+    <tr><td>22</td><td>Члены комиссии</td><td>${state.org.singleEmployee ? '— (ИП / 1 сотрудник)' : state.org.commissionMembers.map(m => escHtml((m.position||'') + (m.fio ? ' — ' + m.fio : ''))).join('<br>')}</td></tr>
+  </table>
+  <h2>2. Сводная таблица</h2>
+  <table>
+    <thead><tr>
+      <th>№</th><th>№ пред. СОУТ</th><th>Должность</th><th>Код ОК</th><th>Сменность</th><th>Смена, ч</th>
+      <th>Описание</th><th>Работающих</th><th>Жен.</th><th>Несов.</th><th>Инв.</th>
+      <th>Рабочие зоны</th><th>Оборудование</th><th>Транспорт</th><th>Материалы</th><th>Класс УТ</th>
+      <th>ФИО / СНИЛС / Пол</th><th>Гарантии и компенсации</th><th>Пункты 29Н</th>
+    </tr></thead><tbody>
+  `;
+  state.departments.forEach(dept => {
+    html += `<tr><td colspan="19" class="dept">${escHtml(dept.name)}${dept.address ? ' — ' + escHtml(dept.address) : ''}</td></tr>`;
+    dept.workplaces.forEach(wp => {
+      const emp = wp.employees.map(e => {
+        const g = e.gender === 'male' ? '♂' : e.gender === 'female' ? '♀' : '?';
+        const flags = [e.disabled ? 'инв' : '', e.minor ? 'несов' : ''].filter(Boolean).join(', ');
+        return `${escHtml(e.fio)} ${g}${flags ? ' ['+flags+']' : ''}<br><span class="small">${escHtml(e.snils)}</span>`;
+      }).join('<hr>');
+      const zones = (wp.workZones || []).map(z => `${escHtml(z.name)} — ${z.percent}%`).join('<br>');
+      const equip = (wp.equipmentList || []).filter(Boolean).map(eq => escHtml(eq)).join('<br>');
+      const order29n = (wp.order29nList || []).filter(Boolean).map(o => escHtml(o)).join('<br>');
+      const b = wp.benefits;
+      const benLines = [
+        'Повышенная оплата труда: ' + (b.higherPay === 'yes' ? 'да' : 'нет'),
+        'Дополнительный отпуск: ' + (b.extraVacation === 'yes' ? 'да' : 'нет'),
+        'Сокращённая продолжительность: ' + (b.shorterHours === 'yes' ? 'да' : 'нет'),
+        'Молоко / ЛПП: ' + (b.milk === 'yes' ? 'да' : 'нет'),
+        'Лечебно-проф. питание: ' + (b.therapeuticFood === 'yes' ? 'да' : 'нет'),
+        'Право на досрочную пенсию: ' + (b.earlyPension === 'yes' ? 'да' : 'нет'),
+        'Основание: ' + (b.earlyPensionBasis || '—'),
+        'Медосмотры: ' + (b.medicalExams === 'yes' ? 'да' : 'нет')
+      ];
+      html += `<tr>
+        <td class="center">${wp.num}</td><td class="center">${escHtml(wp.prevNum || '')}</td><td>${escHtml(wp.position)}</td><td class="center">${escHtml(wp.okCode || '—')}</td>
+        <td class="center">${escHtml(wp.shift)}</td><td class="center">${wp.shiftHours}</td><td>${escHtml(wp.description)}</td>
+        <td class="center">${wp.workersCount}</td><td class="center">${wp.women}</td><td class="center">${wp.minors}</td><td class="center">${wp.disabled}</td>
+        <td>${zones}</td><td>${equip}</td><td>${escHtml(wp.vehicle || '')}</td><td>${escHtml(wp.materials)}</td>
+        <td class="center">${escHtml(wp.classConditions || '—')}</td><td>${emp}</td>
+        <td>${benLines.join('<br>')}</td>
+        <td>${order29n}</td>
+      </tr>`;
+    });
+  });
+  html += `</tbody></table>
+  <h2>3. Итоги</h2>
+  <table class="totals" style="width:auto;">
+    <tr><td>Рабочих мест</td><td class="num">${t.workplaces}</td></tr>
+    <tr><td>Работающих</td><td class="num">${t.workers}</td></tr>
+    <tr><td>Женщин</td><td class="num">${t.women}</td></tr>
+    <tr><td>Несовершеннолетних</td><td class="num">${t.minors}</td></tr>
+    <tr><td>Инвалидов</td><td class="num">${t.disabled}</td></tr>
+    <tr><td>Повышенная оплата труда</td><td class="num">${t.higherPay}</td></tr>
+    <tr><td>Дополнительный отпуск</td><td class="num">${t.extraVacation}</td></tr>
+    <tr><td>Сокращённое рабочее время</td><td class="num">${t.shorterHours}</td></tr>
+    <tr><td>Молоко / ЛПП</td><td class="num">${t.milk}</td></tr>
+    <tr><td>Лечебно-профилактическое питание</td><td class="num">${t.therapeuticFood}</td></tr>
+    <tr><td>Досрочная пенсия</td><td class="num">${t.earlyPension}</td></tr>
+    <tr><td>Медосмотры</td><td class="num">${t.medicalExams}</td></tr>
+  </table>
+  </body></html>`;
+  const blob = new Blob(['\ufeff' + html], { type: 'application/msword' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `СОУТ_${(state.org.shortName || 'организация').replace(/[^\wа-яё]/gi, '_')}_${new Date().toISOString().slice(0,10)}.doc`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+  showToast('📄 Word сохранён');
+}
+
+/* ============================================================
+   ХЕЛПЕРЫ
+   ============================================================ */
+function escHtml(s) {
+  return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function escAttr(s) { return escHtml(s); }
+
+/* ============================================================
+   ИНИЦИАЛИЗАЦИЯ
+   ============================================================ */
+document.addEventListener('DOMContentLoaded', function() {
+  loadUserDict();
+  state = loadState();
+  render();
+
+  document.getElementById('orgCardToggle').addEventListener('click', () => document.getElementById('orgCard').classList.toggle('open'));
+
+  Object.entries(ORG_FIELD_MAP).forEach(([elId, key]) => {
+    const el = document.getElementById(elId);
+    if (el) el.addEventListener('input', (e) => {
+      state.org[key] = e.target.value;
+      if (key === 'email') {
+        if (e.target.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.target.value)) e.target.classList.add('err');
+        else e.target.classList.remove('err');
+      }
+      updateOrgBadge(); scheduleSave();
+    });
+  });
+
+  document.getElementById('singleEmpToggle').addEventListener('change', (e) => {
+    state.org.singleEmployee = e.target.checked;
+    updateCommissionVisibility();
+    scheduleSave();
+  });
+
+  document.getElementById('dadataBtn').addEventListener('click', loadFromDadata);
+  document.getElementById('dadataQuery').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); loadFromDadata(); } });
+
+  document.getElementById('addAddrBtn').addEventListener('click', () => {
+    state.org.manualAddresses.push({ id: uid('addr'), address: '' });
+    renderAddresses(); scheduleSave();
+  });
+  document.getElementById('addCommBtn').addEventListener('click', () => { state.org.commissionMembers.push({ id: uid('cm'), position: '', fio: '' }); renderCommission(); scheduleSave(); });
+
+  const addDept = () => {
+    const defaultAddr = state.org.actualAddress || state.org.legalAddress || '';
+    state.departments.push({ id: uid('dept'), name: '', address: defaultAddr, workplaces: [createEmptyWorkplace()] });
+    render(); scheduleSave();
+    setTimeout(() => { const last = document.querySelector('.dept:last-of-type'); if (last) last.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 100);
+  };
+  document.getElementById('addDeptBtn').addEventListener('click', addDept);
+  document.getElementById('addDeptBtn2').addEventListener('click', addDept);
+
+  document.getElementById('saveBtn').addEventListener('click', () => saveState(false));
+  document.getElementById('saveBtn2').addEventListener('click', () => saveState(false));
+  document.getElementById('excelBtn').addEventListener('click', exportExcel);
+  document.getElementById('excelBtn2').addEventListener('click', exportExcel);
+  document.getElementById('wordBtn').addEventListener('click', exportWord);
+  document.getElementById('wordBtn2').addEventListener('click', exportWord);
+  document.getElementById('printBtn').addEventListener('click', () => window.print());
+  document.getElementById('printBtn2').addEventListener('click', () => window.print());
+
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    if (!confirm('Сбросить все данные и вернуть пример? Несохранённые изменения будут потеряны.')) return;
+    state = JSON.parse(JSON.stringify(DEFAULT_DATA));
+    saveState(true); render();
+    showToast('🗑️ Данные сброшены к примеру');
+  });
+
+  document.getElementById('dictClose').addEventListener('click', () => document.getElementById('dictModal').classList.remove('open'));
+  document.getElementById('dictCancel').addEventListener('click', () => document.getElementById('dictModal').classList.remove('open'));
+  document.getElementById('dictModal').addEventListener('click', (e) => { if (e.target.id === 'dictModal') e.currentTarget.classList.remove('open'); });
+  document.getElementById('dictSearch').addEventListener('input', (e) => renderDictContent(e.target.value));
+  document.getElementById('dictApply').addEventListener('click', () => {
+    const container = document.getElementById('dictContent');
+    const picked = container.querySelector('.modal-item.selected');
+    if (!picked) { showToast('Выберите значение из списка', true); return; }
+    const field = dictCurrentField;
+    let item;
+    if (field === 'positions') {
+      const q = document.getElementById('dictSearch').value.trim().toLowerCase();
+      const all = DICT.positions;
+      const filtered = q ? all.filter(it => it.name.toLowerCase().includes(q)) : all;
+      item = filtered[+picked.dataset.idx];
+    } else if (field === 'order29n') {
+      item = { code: picked.dataset.code, name: picked.dataset.name };
+    } else {
+      item = { name: picked.dataset.name };
+    }
+    if (item && dictCallback) dictCallback(item);
+    document.getElementById('dictModal').classList.remove('open');
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); saveState(false); }
+  });
+});
+</script>
+
+</body>
+</html>
