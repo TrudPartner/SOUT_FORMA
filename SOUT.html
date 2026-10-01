@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Конструктор СОУТ — реквизиты + рабочие места</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { overflow-x: hidden; max-width: 100%; }
+  body { font-family: 'Segoe UI', Roboto, system-ui, sans-serif; background: #e9eff5; padding: 24px 16px 60px; color: #111; }
+  .container { max-width: 1400px; margin: 0 auto; width: 100%; }
+
+  .proto-warn {
+    display: none;
+    background: #fff8e8; border: 1px solid #f0dca8; color: #6a4d00;
+    padding: 12px 18px; border-radius: 12px; margin-bottom: 18px;
+    font-size: 13.5px; line-height: 1.55;
+  }
+  .proto-warn.show { display: block; }
+  .proto-warn b { color: #7a4a00; }
+  .proto-warn code { background: #fff2cc; padding: 1px 6px; border-radius: 4px; font-size: 12.5px; }
+
+  .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
+  .header h1 { font-size: 24px; color: #003366; display: flex; align-items: center; gap: 10px; }
+  .header h1 small { font-size: 14px; font-weight: 400; color: #4a6f8f; }
+  .header-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn { padding: 8px 18px; border: none; border-radius: 40px; font-size: 13.5px; font-weight: 600; cursor: pointer; transition: 0.15s; white-space: nowrap; font-family: inherit; }
+  .btn-primary { background: #003366; color: #fff; }
+  .btn-primary:hover { background: #002244; }
+  .btn-excel { background: #1f7244; color: #fff; }
+  .btn-excel:hover { background: #155533; }
+  .btn-word { background: #2b5797; color: #fff; }
+  .btn-word:hover { background: #1d3f6e; }
+  .btn-import { background: #c2410c; color: #fff; }
+  .btn-import:hover { background: #9a3309; }
+  .btn-mail { background: #7c3aed; color: #fff; }
+  .btn-mail:hover { background: #5b21b6; }
+  .btn-order { background: #0d5c3f; color: #fff; }
+  .btn-order:hover { background: #094430; }
+  .btn-export-data { background: #0369a1; color: #fff; }
+  .btn-export-data:hover { background: #075985; }
+  .btn-danger { background: #b33; color: #fff; }
+  .btn-danger:hover { background: #922; }
+  .btn-ghost { background: #d9f2e6; color: #0d5c3f; border: 1px solid #a8dcc4; }
+  .btn-ghost:hover { background: #c2e9d6; }
+  .btn-sm { padding: 4px 12px; font-size: 12px; border-radius: 30px; }
+
+  .btn-icon {
+    width: 36px; height: 36px; padding: 0; font-size: 16px; font-weight: 700;
+    border-radius: 9px; background: #e8f5ee; color: #0d5c3f;
+    display: inline-flex; align-items: center; justify-content: center;
+    cursor: pointer; border: 1px solid #c2e9d6; transition: 0.15s; font-family: inherit; flex-shrink: 0;
+  }
+  .btn-icon:hover { background: #d0ecdd; transform: translateY(-1px); }
+  .btn-icon:active { transform: translateY(0); }
+  .btn-icon.danger { background: #fde8e8; color: #b33; border-color: #f8d0d0; font-size: 17px; }
+  .btn-icon.danger:hover { background: #f8d0d0; }
+  .btn-icon.auto {
+    width: auto; min-width: 78px; height: 36px; padding: 0 14px;
+    font-size: 13px; font-weight: 700; background: #fff0c2; color: #7a4a00;
+    border-radius: 9px; border: 1px solid #f0dca8;
+  }
+  .btn-icon.auto:hover { background: #ffe9a8; }
+
+  .wp-title-banner {
+    background: linear-gradient(90deg,#003366,#2b7bb6); color: #fff;
+    border-radius: 16px; padding: 16px 26px; margin: 26px 0 18px;
+    font-size: 20px; font-weight: 800; letter-spacing: 0.5px;
+    box-shadow: 0 6px 24px rgba(0,30,60,0.15);
+    display: flex; align-items: center; gap: 12px;
+  }
+  .wp-title-banner .sub { font-size: 13px; font-weight: 500; opacity: 0.85; margin-left: auto; }
+
+  .help-card { background: #fff; border-radius: 16px; box-shadow: 0 6px 24px rgba(0,30,60,0.08); margin-bottom: 22px; overflow: hidden; border-left: 6px solid #2b7bb6; }
+  .help-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 22px; cursor: pointer; user-select: none; background: linear-gradient(90deg,#f0f7fe,#fff); transition: 0.15s; }
+  .help-header:hover { background: #e8f2fc; }
+  .help-header h2 { font-size: 16px; color: #003366; display: flex; align-items: center; gap: 10px; }
+  .help-header .chev { font-size: 20px; color: #2b7bb6; transition: 0.2s; }
+  .help-card.open .chev { transform: rotate(180deg); }
+  .help-body { display: none; padding: 6px 22px 20px; }
+  .help-card.open .help-body { display: block; }
+  .help-body ol { margin: 0 0 0 20px; font-size: 14px; line-height: 1.65; color: #1a3a5f; }
+  .help-body ol li { margin-bottom: 6px; }
+  .help-body .help-sub { font-size: 13.5px; color: #4a6f8f; margin-top: 10px; }
+  .help-body b { color: #003366; }
+  .help-body .kbd { display: inline-block; background: #eef3f9; border: 1px solid #cfe0f0; border-radius: 5px; padding: 0 6px; font-size: 12.5px; font-weight: 700; color: #003366; }
+  .help-buttons { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 8px 18px; margin-top: 12px; padding: 12px 16px; background: #f7fbff; border: 1px solid #d6e6f5; border-radius: 10px; }
+  .help-buttons .hb-item { font-size: 13.5px; color: #1a3a5f; line-height: 1.5; }
+  .help-buttons .hb-item b { display: inline-block; background: #e8f2fc; color: #003366; padding: 1px 8px; border-radius: 6px; font-size: 12.5px; margin-right: 4px; font-weight: 700; }
+
+  .org-card { background: #fff; border-radius: 20px; box-shadow: 0 6px 24px rgba(0,30,60,0.08); margin-bottom: 22px; overflow: hidden; border-left: 6px solid #003366; }
+  .org-card-header { display: flex; align-items: center; justify-content: space-between; padding: 18px 26px; cursor: pointer; user-select: none; background: linear-gradient(90deg,#f0f7fe,#fff); transition: 0.15s; }
+  .org-card-header:hover { background: #e8f2fc; }
+  .org-card-header h2 { font-size: 17px; color: #003366; display: flex; align-items: center; gap: 10px; }
+  .org-card-header .badge-ok { font-size: 11.5px; font-weight: 600; padding: 2px 12px; border-radius: 20px; background: #e1f3e6; color: #1a6e3a; }
+  .org-card-header .badge-warn { font-size: 11.5px; font-weight: 600; padding: 2px 12px; border-radius: 20px; background: #fde8e8; color: #b33; }
+  .org-card-header .chev { font-size: 20px; color: #2b7bb6; transition: 0.2s; }
+  .org-card.open .chev { transform: rotate(180deg); }
+  .org-card-body { display: none; padding: 4px 26px 24px; }
+  .org-card.open .org-card-body { display: block; }
+
+  .org-section { margin-top: 18px; }
+  .org-section-title { font-size: 14px; font-weight: 700; color: #4a6f8f; text-transform: uppercase; letter-spacing: 0.6px; border-bottom: 2px solid #e6f0fa; padding-bottom: 6px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+  .org-section-title .note { font-size: 12.5px; font-weight: 600; color: #b33; text-transform: none; letter-spacing: 0; }
+  .org-section-title .toggle-1emp { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: #1a3a5f; text-transform: none; letter-spacing: 0; cursor: pointer; background: #f0f7fe; padding: 4px 12px; border-radius: 20px; border: 1px solid #b8d9f5; }
+  .org-section-title .toggle-1emp input[type="checkbox"] { accent-color: #003366; cursor: pointer; }
+  .org-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px 16px; }
+  .org-grid .span2 { grid-column: span 2; }
+  .field { min-width: 0; }
+  .field label { display: block; font-size: 13.5px; font-weight: 600; color: #1a3a5f; margin-bottom: 4px; line-height: 1.35; }
+  .field label .num { color: #7a94ab; font-weight: 500; }
+  .field label .req { color: #b33; }
+  .field label .note { color: #7a94ab; font-weight: 500; font-style: italic; font-size: 12.5px; }
+  .field input, .field select, .field textarea { width: 100%; padding: 7px 11px; border: 1px solid #d0dcec; border-radius: 8px; font-size: 13.5px; transition: 0.15s; background: #fff; font-family: inherit; }
+  .field input:focus, .field select:focus, .field textarea:focus { border-color: #2b7bb6; outline: none; box-shadow: 0 0 0 3px rgba(43,123,182,0.12); }
+  .field textarea { resize: vertical; min-height: 38px; }
+  .field input.err, .field textarea.err, .field select.err { border-color: #e28c8c; background: #fff7f7; box-shadow: 0 0 0 3px rgba(226,140,140,0.15); }
+  .field .hint { font-size: 12px; color: #7a94ab; font-style: italic; margin-top: 4px; }
+
+  .dadata-block { background: #f0f7fe; border: 1px solid #b8d9f5; border-radius: 12px; padding: 12px 14px; margin-bottom: 16px; }
+  .dadata-block label { font-size: 13.5px; font-weight: 700; color: #003366; display: block; margin-bottom: 6px; }
+  .dadata-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .dadata-row input { flex: 1; min-width: 160px; padding: 8px 12px; border: 1px solid #b8d9f5; border-radius: 8px; font-size: 13.5px; }
+  .dadata-row input:focus { border-color: #2b7bb6; outline: none; }
+  .dadata-hint { font-size: 12px; color: #7a94ab; margin-top: 5px; }
+
+  .addr-list, .comm-list { display: flex; flex-direction: column; gap: 8px; }
+  .addr-row { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; padding: 8px 12px; background: #f8faff; border: 1px solid #dce8f5; border-radius: 10px; }
+  .addr-row.auto { background: #eef6ff; border-color: #b8d9f5; }
+  .addr-row.auto input { background: transparent; border-color: transparent; color: #003366; font-weight: 600; cursor: default; }
+  .addr-row.auto input:focus { border-color: transparent; box-shadow: none; }
+  .addr-row .addr-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .addr-row input { padding: 6px 10px; font-size: 13px; border: 1px solid #d0dcec; border-radius: 7px; width: 100%; }
+  .addr-row .addr-count { font-size: 12px; color: #4a6f8f; }
+  .addr-row .addr-count b { color: #003366; }
+  .addr-row .addr-source { font-size: 11px; color: #2b7bb6; font-style: italic; font-weight: 600; margin-left: 6px; }
+  .addr-row .addr-actions { display: flex; gap: 5px; }
+
+  .comm-row { display: grid; grid-template-columns: 1fr 1fr 42px; gap: 8px; align-items: center; }
+  .comm-row input { padding: 8px 12px; font-size: 14px; border: 1.5px solid #a8c2dd; border-radius: 8px; width: 100%; }
+  .comm-warn { font-size: 12.5px; color: #b33; margin-top: 6px; display: none; }
+  .comm-warn.show { display: block; }
+  .comm-ok { font-size: 12.5px; color: #1a6e3a; margin-top: 6px; display: none; }
+  .comm-ok.show { display: block; }
+  .comm-hidden { display: none !important; }
+
+  .dept { background: #fff; border-radius: 20px; padding: 18px 22px; box-shadow: 0 6px 24px rgba(0,30,60,0.07); margin-bottom: 20px; border-left: 5px solid #2b7bb6; overflow: visible; }
+  .dept-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
+  .dept-field { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+  .dept-field.dept-title { flex: 1; min-width: 220px; }
+  .dept-field.dept-addr { flex: 1.5; min-width: 240px; }
+  .dept-field > label { font-size: 12px; font-weight: 700; color: #4a6f8f; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 2px; }
+  .dept-field input { font-size: 14px; padding: 8px 12px; border: 1.5px solid #a8c2dd; border-radius: 8px; width: 100%; font-family: inherit; }
+  .dept-field input:focus { border-color: #003366; outline: none; box-shadow: 0 0 0 3px rgba(0,51,102,0.12); }
+  .dept-field.dept-title input { font-size: 16px; font-weight: 700; color: #003366; border: 2px solid transparent; background: #f0f7fe; }
+  .dept-field.dept-title input:focus { border-color: #2b7bb6; background: #fff; }
+  .dept-hint { font-size: 12px; color: #7a94ab; font-style: italic; padding-left: 2px; line-height: 1.3; }
+  .dept-actions { display: flex; gap: 6px; padding-top: 22px; }
+
+  .wp-card {
+    background: #fff; border: 1.5px solid #d0dcec; border-radius: 16px;
+    padding: 22px 26px 26px; margin-bottom: 18px; position: relative;
+    min-width: 0; box-shadow: 0 2px 8px rgba(0,30,60,0.04); overflow: visible;
+  }
+  .wp-card.has-error { border-color: #e28c8c; background: #fffafa; }
+  .wp-card .wp-head {
+    display: flex; align-items: center; gap: 14px; margin-bottom: 20px;
+    padding-bottom: 16px; border-bottom: 2px solid #e8f2fc;
+    flex-wrap: wrap; padding-right: 170px;
+  }
+  .wp-card .wp-num-block {
+    display: flex; align-items: center; gap: 8px;
+    background: #003366; color: #fff; padding: 7px 14px;
+    border-radius: 24px; font-weight: 700; font-size: 15px;
+  }
+  .wp-card .wp-num-block > span:first-child { opacity: 0.75; font-weight: 600; }
+  .wp-card .wp-num-block .num-input {
+    background: transparent; border: none; color: #fff; font-weight: 800;
+    font-size: 16px; width: 60px; padding: 0; text-align: center;
+    outline: none; font-family: inherit;
+  }
+  .wp-card .wp-num-block .num-input::placeholder { color: rgba(255,255,255,0.55); }
+  .wp-card .wp-num-block .num-input:disabled { color: #fff; cursor: default; }
+  .wp-card .wp-num-block .num-toggle {
+    background: rgba(255,255,255,0.18); border: none; color: #fff;
+    font-size: 12px; font-weight: 700; padding: 4px 10px;
+    border-radius: 8px; cursor: pointer; transition: 0.15s;
+  }
+  .wp-card .wp-num-block .num-toggle:hover { background: rgba(255,255,255,0.32); }
+  .wp-card .wp-num-block .num-toggle.active { background: #ffc107; color: #000; }
+  .wp-card .prev-num-block { display: flex; align-items: center; gap: 8px; font-size: 14px; flex-wrap: wrap; }
+  .wp-card .prev-num-block label { color: #4a6f8f; font-weight: 600; }
+  .wp-card .prev-num-block input {
+    padding: 8px 12px; font-size: 14px; border: 1.5px solid #a8c2dd;
+    border-radius: 8px; width: 180px; font-family: inherit;
+  }
+  .wp-card .prev-num-block input:focus { border-color: #003366; outline: none; box-shadow: 0 0 0 3px rgba(0,51,102,0.12); }
+  .wp-card .wp-actions { position: absolute; top: 20px; right: 22px; display: flex; gap: 6px; }
+
+  .wp-section-label {
+    display: block; font-size: 15px; font-weight: 800; color: #003366;
+    text-transform: uppercase; letter-spacing: 0.6px; margin: 26px 0 16px;
+    background: #e8f2fc; border-left: 5px solid #2b7bb6;
+    padding: 10px 16px; border-radius: 6px;
+  }
+  .wp-section-label:first-of-type { margin-top: 6px; }
+  .wp-section-label .note { font-size: 13px; font-weight: 500; color: #4a6f8f; text-transform: none; letter-spacing: 0; font-style: italic; }
+
+  .wp-card .field { display: block; width: 100%; margin-bottom: 16px; }
+  .wp-card .field label { display: block; font-size: 15px; font-weight: 700; color: #003366; margin-bottom: 6px; line-height: 1.35; }
+  .wp-card .field label .note { font-size: 13px; font-weight: 500; color: #4a6f8f; font-style: italic; }
+  .wp-card .field label .req { color: #b33; }
+  .wp-card .field input, .wp-card .field select, .wp-card .field textarea {
+    width: 100%; padding: 10px 14px; border: 1.5px solid #a8c2dd;
+    border-radius: 9px; font-size: 14.5px; background: #fff;
+    font-family: inherit; transition: 0.15s; color: #111;
+  }
+  .wp-card .field input:focus, .wp-card .field select:focus, .wp-card .field textarea:focus {
+    border-color: #003366; outline: none; box-shadow: 0 0 0 3px rgba(0,51,102,0.12);
+  }
+  .wp-card .field input.err, .wp-card .field textarea.err, .wp-card .field select.err {
+    border-color: #e28c8c; background: #fff7f7;
+    box-shadow: 0 0 0 3px rgba(226,140,140,0.15);
+  }
+  .wp-card .field input.warn-field { border-color: #e2c88c; background: #fffbf0; }
+  .wp-card .field textarea { resize: vertical; min-height: 44px; }
+  .wp-card .field .hint { font-size: 13px; color: #4a6f8f; font-style: italic; margin-top: 5px; }
+
+  .num-field-row { display: flex; gap: 10px; align-items: center; }
+  .num-field-row input { flex: 1; min-width: 0; }
+
+  .zone-list, .equip-list, .order29n-list { display: flex; flex-direction: column; gap: 8px; }
+  .zone-row { display: grid; grid-template-columns: 1fr 90px 42px; gap: 8px; align-items: center; }
+  .zone-row input { padding: 8px 12px; font-size: 14px; border: 1.5px solid #a8c2dd; border-radius: 8px; }
+  .zone-row input:focus { border-color: #003366; outline: none; box-shadow: 0 0 0 3px rgba(0,51,102,0.12); }
+  .zone-row .pct { text-align: right; }
+
+  .equip-row, .order29n-row { display: grid; grid-template-columns: 1fr 42px; gap: 8px; align-items: center; }
+  .equip-row .ac-wrap, .order29n-row .ac-wrap { width: 100%; min-width: 0; }
+  .equip-row input, .order29n-row input { padding: 8px 12px; font-size: 14px; border: 1.5px solid #a8c2dd; border-radius: 8px; }
+  .equip-row input:focus, .order29n-row input:focus { border-color: #003366; outline: none; box-shadow: 0 0 0 3px rgba(0,51,102,0.12); }
+
+  .zone-sum { font-size: 13.5px; color: #4a6f8f; margin-top: 6px; }
+  .zone-sum b { color: #003366; }
+  .zone-sum.warn b { color: #b33; }
+
+  .add-row { display: flex; justify-content: flex-start; margin-top: 10px; margin-bottom: 4px; }
+  .btn-add {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: linear-gradient(135deg,#0d5c3f,#1a8a5f); color: #fff;
+    font-size: 14px; font-weight: 700; padding: 10px 22px;
+    border-radius: 30px; border: none; cursor: pointer;
+    box-shadow: 0 3px 10px rgba(13,92,63,0.22); transition: 0.15s; font-family: inherit;
+  }
+  .btn-add:hover { background: linear-gradient(135deg,#1a8a5f,#22a874); box-shadow: 0 4px 14px rgba(13,92,63,0.32); transform: translateY(-1px); }
+  .btn-add:active { transform: translateY(0); box-shadow: 0 2px 6px rgba(13,92,63,0.2); }
+
+  .emp-block { background: #f8faff; border: 1.5px solid #dce8f5; border-radius: 12px; padding: 14px 16px; margin-top: 6px; }
+  .emp-block .emp-title { font-size: 14.5px; font-weight: 700; color: #003366; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+  .emp-list { display: flex; flex-direction: column; gap: 12px; }
+
+  .emp-row { display: flex; flex-direction: column; gap: 8px; padding: 12px 14px; background: #fff; border: 1.5px solid #dce8f5; border-radius: 10px; }
+  .emp-row.err { border-color: #e28c8c; background: #fffafa; }
+  .emp-row .emp-top { display: grid; grid-template-columns: 36px 1fr 1fr 42px; gap: 10px; align-items: center; }
+  .emp-row .emp-bottom { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; padding-left: 46px; font-size: 14px; }
+  .emp-row input[type="text"] { padding: 8px 12px; font-size: 14px; border: 1.5px solid #a8c2dd; border-radius: 8px; width: 100%; min-width: 0; font-family: inherit; }
+  .emp-row input[type="text"]:focus { border-color: #003366; outline: none; box-shadow: 0 0 0 3px rgba(0,51,102,0.12); }
+  .emp-row input[type="text"].err { border-color: #e28c8c; background: #fff7f7; box-shadow: 0 0 0 3px rgba(226,140,140,0.15); }
+  .emp-row .snils-warn { display: none; font-size: 12.5px; color: #b33; font-weight: 600; padding: 4px 0 0 46px; line-height: 1.35; }
+  .emp-row .snils-warn.show { display: block; }
+  .emp-row input[data-emp="snils"].ok { border-color: #7dc79a; background: #f6fff9; }
+  .emp-row.no-fio [data-emp="fio"] { display: none; }
+  .emp-row.no-snils [data-emp="snils"] { display: none; }
+  .emp-row.no-both .emp-gender { display: none; }
+  .emp-row.no-both .emp-checks .emp-group { display: none; }
+
+  .emp-gender { font-size: 22px; text-align: center; cursor: help; user-select: none; width: 36px; line-height: 1; }
+  .emp-gender.male { color: #2b5797; }
+  .emp-gender.female { color: #c2185b; }
+  .emp-gender.unknown { color: #b8a44e; }
+
+  .emp-checks { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; font-size: 14px; }
+  .emp-checks .emp-group { display: flex; align-items: center; gap: 6px; }
+  .emp-checks .emp-group-label { color: #4a6f8f; font-weight: 600; font-size: 13.5px; }
+  .emp-checks label { display: flex; align-items: center; gap: 5px; cursor: pointer; font-weight: 500; }
+  .emp-checks input[type="checkbox"], .emp-checks input[type="radio"] { accent-color: #003366; width: 16px; height: 16px; }
+
+  .emp-refuse-flags { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 12px; padding: 10px 14px; background: #f0f7fe; border: 1px solid #b8d9f5; border-radius: 10px; }
+  .emp-refuse-flags label { display: flex; align-items: center; gap: 6px; font-size: 13.5px; font-weight: 600; color: #003366; cursor: pointer; }
+  .emp-refuse-flags input[type="checkbox"] { width: 17px; height: 17px; accent-color: #003366; cursor: pointer; }
+  .refuse-warn { background: #fff8e8; border: 1px solid #f0dca8; border-radius: 8px; padding: 8px 12px; font-size: 12.5px; color: #7a4a00; margin-top: 8px; font-weight: 600; }
+  .emp-manual-block { background: #fff8e8; border: 2px dashed #f0dca8; border-radius: 12px; padding: 16px 18px; margin-top: 6px; }
+  .emp-manual-block .manual-title { font-size: 14.5px; font-weight: 800; color: #7a4a00; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .emp-manual-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
+  .emp-manual-grid .mf { display: flex; flex-direction: column; gap: 4px; }
+  .emp-manual-grid .mf label { font-size: 13px; font-weight: 700; color: #7a4a00; }
+  .emp-manual-grid .mf input { padding: 9px 12px; border: 1.5px solid #e0c88c; border-radius: 8px; font-size: 14.5px; font-family: inherit; background: #fff; }
+  .emp-manual-grid .mf input:focus { border-color: #b06a00; outline: none; box-shadow: 0 0 0 3px rgba(176,106,0,0.15); }
+  .emp-manual-grid .mf input.err { border-color: #e28c8c; background: #fff7f7; }
+
+  .yesno { display: flex; gap: 18px; align-items: center; padding-top: 4px; flex-wrap: wrap; }
+  .yesno label { display: flex; align-items: center; gap: 6px; font-size: 15px; font-weight: 600; cursor: pointer; color: #1a3a5f; }
+  .yesno input[type="radio"] { width: 18px; height: 18px; accent-color: #003366; }
+
+  .warn { color: #b33; font-size: 13px; margin-top: 6px; display: none; font-weight: 600; }
+  .warn.show { display: block; }
+
+  .flag-checkbox { display: inline-flex; align-items: center; gap: 10px; padding: 10px 16px; background: #fff8e8; border: 1.5px solid #f0dca8; border-radius: 10px; font-size: 14.5px; font-weight: 600; color: #6a4d00; cursor: pointer; user-select: none; margin-bottom: 14px; }
+  .flag-checkbox:hover { background: #fff2cc; }
+  .flag-checkbox input[type="checkbox"] { width: 18px; height: 18px; accent-color: #8a5a00; cursor: pointer; }
+  .flag-checkbox.blue { background: #eef6ff; border-color: #b8d9f5; color: #003366; }
+  .flag-checkbox.blue:hover { background: #dcecfb; }
+  .flag-checkbox.blue input[type="checkbox"] { accent-color: #003366; }
+
+  .vehicle-fields { display: grid; grid-template-columns: 2fr 1fr 1.5fr; gap: 12px; }
+  @media (max-width: 700px) { .vehicle-fields { grid-template-columns: 1fr; } }
+
+  .ac-wrap { position: relative; min-width: 0; display: flex; flex-direction: column; }
+  .ac-input-wrap { display: flex; gap: 8px; align-items: center; }
+  .ac-input-wrap input { flex: 1; min-width: 0; }
+  .ac-list { position: absolute; top: 100%; left: 0; right: 0; background: #fff; border: 1.5px solid #b8d9f5; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,30,60,0.18); max-height: 280px; overflow-y: auto; z-index: 50; display: none; margin-top: 4px; }
+  .ac-list.open { display: block; }
+  .ac-item { padding: 10px 14px; font-size: 14px; cursor: pointer; border-bottom: 1px solid #f0f4f8; }
+  .ac-item:last-child { border-bottom: none; }
+  .ac-item:hover, .ac-item.active { background: #e8f2fc; }
+  .ac-item .ac-code { color: #7a94ab; font-size: 13px; margin-right: 8px; font-weight: 600; }
+  .ac-item .ac-src { color: #b8c8d8; font-size: 12px; float: right; }
+  .ac-loading { padding: 10px 14px; font-size: 13px; color: #7a94ab; text-align: center; }
+
+  .totals { background: #003366; color: #fff; border-radius: 20px; padding: 20px 26px; margin-bottom: 22px; box-shadow: 0 6px 24px rgba(0,30,60,0.15); }
+  .totals h2 { font-size: 16px; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+  .totals-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; }
+  .total-item { background: rgba(255,255,255,0.08); border-radius: 12px; padding: 12px 16px; }
+  .total-item .num { font-size: 26px; font-weight: 700; }
+  .total-item .lbl { font-size: 12px; opacity: 0.85; margin-top: 2px; }
+
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: #1e8b4c; color: #fff; padding: 12px 28px; border-radius: 40px; font-size: 14px; font-weight: 600; box-shadow: 0 8px 30px rgba(0,0,0,0.2); opacity: 0; transition: 0.3s; z-index: 9999; max-width: 90vw; text-align: center; }
+  .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+  .toast.error { background: #b33; }
+
+  .sticky-bar { position: sticky; bottom: 16px; z-index: 100; display: flex; justify-content: center; gap: 10px; margin-top: 24px; padding: 12px 20px; background: rgba(255,255,255,0.92); backdrop-filter: blur(10px); border-radius: 60px; box-shadow: 0 10px 40px rgba(0,30,60,0.18); flex-wrap: wrap; }
+
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,20,40,0.5); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 20px; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: #fff; border-radius: 16px; max-width: 700px; width: 100%; max-height: 85vh; display: flex; flex-direction: column; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+  .modal.modal-sm { max-width: 520px; }
+  .modal.modal-lg { max-width: 900px; }
+  .modal-header { padding: 16px 22px; border-bottom: 2px solid #e6f0fa; display: flex; justify-content: space-between; align-items: center; }
+  .modal-header h3 { font-size: 16px; color: #003366; }
+  .modal-body { padding: 16px 22px; overflow-y: auto; flex: 1; }
+  .modal-footer { padding: 12px 22px; border-top: 1px solid #e6f0fa; display: flex; justify-content: flex-end; gap: 8px; flex-wrap: wrap; }
+  .modal-search { width: 100%; padding: 9px 12px; border: 1px solid #d0dcec; border-radius: 8px; font-size: 14px; margin-bottom: 12px; }
+  .modal-search:focus { border-color: #2b7bb6; outline: none; }
+  .modal-cat { font-size: 13px; font-weight: 700; color: #4a6f8f; text-transform: uppercase; letter-spacing: 0.5px; margin: 14px 0 6px; padding-bottom: 4px; border-bottom: 1px solid #e6f0fa; }
+  .modal-item { padding: 7px 10px; font-size: 13.5px; cursor: pointer; border-radius: 6px; }
+  .modal-item:hover { background: #e8f2fc; }
+  .modal-item.selected { background: #cfe3f5; }
+  .modal-item .m-code { color: #7a94ab; font-size: 12px; margin-right: 6px; }
+  .modal-empty { color: #7a94ab; font-size: 13px; text-align: center; padding: 20px; }
+  .modal-hint { font-size: 12px; color: #7a94ab; margin-bottom: 10px; font-style: italic; }
+
+  .import-step { margin-bottom: 16px; }
+  .import-step-title { font-size: 14px; font-weight: 700; color: #003366; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+  .import-step-title .num { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; background: #003366; color: #fff; font-size: 12px; font-weight: 700; }
+  .import-drop { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px 20px; border: 2px dashed #a8c2dd; border-radius: 14px; background: #f8faff; cursor: pointer; transition: 0.15s; text-align: center; }
+  .import-drop:hover, .import-drop.dragover { background: #e8f2fc; border-color: #2b7bb6; }
+  .import-drop .icon { font-size: 36px; margin-bottom: 8px; }
+  .import-drop .main { font-size: 15px; font-weight: 700; color: #003366; margin-bottom: 4px; }
+  .import-drop .sub { font-size: 13px; color: #7a94ab; }
+  .import-file-info { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: #eef6ff; border: 1px solid #b8d9f5; border-radius: 10px; font-size: 13.5px; color: #1a3a5f; }
+  .import-file-info .name { flex: 1; font-weight: 700; word-break: break-all; }
+  .import-file-info .size { color: #7a94ab; font-size: 12.5px; }
+  .import-sheet-select { margin-top: 10px; }
+  .import-sheet-select select { width: 100%; padding: 8px 12px; border: 1.5px solid #a8c2dd; border-radius: 8px; font-size: 14px; font-family: inherit; background: #fff; }
+  .import-map-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 6px; background: #fff; border-radius: 10px; overflow: hidden; }
+  .import-map-table th, .import-map-table td { padding: 6px 10px; border-bottom: 1px solid #e6f0fa; text-align: left; vertical-align: middle; }
+  .import-map-table th { background: #e8f2fc; color: #003366; font-size: 12.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; }
+  .import-map-table td select { width: 100%; padding: 6px 10px; border: 1px solid #d0dcec; border-radius: 7px; font-size: 13px; font-family: inherit; background: #fff; }
+  .import-map-table .col-source { font-weight: 600; color: #1a3a5f; width: 30%; }
+  .import-map-table .col-sample { color: #7a94ab; font-size: 12.5px; width: 40%; word-break: break-word; max-width: 260px; }
+  .import-map-table .col-target { width: 30%; }
+  .import-map-table tr.matched td select { border-color: #7dc79a; background: #f6fff9; }
+  .import-map-table tr.unmatched td select { border-color: #e2c88c; background: #fffbf0; }
+  .import-preview { overflow-x: auto; margin-top: 8px; border: 1px solid #d0dcec; border-radius: 10px; }
+  .import-preview table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  .import-preview th, .import-preview td { padding: 5px 8px; border: 1px solid #e6f0fa; white-space: nowrap; max-width: 220px; overflow: hidden; text-overflow: ellipsis; }
+  .import-preview th { background: #e8f2fc; color: #003366; font-weight: 700; position: sticky; top: 0; }
+  .import-mode { display: flex; gap: 16px; flex-wrap: wrap; padding: 12px 14px; background: #f0f7fe; border: 1px solid #b8d9f5; border-radius: 10px; }
+  .import-mode label { display: flex; align-items: center; gap: 6px; font-size: 13.5px; font-weight: 600; color: #1a3a5f; cursor: pointer; }
+  .import-mode input[type="radio"] { accent-color: #003366; width: 16px; height: 16px; }
+  .import-summary { padding: 12px 14px; background: #fff8e8; border: 1px solid #f0dca8; border-radius: 10px; font-size: 13px; color: #6a4d00; line-height: 1.55; margin-top: 10px; }
+  .import-summary b { color: #7a4a00; }
+  .import-warn { color: #b33; font-size: 12.5px; margin-top: 6px; font-weight: 600; }
+
+  .confirm-text { font-size: 14px; color: #1a3a5f; line-height: 1.55; margin-bottom: 14px; }
+  .confirm-text b { color: #003366; }
+  .confirm-checkbox { display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; background: #f0f7fe; border: 1px solid #b8d9f5; border-radius: 10px; font-size: 14px; cursor: pointer; }
+  .confirm-checkbox input[type="checkbox"] { margin-top: 3px; width: 18px; height: 18px; accent-color: #003366; cursor: pointer; }
+  .confirm-checkbox span { color: #1a3a5f; }
+
+  .privacy-text { font-size: 13.5px; line-height: 1.65; color: #1a3a5f; }
+  .privacy-text h4 { font-size: 14px; color: #003366; margin: 14px 0 6px; }
+  .privacy-text p { margin-bottom: 10px; }
+  .privacy-text ul { margin: 6px 0 10px 22px; }
+  .privacy-text li { margin-bottom: 4px; }
+
+  .email-form .field { margin-bottom: 14px; }
+  .email-form .field label { font-size: 14px; font-weight: 700; color: #003366; margin-bottom: 6px; display: block; }
+  .email-form .field input, .email-form .field textarea { width: 100%; padding: 10px 14px; border: 1.5px solid #a8c2dd; border-radius: 9px; font-size: 14.5px; font-family: inherit; }
+  .email-form .field input:focus, .email-form .field textarea:focus { border-color: #003366; outline: none; box-shadow: 0 0 0 3px rgba(0,51,102,0.12); }
+  .email-form .field textarea { resize: vertical; min-height: 90px; }
+  .email-form .email-warn { background: #fff8e8; border: 1px solid #f0dca8; border-radius: 10px; padding: 12px 14px; font-size: 13px; color: #6a4d00; line-height: 1.55; margin-bottom: 14px; }
+  .email-form .email-policy { display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; background: #f0f7fe; border: 1px solid #b8d9f5; border-radius: 10px; font-size: 13.5px; cursor: pointer; }
+  .email-form .email-policy input[type="checkbox"] { margin-top: 3px; width: 18px; height: 18px; accent-color: #003366; cursor: pointer; }
+  .email-form .email-policy a { color: #2b7bb6; font-weight: 700; text-decoration: underline; }
+  .email-form .email-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+
+  .mail-files-drop { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 12px 14px; border: 2px dashed #a8c2dd; border-radius: 10px; background: #f8faff; transition: 0.15s; }
+  .mail-files-drop.dragover { background: #e8f2fc; border-color: #2b7bb6; }
+  .mail-files-hint { font-size: 12.5px; color: #7a94ab; font-style: italic; }
+  .mail-files-list { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+  .mail-file-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: #eef6ff; border: 1px solid #b8d9f5; border-radius: 8px; font-size: 13px; color: #1a3a5f; }
+  .mail-file-item .mf-name { flex: 1; min-width: 0; word-break: break-all; font-weight: 600; }
+  .mail-file-item .mf-size { color: #7a94ab; font-size: 12px; }
+  .mail-file-item .mf-del { background: #fde8e8; color: #b33; border: none; width: 26px; height: 26px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 700; }
+  .mail-file-item .mf-del:hover { background: #f8d0d0; }
+  .mail-files-note { margin-top: 8px; padding: 10px 12px; background: #fff8e8; border: 1px solid #f0dca8; border-radius: 8px; font-size: 12.5px; color: #6a4d00; line-height: 1.5; }
+
+  .order-preview { background: #fff; border: 1px solid #d0dcec; border-radius: 10px; padding: 30px 40px; font-family: 'Times New Roman', serif; font-size: 13pt; line-height: 1.5; color: #000; max-height: 60vh; overflow-y: auto; }
+  .order-preview .op-org { text-align: center; font-size: 13pt; font-weight: bold; text-transform: uppercase; line-height: 1.25; }
+  .order-preview .op-org-sub { text-align: center; font-size: 11pt; margin-top: 4px; line-height: 1.3; }
+  .order-preview .op-line { border-top: 2px solid #000; margin: 10px 0 14px; }
+  .order-preview h2 { text-align: center; font-size: 16pt; font-weight: bold; letter-spacing: 2px; margin: 8px 0; }
+  .order-preview .op-headline { text-align: center; font-size: 12pt; margin-bottom: 12px; }
+  .order-preview .op-meta { display: flex; justify-content: space-between; font-size: 11pt; margin: 12px 0; }
+  .order-preview .op-body p { margin: 8px 0; text-align: justify; }
+  .order-preview .op-list { margin: 8px 0 8px 26px; }
+  .order-preview .op-list li { margin-bottom: 6px; text-align: justify; }
+  .order-preview .op-commission { margin: 6px 0 6px 20px; }
+  .order-preview .op-commission li { margin-bottom: 4px; }
+  .order-preview table { border-collapse: collapse; width: 100%; margin: 10px 0; font-size: 10.5pt; }
+  .order-preview th, .order-preview td { border: 1px solid #000; padding: 5px 7px; vertical-align: top; }
+  .order-preview th { background: #e6f0fa; text-align: center; font-weight: bold; }
+  .order-preview .op-sign { margin-top: 30px; }
+  .order-preview .op-sign-row { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 14px; gap: 20px; }
+  .order-preview .op-sign-label { font-size: 11pt; }
+  .order-preview .op-sign-line { border-bottom: 1px solid #000; min-width: 220px; display: inline-block; }
+  .order-preview .op-sign-date { margin-top: 24px; font-size: 11pt; }
+
+  .tip { position: relative; }
+  .tip::after {
+    content: attr(data-tip);
+    position: absolute; left: 50%; bottom: calc(100% + 10px);
+    transform: translateX(-50%) translateY(4px);
+    background: #003366; color: #fff; font-size: 12.5px; font-weight: 500;
+    line-height: 1.45; padding: 8px 13px; border-radius: 9px;
+    white-space: normal; max-width: 280px; min-width: 120px; width: max-content;
+    text-align: center; box-shadow: 0 8px 24px rgba(0,30,60,0.28);
+    opacity: 0; pointer-events: none; transition: 0.15s; z-index: 500;
+  }
+  .tip::before {
+    content: ''; position: absolute; left: 50%; bottom: calc(100% + 4px);
+    transform: translateX(-50%); border: 6px solid transparent;
+    border-top-color: #003366; opacity: 0; pointer-events: none;
+    transition: 0.15s; z-index: 500;
+  }
+  .tip:hover::after, .tip:hover::before { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .tip-left::after { left: 0; transform: translateX(0) translateY(4px); }
+  .tip-left::before { left: 22px; transform: translateX(0); }
+  .tip-left:hover::after { transform: translateX(0) translateY(0); }
+  .tip-bottom::after { top: calc(100% + 10px); bottom: auto; transform: translateX(-50%) translateY(-4px); }
+  .tip-bottom::before { top: calc(100% + 4px); bottom: auto; border-top-color: transparent; border-bottom-color: #003366; transform: translateX(-50%); }
+  .tip-bottom:hover::after { transform: translateX(-50%) translateY(0); }
+  @media (hover: none) { .tip::after, .tip::before { display: none !important; } }
+
+  @media (max-width: 1000px) {
+    .org-grid { grid-template-columns: repeat(2, 1fr); }
+    .org-grid .span2 { grid-column: span 2; }
+    .wp-card .wp-head { padding-right: 0; padding-top: 46px; }
+    .wp-card .wp-actions { top: 14px; right: 14px; }
+  }
+  @media (max-width: 600px) {
+    body { padding: 16px 10px 60px; }
+    .org-grid { grid-template-columns: 1fr; }
+    .org-grid .span2 { grid-column: span 1; }
+    .dept, .org-card-body, .help-body { padding-left: 14px; padding-right: 14px; }
+    .org-card-header, .help-header { padding-left: 16px; padding-right: 16px; }
+    .wp-card { padding: 16px 14px 20px; }
+    .wp-card .wp-head { padding-top: 46px; }
+    .zone-row { grid-template-columns: 1fr 70px 42px; }
+    .emp-row .emp-top { grid-template-columns: 32px 1fr 42px; }
+    .emp-row .emp-top input[data-emp="snils"] { grid-column: 2 / 3; }
+    .emp-row .emp-bottom { padding-left: 0; }
+    .emp-row .snils-warn { padding-left: 0; }
+    .btn-add { padding: 10px 16px; font-size: 13.5px; }
+    .wp-section-label { font-size: 14px; padding: 9px 12px; }
+    .wp-card .field label { font-size: 14px; }
+    .wp-card .field input, .wp-card .field select, .wp-card .field textarea { font-size: 14px; padding: 9px 12px; }
+    .header h1 { font-size: 20px; }
+    .dept-actions { padding-top: 0; }
+    .addr-row { grid-template-columns: 1fr auto; }
+    .totals { padding: 16px 18px; }
+    .sticky-bar { padding: 10px 12px; gap: 8px; }
+    .sticky-bar .btn { padding: 8px 12px; font-size: 12.5px; }
+    .comm-row { grid-template-columns: 1fr; }
+    .wp-title-banner { font-size: 16px; padding: 12px 18px; }
+    .wp-title-banner .sub { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="proto-warn" id="protoWarn">
+    ⚠ <b>Страница открыта через <code>file://</code>.</b> Скачивание Excel/Word/приказа может не работать из-за ограничений браузера. Если возникнет ошибка «Неподдерживаемая схема URL» — откройте файл через локальный сервер: в папке с файлом запустите <code>python -m http.server 8000</code> и откройте <code>http://localhost:8000/sout.html</code>.
+  </div>
+
+  <div class="header">
+    <h1>📋 Конструктор СОУТ <small>реквизиты + рабочие места</small></h1>
+    <div class="header-actions">
+      <button class="btn btn-primary" id="saveBtn">💾 Сохранить</button>
+      <button class="btn btn-excel" id="excelBtn">📊 Excel</button>
+      <button class="btn btn-word" id="wordBtn">📄 Word</button>
+      <button class="btn btn-import" id="importBtn" title="Импорт перечня рабочих мест из файла">📥 Импорт перечня</button>
+      <button class="btn btn-mail" id="mailBtn">📧 Отправить менеджеру</button>
+      <button class="btn btn-danger" id="resetBtn">🗑️ Сброс</button>
+    </div>
+  </div>
+
+  <div class="help-card open" id="helpCard">
+    <div class="help-header" id="helpToggle">
+      <h2>📖 Мини-инструкция — как пользоваться конструктором</h2>
+      <span class="chev">▾</span>
+    </div>
+    <div class="help-body">
+      <ol>
+        <li><b>Заполните карточку организации.</b> Введите ИНН или название и нажмите «Загрузить» — реквизиты подтянутся автоматически.</li>
+        <li><b>Укажите адреса проведения замеров.</b> Они заполняются автоматически из подразделений.</li>
+        <li><b>Заполните комиссию по СОУТ.</b> Минимум 3 человека, нечётное количество.</li>
+        <li><b>Добавляйте рабочие места.</b> Кнопка «➕ Подразделение» внизу страницы; внутри — «➕ Рабочее место».</li>
+        <li><b>В карте рабочего места:</b> должность (код ОК-016 подтянется из ОКПДТР), сменность, смена, класс УТ, рабочие зоны, оборудование, материалы, описание.</li>
+        <li><b>Сотрудники.</b> ФИО и СНИЛС (маска 123-456-789 00, проверка 11 цифр). Численность подставляется автоматически — кнопка <span class="kbd">↺ Авто</span>.</li>
+        <li><b>Гарантии и компенсации.</b> Если гарантий нет — отметьте «Гарантии отсутствуют». Медосмотры — «да/нет»; при «да» появится блок 29Н.</li>
+        <li><b>Нумерация.</b> Если указан № по предыдущей СОУТ — он становится номером рабочего места. Иначе — авто.</li>
+        <li><b>Экспорт.</b> «Excel» — два листа. «Word» — карточка + сводная + итоги. «📄 Скачать приказ» — приказ о создании комиссии по СОУТ. «📥 Импорт перечня» — добавление данных из файла (Excel, CSV, JSON, текст) с авто-определением колонок и заполнением объединённых ячеек вниз.</li>
+      </ol>
+      <div class="help-sub" style="margin-top:14px;"><b>Кнопки:</b></div>
+      <div class="help-buttons">
+        <div class="hb-item"><b>✕ Закрыть</b> — закрыть окно / удалить элемент (рабочее место, подразделение, сотрудника, оборудование, зону, адрес, члена комиссии)</div>
+        <div class="hb-item"><b>📋 Список</b> — открыть справочник для выбора значения (должности, оборудование, материалы, зоны, 29Н, ФЗ-400, ОКПДТР)</div>
+        <div class="hb-item"><b>➕ Добавить</b> — добавить новую запись (подразделение, рабочее место, оборудование, пункты)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="org-card open" id="orgCard">
+    <div class="org-card-header" id="orgCardToggle">
+      <h2>🏢 Карточка организации <span class="badge-warn" id="orgBadge">не заполнена</span></h2>
+      <span class="chev">▾</span>
+    </div>
+    <div class="org-card-body">
+
+      <div class="dadata-block">
+        <label>🔍 Автозаполнение по ИНН или названию</label>
+        <div class="dadata-row">
+          <input type="text" id="dadataQuery" placeholder="Например: 7816309879 или Рыбка" />
+          <button class="btn btn-primary" id="dadataBtn" style="padding:6px 18px;font-size:13px;">Загрузить</button>
+        </div>
+        <div class="dadata-hint">Заполнит: наименование, ИНН, КПП, ОГРН, ОКПО, ОКОГУ, ОКВЭД, ОКТМО, юр. адрес, руководителя</div>
+      </div>
+
+      <div class="org-section">
+        <div class="org-section-title">Реквизиты</div>
+        <div class="org-grid">
+          <div class="field span2"><label><span class="num">1.</span> Полное наименование организации</label><input type="text" id="orgFullName" /></div>
+          <div class="field span2"><label><span class="num">2.</span> Сокращённое наименование организации</label><input type="text" id="orgShortName" /></div>
+          <div class="field span2"><label><span class="num">3.</span> ИНН</label><input type="text" id="orgInn" /></div>
+          <div class="field span2"><label><span class="num">4.</span> КПП</label><input type="text" id="orgKpp" /></div>
+          <div class="field span2"><label><span class="num">5.</span> ОКПО</label><input type="text" id="orgOkpo" /></div>
+          <div class="field span2"><label><span class="num">6.</span> ОКОГУ</label><input type="text" id="orgOkogu" /></div>
+          <div class="field span2"><label><span class="num">7.</span> ОКВЭД</label><input type="text" id="orgOkved" /></div>
+          <div class="field span2"><label><span class="num">8.</span> ОКТМО</label><input type="text" id="orgOktmo" /></div>
+          <div class="field span2"><label><span class="num">9.</span> ОГРН</label><input type="text" id="orgOgrn" /></div>
+        </div>
+      </div>
+
+      <div class="org-section">
+        <div class="org-section-title">Адреса</div>
+        <div class="org-grid">
+          <div class="field span2"><label><span class="num">10.</span> Юридический адрес</label><input type="text" id="orgLegalAddress" /></div>
+          <div class="field span2"><label><span class="num">11.</span> Фактический адрес (если отличается)</label><input type="text" id="orgActualAddress" /></div>
+        </div>
+      </div>
+
+      <div class="org-section">
+        <div class="org-section-title">Контакты</div>
+        <div class="org-grid">
+          <div class="field"><label><span class="num">12.</span> Телефон</label><input type="text" id="orgPhone" placeholder="+7 (___) ___-__-__" /></div>
+          <div class="field span2"><label><span class="num">14.</span> Электронная почта <span class="req">* обязательно указать</span></label><input type="text" id="orgEmail" placeholder="info@example.ru" /></div>
+        </div>
+      </div>
+
+      <div class="org-section">
+        <div class="org-section-title">
+          <span>Адреса проведения замеров <span style="color:#7a94ab;font-weight:500;text-transform:none;font-size:12px;">(автоматически из подразделений)</span></span>
+        </div>
+        <div class="addr-list" id="addrList"></div>
+        <div class="add-row"><button class="btn btn-ghost btn-sm" id="addAddrBtn">➕ Добавить адрес вручную</button></div>
+      </div>
+
+      <div class="org-section">
+        <div class="org-section-title">Руководитель и приказ</div>
+        <div class="org-grid">
+          <div class="field span2"><label><span class="num">17.</span> Руководитель организации (должность, ФИО)</label><input type="text" id="orgDirector" /></div>
+          <div class="field span2"><label><span class="num">20.</span> Приказ о проведении СОУТ (номер и дата)</label><input type="text" id="orgOrder" placeholder="№ 15 от 01.02.2025" /></div>
+        </div>
+      </div>
+
+      <div class="org-section">
+        <div class="org-section-title">
+          <span>Комиссия по проведению СОУТ <span class="note" id="commNote">(минимум 3, нечётное количество)</span></span>
+          <label class="toggle-1emp">
+            <input type="checkbox" id="singleEmpToggle" />
+            <span>В организации 1 сотрудник / ИП</span>
+          </label>
+        </div>
+        <div class="org-grid">
+          <div class="field span2"><label><span class="num">21.</span> Председатель комиссии (должность, ФИО)</label><input type="text" id="orgCommissionChair" /></div>
+          <div class="field span2" id="commMembersBlock">
+            <label><span class="num">22.</span> Члены комиссии (должность, ФИО)</label>
+            <div class="comm-list" id="commList"></div>
+            <div class="add-row"><button class="btn btn-ghost btn-sm" id="addCommBtn">➕ Добавить члена комиссии</button></div>
+            <div class="comm-warn" id="commWarn">⚠ Общее количество членов комиссии (включая председателя) должно быть нечётным и не менее 3</div>
+            <div class="comm-ok" id="commOk">✓ Количество членов комиссии корректно</div>
+          </div>
+        </div>
+        <div style="margin-top:14px;">
+          <button class="btn btn-order" id="orderBtnInline" title="Скачать приказ о создании комиссии по СОУТ">📄 Скачать приказ</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="wp-title-banner">
+    📋 Информация по рабочим местам
+    <span class="sub">заполните по каждому рабочему месту</span>
+  </div>
+
+  <div id="deptsContainer"></div>
+
+  <button class="btn btn-ghost" id="addDeptBtn2" style="width:100%; padding:12px; font-size:15px; margin-bottom:22px;">➕ Добавить подразделение</button>
+
+  <div class="totals" id="totalsBlock">
+    <h2>📊 Итоги</h2>
+    <div class="totals-grid" id="totalsGrid"></div>
+  </div>
+
+  <div class="sticky-bar">
+    <button class="btn btn-primary" id="saveBtn2">💾 Сохранить</button>
+    <button class="btn btn-excel" id="excelBtn2">📊 Excel</button>
+    <button class="btn btn-word" id="wordBtn2">📄 Word</button>
+    <button class="btn btn-import" id="importBtn2">📥 Импорт перечня</button>
+    <button class="btn btn-mail" id="mailBtn2">📧 Менеджеру</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="dictModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="dictTitle">Справочник</h3>
+      <button class="btn-icon danger" id="dictClose" title="Закрыть">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="text" class="modal-search" id="dictSearch" placeholder="Поиск..." />
+      <div class="modal-hint" id="dictHint"></div>
+      <div id="dictContent"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="dictCancel">Отмена</button>
+      <button class="btn btn-primary" id="dictApply">Выбрать</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="importModal">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <h3>📥 Импорт перечня рабочих мест</h3>
+      <button class="btn-icon danger" id="importClose" title="Закрыть">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="importStep1" class="import-step">
+        <div class="import-step-title"><span class="num">1</span> Выберите файл</div>
+        <div class="import-drop" id="importDrop">
+          <input type="file" id="importFileUniversal" accept=".xlsx,.xls,.csv,.json,.txt,.tsv" style="display:none" />
+          <div class="icon">📄</div>
+          <div class="main">Перетащите файл или нажмите для выбора</div>
+          <div class="sub">Excel (.xlsx, .xls), CSV, JSON, текстовый список</div>
+        </div>
+        <div class="import-file-info" id="importFileInfo" style="display:none;">
+          <span>📎</span>
+          <span class="name" id="importFileName"></span>
+          <span class="size" id="importFileSize"></span>
+          <button class="btn-icon danger" id="importFileClear" title="Убрать файл">✕</button>
+        </div>
+        <div class="import-sheet-select" id="importSheetWrap" style="display:none;">
+          <label style="font-size:12.5px;font-weight:700;color:#4a6f8f;text-transform:uppercase;letter-spacing:0.4px;display:block;margin-bottom:4px;">Лист Excel</label>
+          <select id="importSheetSelect"></select>
+        </div>
+      </div>
+
+      <div id="importStep2" class="import-step" style="display:none;">
+        <div class="import-step-title"><span class="num">2</span> Сопоставьте колонки</div>
+        <div class="modal-hint">Мы попробовали определить колонки автоматически. Проверьте и при необходимости исправьте. Объединённые ячейки (подразделение/адрес только в первой строке группы) заполняются вниз автоматически.</div>
+        <div class="import-map-table-wrap" style="max-height:340px;overflow-y:auto;">
+          <table class="import-map-table">
+            <thead>
+              <tr>
+                <th>Колонка в файле</th>
+                <th>Пример данных</th>
+                <th>Куда импортировать</th>
+              </tr>
+            </thead>
+            <tbody id="importMapBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="importStep3" class="import-step" style="display:none;">
+        <div class="import-step-title"><span class="num">3</span> Предпросмотр</div>
+        <div class="import-preview" id="importPreview"></div>
+        <div class="import-summary" id="importSummary"></div>
+      </div>
+
+      <div id="importStep4" class="import-step" style="display:none;">
+        <div class="import-step-title"><span class="num">4</span> Режим импорта</div>
+        <div class="import-mode">
+          <label><input type="radio" name="importMode" value="append" checked /> Добавить к текущим данным</label>
+          <label><input type="radio" name="importMode" value="replace" /> Заменить все данные</label>
+        </div>
+        <div class="import-warn" id="importWarn" style="display:none;"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="importCancel">Отмена</button>
+      <button class="btn btn-primary" id="importApply">Импортировать</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="orderModal">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <h3>📄 Приказ о создании комиссии по проведению СОУТ</h3>
+      <button class="btn-icon danger" id="orderClose" title="Закрыть">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-hint">Шаблон автоматически заполнен данными организации. Проверьте и при необходимости отредактируйте поля карточки организации перед скачиванием.</div>
+      <div class="order-preview" id="orderPreview"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="orderCancel">Закрыть</button>
+      <button class="btn btn-ghost" id="orderPrint">🖨 Печать</button>
+      <button class="btn btn-word" id="orderDownload">📄 Скачать .doc</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="saveInfoModal">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <h3>💾 Данные сохранены</h3>
+      <button class="btn-icon danger" id="saveInfoClose" title="Закрыть">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:14.5px;line-height:1.65;color:#1a3a5f;margin-bottom:12px;">
+        Данные сохранены <b>в браузере</b>. Вы можете продолжить редактирование позже — просто вернитесь на эту страницу.
+      </p>
+      <div style="background:#fff8e8;border:1px solid #f0dca8;border-radius:10px;padding:12px 14px;font-size:13px;color:#6a4d00;line-height:1.55;">
+        <b>⚠ Важно:</b> браузер может очистить локальное хранилище при очистке истории. Для надёжного хранения выгрузите файл <b>«Данные для СОУТ»</b> и при необходимости загрузите его обратно.
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="saveInfoImport">📂 Загрузить данные</button>
+      <button class="btn btn-export-data" id="saveInfoExport">📤 Выгрузить «Данные для СОУТ»</button>
+      <button class="btn btn-primary" id="saveInfoOk">Понятно</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="reminderModal">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <h3>📎 Напоминание</h3>
+      <button class="btn-icon danger" id="reminderClose" title="Закрыть">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:14.5px;line-height:1.65;color:#1a3a5f;margin-bottom:12px;">
+        Пожалуйста, <b>не забудьте направить нам сводную ведомость по ранее проведённой СОУТ</b>.
+      </p>
+      <div style="background:#fff8e8;border:1px solid #f0dca8;border-radius:10px;padding:12px 14px;font-size:13px;color:#6a4d00;line-height:1.55;">
+        Напоминание появилось, потому что вы указали <b>номер рабочего места по предыдущей СОУТ</b> и/или <b>гарантии и компенсации</b> (кроме медосмотров).
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" id="reminderOk">Понятно</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="confirmDeleteModal">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <h3>Удаление сотрудника</h3>
+      <button class="btn-icon danger" id="confirmDeleteClose" title="Закрыть">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="confirm-text" id="confirmDeleteText">Удалить сотрудника?</div>
+      <label class="confirm-checkbox" id="confirmDeleteAllWrap">
+        <input type="checkbox" id="confirmDeleteAll" />
+        <span>Удалить также для других рабочих мест (поиск по ФИО и СНИЛС)</span>
+      </label>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="confirmDeleteCancel">Отмена</button>
+      <button class="btn btn-danger" id="confirmDeleteOk">Удалить</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="privacyModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Политика конфиденциальности</h3>
+      <button class="btn-icon danger" id="privacyClose" title="Закрыть">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="privacy-text">
+        <p><b>Настоящая Политика конфиденциальности</b> описывает порядок обработки и защиты персональных данных, которые передаются через настоящий сервис.</p>
+        <h4>1. Общие положения</h4>
+        <p>Обработка персональных данных осуществляется в соответствии с ФЗ от 27.07.2006 № 152-ФЗ «О персональных данных».</p>
+        <h4>2. Какие данные обрабатываются</h4>
+        <ul>
+          <li>Данные организации (наименование, ИНН, КПП, ОГРН, адреса);</li>
+          <li>ФИО, СНИЛС сотрудников;</li>
+          <li>Сведения о рабочих местах, условиях труда, гарантиях и компенсациях.</li>
+        </ul>
+        <h4>3. Цели обработки</h4>
+        <p>Данные обрабатываются исключительно для целей проведения специальной оценки условий труда (СОУТ) и подготовки документации.</p>
+        <h4>4. Передача третьим лицам</h4>
+        <p>Все данные обрабатываются в соответствии с договорами и <b>не подлежат распространению третьим лицам</b>, за исключением случаев, прямо предусмотренных законодательством РФ.</p>
+        <h4>5. Защита данных</h4>
+        <p>Принимаются необходимые организационные и технические меры для защиты персональных данных.</p>
+        <h4>6. Контакты</h4>
+        <p>По вопросам обработки персональных данных: <b>sulima.d@trud-ps.ru</b></p>
+        <p style="margin-top:14px;font-style:italic;color:#7a94ab;">⚠ Текст-заглушка. Замените на утверждённую политику конфиденциальности вашей организации.</p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="privacyCloseFooter">Закрыть</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="mailModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>📧 Отправить данные менеджеру</h3>
+      <button class="btn-icon danger" id="mailClose" title="Закрыть">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="email-form">
+        <div class="field">
+          <label>Email получателя</label>
+          <input type="email" id="mailTo" value="sulima.d@trud-ps.ru" />
+        </div>
+        <div class="field">
+          <label>Комментарий (необязательно)</label>
+          <textarea id="mailComment" placeholder="Например: прошу проверить заполнение"></textarea>
+        </div>
+        <div class="field">
+          <label>Прикрепить файлы (сводная ведомость, предыдущая СОУТ и т.п.)</label>
+          <div class="mail-files-drop" id="mailFilesDrop">
+            <input type="file" id="mailFilesInput" multiple style="display:none;" />
+            <button class="btn btn-ghost" id="mailFilesBtn" type="button">📎 Выбрать файлы</button>
+            <span class="mail-files-hint">или перетащите файлы сюда</span>
+          </div>
+          <div class="mail-files-list" id="mailFilesList"></div>
+          <div class="mail-files-note" id="mailFilesNote" style="display:none;">
+            ⚠ Файлы <b>не отправятся автоматически</b> через почтовый клиент. При нажатии «Открыть почтовый клиент» они <b>скачаются на компьютер</b> — прикрепите их к письму вручную.
+          </div>
+        </div>
+        <div class="email-warn">
+          <b>⚠ Обратите внимание:</b> файл сохраняется в браузере и <b>не отправляется автоматически</b>. Кнопка «Открыть почтовый клиент» откроет Outlook/Mail с уже заполненным письмом. Если клиент не настроен — «Скопировать текст письма» и вставьте в удобный сервис.
+        </div>
+        <label class="email-policy">
+          <input type="checkbox" id="mailPrivacy" />
+          <span>
+            Я подтверждаю, что данные обрабатываются в соответствии с договором и законодательством РФ (ФЗ-152), не подлежат распространению третьим лицам и используются для целей СОУТ. Ознакомлен(а) с <a href="#" id="privacyLink">политикой конфиденциальности</a>.
+          </span>
+        </label>
+        <div class="email-actions">
+          <button class="btn btn-mail" id="mailSend" disabled>📧 Открыть почтовый клиент</button>
+          <button class="btn btn-ghost" id="mailCopy">📋 Скопировать текст письма</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="mailCancel">Закрыть</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="validationModal">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <h3>⚠ Проверьте заполнение</h3>
+      <button class="btn-icon danger" id="validationClose" title="Закрыть">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:14px;color:#1a3a5f;margin-bottom:12px;">Обнаружены незаполненные обязательные поля. Пожалуйста, заполните их и повторите попытку:</p>
+      <ul id="validationList" style="margin-left:20px;font-size:14px;line-height:1.7;color:#b33;"></ul>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" id="validationOk">Понятно</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<input type="file" id="importDataFileInput" accept=".json,.sout.json,application/json" style="display:none;" />
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
+<script src="sout-app.js"></script>
+
+</body>
+</html>
