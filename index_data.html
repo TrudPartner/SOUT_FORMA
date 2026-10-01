@@ -505,6 +505,80 @@
   .tip-bottom:hover::after { transform: translateX(-50%) translateY(0); }
   @media (hover: none) { .tip::after, .tip::before { display: none !important; } }
 
+  /* ===== Импорт перечня ===== */
+  .import-step { margin-bottom: 16px; }
+  .import-step-title { font-size: 14px; font-weight: 700; color: #003366; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+  .import-step-title .num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 22px; height: 22px; border-radius: 50%;
+    background: #003366; color: #fff; font-size: 12px; font-weight: 700;
+  }
+  .import-drop {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 32px 20px; border: 2px dashed #a8c2dd; border-radius: 14px;
+    background: #f8faff; cursor: pointer; transition: 0.15s; text-align: center;
+  }
+  .import-drop:hover, .import-drop.dragover { background: #e8f2fc; border-color: #2b7bb6; }
+  .import-drop .icon { font-size: 36px; margin-bottom: 8px; }
+  .import-drop .main { font-size: 15px; font-weight: 700; color: #003366; margin-bottom: 4px; }
+  .import-drop .sub { font-size: 13px; color: #7a94ab; }
+  .import-file-info {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 16px; background: #eef6ff; border: 1px solid #b8d9f5;
+    border-radius: 10px; font-size: 13.5px; color: #1a3a5f;
+  }
+  .import-file-info .name { flex: 1; font-weight: 700; word-break: break-all; }
+  .import-file-info .size { color: #7a94ab; font-size: 12.5px; }
+  .import-sheet-select { margin-top: 10px; }
+  .import-sheet-select select {
+    width: 100%; padding: 8px 12px; border: 1.5px solid #a8c2dd;
+    border-radius: 8px; font-size: 14px; font-family: inherit; background: #fff;
+  }
+  .import-map-table {
+    width: 100%; border-collapse: collapse; font-size: 13px;
+    margin-top: 6px; background: #fff; border-radius: 10px; overflow: hidden;
+  }
+  .import-map-table th, .import-map-table td {
+    padding: 6px 10px; border-bottom: 1px solid #e6f0fa; text-align: left; vertical-align: middle;
+  }
+  .import-map-table th {
+    background: #e8f2fc; color: #003366; font-size: 12.5px;
+    font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px;
+  }
+  .import-map-table td select {
+    width: 100%; padding: 6px 10px; border: 1px solid #d0dcec;
+    border-radius: 7px; font-size: 13px; font-family: inherit; background: #fff;
+  }
+  .import-map-table .col-source { font-weight: 600; color: #1a3a5f; width: 30%; }
+  .import-map-table .col-sample { color: #7a94ab; font-size: 12.5px; width: 40%; word-break: break-word; max-width: 260px; }
+  .import-map-table .col-target { width: 30%; }
+  .import-map-table tr.matched td select { border-color: #7dc79a; background: #f6fff9; }
+  .import-map-table tr.unmatched td select { border-color: #e2c88c; background: #fffbf0; }
+  .import-preview {
+    overflow-x: auto; margin-top: 8px; border: 1px solid #d0dcec; border-radius: 10px;
+  }
+  .import-preview table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  .import-preview th, .import-preview td {
+    padding: 5px 8px; border: 1px solid #e6f0fa; white-space: nowrap;
+    max-width: 220px; overflow: hidden; text-overflow: ellipsis;
+  }
+  .import-preview th { background: #e8f2fc; color: #003366; font-weight: 700; position: sticky; top: 0; }
+  .import-mode {
+    display: flex; gap: 16px; flex-wrap: wrap; padding: 12px 14px;
+    background: #f0f7fe; border: 1px solid #b8d9f5; border-radius: 10px;
+  }
+  .import-mode label {
+    display: flex; align-items: center; gap: 6px; font-size: 13.5px;
+    font-weight: 600; color: #1a3a5f; cursor: pointer;
+  }
+  .import-mode input[type="radio"] { accent-color: #003366; width: 16px; height: 16px; }
+  .import-summary {
+    padding: 12px 14px; background: #fff8e8; border: 1px solid #f0dca8;
+    border-radius: 10px; font-size: 13px; color: #6a4d00; line-height: 1.55; margin-top: 10px;
+  }
+  .import-summary b { color: #7a4a00; }
+  .import-warn { color: #b33; font-size: 12.5px; margin-top: 6px; font-weight: 600; }
+
   @media (max-width: 1000px) {
     .org-grid { grid-template-columns: repeat(2, 1fr); }
     .org-grid .span2 { grid-column: span 2; }
@@ -550,7 +624,7 @@
       <button class="btn btn-primary" id="saveBtn">💾 Сохранить</button>
       <button class="btn btn-excel" id="excelBtn">📊 Excel</button>
       <button class="btn btn-word" id="wordBtn">📄 Word</button>
-      <button class="btn btn-import" id="importBtn" title="Загрузить данные из Excel-файла">📥 Импорт Excel</button>
+      <button class="btn btn-import" id="importBtn" title="Импорт перечня рабочих мест из файла">📥 Импорт перечня</button>
       <button class="btn btn-mail" id="mailBtn">📧 Отправить менеджеру</button>
       <button class="btn btn-danger" id="resetBtn">🗑️ Сброс</button>
     </div>
@@ -571,7 +645,7 @@
         <li><b>Сотрудники.</b> ФИО и СНИЛС. Численность подставляется автоматически — кнопка <span class="kbd">↺ Авто</span>. При отказе от ФИО/СНИЛС — ручной ввод количества.</li>
         <li><b>Гарантии и компенсации.</b> Если гарантий нет — отметьте «Гарантии отсутствуют». Медосмотры — «да/нет»; при «да» появится блок 29Н. Основание досрочной пенсии показывается только при выборе «да».</li>
         <li><b>Нумерация.</b> Если указан № по предыдущей СОУТ — он становится номером рабочего места. Иначе — авто.</li>
-        <li><b>Экспорт.</b> «Excel» — два листа. «Word» — карточка + сводная + итоги. «📄 Скачать приказ» — приказ о создании комиссии по СОУТ. «📥 Импорт Excel» — добавление данных из файла.</li>
+        <li><b>Экспорт.</b> «Excel» — два листа. «Word» — карточка + сводная + итоги. «📄 Скачать приказ» — приказ о создании комиссии по СОУТ. «📥 Импорт перечня» — добавление данных из файла (Excel, CSV, JSON, текст).</li>
       </ol>
       <div class="help-sub" style="margin-top:14px;"><b>Кнопки:</b></div>
       <div class="help-buttons">
@@ -594,150 +668,42 @@
         </div>
         <table style="width:100%;border-collapse:collapse;font-size:13.5px;background:#fff;">
           <tbody>
-            <tr>
-              <td colspan="2" style="background:#e8f2fc;border:1px solid #cfe0f0;padding:10px 14px;font-weight:800;color:#003366;text-transform:uppercase;letter-spacing:0.4px;font-size:13px;">Основные сведения</td>
-            </tr>
-            <tr>
-              <td style="border:1px solid #d0dcec;padding:9px 14px;background:#f8faff;width:42%;color:#1a3a5f;font-weight:600;">№ рабочего места</td>
-              <td style="border:1px solid #d0dcec;padding:9px 14px;color:#111;">3</td>
-            </tr>
-            <tr>
-              <td style="border:1px solid #d0dcec;padding:9px 14px;background:#f8faff;color:#1a3a5f;font-weight:600;">№ по предыдущей СОУТ</td>
-              <td style="border:1px solid #d0dcec;padding:9px 14px;color:#111;">3</td>
-            </tr>
-            <tr>
-              <td style="border:1px solid #d0dcec;padding:9px 14px;background:#f8faff;color:#1a3a5f;font-weight:600;">Наименование профессии / должности</td>
-              <td style="border:1px solid #d0dcec;padding:9px 14px;color:#111;">Охранник-водитель</td>
-            </tr>
-            <tr>
-              <td style="border:1px solid #d0dcec;padding:9px 14px;background:#f8faff;color:#1a3a5f;font-weight:600;">Код ОК-016</td>
-              <td style="border:1px solid #d0dcec;padding:9px 14px;color:#111;">26181</td>
-            </tr>
-            <tr>
-              <td style="border:1px solid #d0dcec;padding:9px 14px;background:#f8faff;color:#1a3a5f;font-weight:600;">Класс условий труда</td>
-              <td style="border:1px solid #d0dcec;padding:9px 14px;color:#111;">3.1 — вредный 1 ст.</td>
-            </tr>
-            <tr>
-              <td style="border:1px solid #d0dcec;padding:9px 14px;background:#f8faff;color:#1a3a5f;font-weight:600;">Сменность</td>
-              <td style="border:1px solid #d0dcec;padding:9px 14px;color:#111;">1/3</td>
-            </tr>
-            <tr>
-              <td style="border:1px solid #d0dcec;padding:9px 14px;background:#f8faff;color:#1a3a5f;font-weight:600;">Рабочая смена</td>
-              <td style="border:1px solid #d0dcec;padding:9px 14px;color:#111;">24 ч</td>
-            </tr>
-            <tr>
-              <td style="border:1px solid #d0dcec;padding:9px 14px;background:#f8faff;color:#1a3a5f;font-weight:600;">Краткое описание работы</td>
-              <td style="border:1px solid #d0dcec;padding:9px 14px;color:#111;">Охрана объекта, обход территории, выезды на служебном автомобиле по заявкам</td>
-            </tr>
-            <tr>
-              <td colspan="2" style="background:#e8f2fc;border:1px solid #cfe0f0;padding:10px 14px;font-weight:800;color:#003366;text-transform:uppercase;letter-spacing:0.4px;font-size:13px;">Численность</td>
-            </tr>
-            <tr>
-              <td style="border:1px solid #d0dcec;padding:9px 14px;background:#f8faff;color:#1a3a5f;font-weight:600;">Кол-во работающих</td>
-              <td style="border:1px solid #d0dcec;padding:9px 14px;color:#111;">2</td>
-            </tr>
-            <tr>
-              <td style="border:1px solid #d0dcec;padding:9px 14px;background:#f8faff;color:#1a3a5f;font-weight:600;">Из них женщин</td>
-              <td style="border:1px solid #d0dcec;padding:9px 14px;color:#111;">0</td>
-            </tr>
-            <tr>
-              <td style="border:1px solid #d0dcec;padding:9px 14px;background:#f8faff;color:#1a3a5f;font-weight:600;">Из них несовершеннолетних</td>
-              <td style="border:1px solid #d0dcec;padding:9px 14px;color:#111;">0</td>
-            </tr>
-            <tr>
-              <td style="border:1px solid #d0dcec;padding:9px 14px;background:#f8faff;color:#1a3a5f;font-weight:600;">Из них инвалидов</td>
-              <td style="border:1px solid #d0dcec;padding:9px 14px;color:#111;">0</td>
-            </tr>
-            <tr>
-              <td colspan="2" style="background:#e8f2fc;border:1px solid #cfe0f0;padding:10px 14px;font-weight:800;color:#003366;text-transform:uppercase;letter-spacing:0.4px;font-size:13px;">Рабочие зоны</td>
-            </tr>
-            <tr>
-              <td style="border:1px solid #d0dcec;padding:9px 14px;background:#f8faff;color:#1a3a5f;font-weight:600;">Зона 1</td>
-              <td style="border:1px solid #d0dcec;padding:9px 14px;color:#111;">Пост охраны — 60%</td>
-            </tr>
-            <tr>
-              <td style="border:1px solid #d0dcec;padding:9px 14px;background:#f8faff;color:#1a3a5f;font-weight:600;">Зона 2</td>
-              <td style="border:1px solid #d0dcec;padding:9px 14px;color:#111;">Кабина автомобиля — 40%</td>
-            </tr>
-            <tr>
-              <td colspan="2" style="background:#e8f2fc;border:1px solid #cfe0f0;padding:10px 14px;font-weight:800;color:#003366;text-transform:uppercase;letter-spacing:0.4px;font-size:13px;">Используемое оборудование</td>
-            </tr>
-            <tr>
-              <td style="border:1px solid #d0dcec;padding:9px 14px;background:#f8faff;color:#1a3a5f;font-weight:600;">Оборудование</td>
-              <td style="border:1px solid #d0dcec;padding:9px 14px;color:#111;">
-                Радиостанция<br>
-                ПЭВМ (персональный компьютер)<br>
-                Автомобиль легковой
-              </td>
-            </tr>
-            <tr>
-              <td style="border:1px solid #d0dcec;padding:9px 14px;background:#f8faff;color:#1a3a5f;font-weight:600;">Транспортное средство (обязательно для водителей)</td>
-              <td style="border:1px solid #d0dcec;padding:9px 14px;color:#111;">Лада Гранта, 2020, А 111 АА 77</td>
-            </tr>
-            <tr>
-              <td colspan="2" style="background:#e8f2fc;border:1px solid #cfe0f0;padding:10px 14px;font-weight:800;color:#003366;text-transform:uppercase;letter-spacing:0.4px;font-size:13px;">Применяемые сырьё и материалы</td>
-            </tr>
-            <tr>
-              <td style="border:1px solid #d0dcec;padding:9px 14px;background:#f8faff;color:#1a3a5f;font-weight:600;">Материалы</td>
-              <td style="border:1px solid #d0dcec;padding:9px 14px;color:#111;">Бензин АИ-95, Дизельное топливо</td>
-            </tr>
-            <tr>
-              <td colspan="2" style="background:#e8f2fc;border:1px solid #cfe0f0;padding:10px 14px;font-weight:800;color:#003366;text-transform:uppercase;letter-spacing:0.4px;font-size:13px;">Сотрудники на рабочем месте</td>
-            </tr>
-            <tr>
-              <td style="border:1px solid #d0dcec;padding:9px 14px;background:#f8faff;color:#1a3a5f;font-weight:600;">Сотрудник 1</td>
-              <td style="border:1px solid #d0dcec;padding:9px 14px;color:#111;">Иванов Иван Иванович ♂ — 123-456-789 00</td>
-            </tr>
-            <tr>
-              <td style="border:1px solid #d0dcec;padding:9px 14px;background:#f8faff;color:#1a3a5f;font-weight:600;">Сотрудник 2</td>
-              <td style="border:1px solid #d0dcec;padding:9px 14px;color:#111;">Петров Пётр Петрович ♂ — 234-567-890 11</td>
-            </tr>
-            <tr>
-              <td colspan="2" style="background:#e8f2fc;border:1px solid #cfe0f0;padding:10px 14px;font-weight:800;color:#003366;text-transform:uppercase;letter-spacing:0.4px;font-size:13px;">Гарантии и компенсации</td>
-            </tr>
-            <tr>
-              <td style="border:1px solid #d0dcec;padding:9px 14px;background:#f8faff;color:#1a3a5f;font-weight:600;">Гарантии отсутствуют</td>
-              <td style="border:1px solid #d0dcec;padding:9px 14px;color:#111;">нет</td>
-            </tr>
-            <tr>
-              <td style="border:1px solid #d0dcec;padding:9px 14px;background:#f8faff;color:#1a3a5f;font-weight:600;">Повышенная оплата труда</td>
-              <td style="border:1px solid #d0dcec;padding:9px 14px;color:#111;">да</td>
-            </tr>
-            <tr>
-              <td style="border:1px solid #d0dcec;padding:9px 14px;background:#f8faff;color:#1a3a5f;font-weight:600;">Дополнительный отпуск</td>
-              <td style="border:1px solid #d0dcec;padding:9px 14px;color:#111;">да</td>
-            </tr>
-            <tr>
-              <td style="border:1px solid #d0dcec;padding:9px 14px;background:#f8faff;color:#1a3a5f;font-weight:600;">Сокращённая продолжительность рабочего времени</td>
-              <td style="border:1px solid #d0dcec;padding:9px 14px;color:#111;">нет</td>
-            </tr>
-            <tr>
-              <td style="border:1px solid #d0dcec;padding:9px 14px;background:#f8faff;color:#1a3a5f;font-weight:600;">Молоко / равноценные пищевые продукты</td>
-              <td style="border:1px solid #d0dcec;padding:9px 14px;color:#111;">нет</td>
-            </tr>
-            <tr>
-              <td style="border:1px solid #d0dcec;padding:9px 14px;background:#f8faff;color:#1a3a5f;font-weight:600;">Лечебно-профилактическое питание</td>
-              <td style="border:1px solid #d0dcec;padding:9px 14px;color:#111;">нет</td>
-            </tr>
-            <tr>
-              <td style="border:1px solid #d0dcec;padding:9px 14px;background:#f8faff;color:#1a3a5f;font-weight:600;">Право на досрочную пенсию</td>
-              <td style="border:1px solid #d0dcec;padding:9px 14px;color:#111;">нет</td>
-            </tr>
-            <tr>
-              <td style="border:1px solid #d0dcec;padding:9px 14px;background:#f8faff;color:#1a3a5f;font-weight:600;">Основание досрочной пенсии</td>
-              <td style="border:1px solid #d0dcec;padding:9px 14px;color:#111;">—</td>
-            </tr>
-            <tr>
-              <td style="border:1px solid #d0dcec;padding:9px 14px;background:#f8faff;color:#1a3a5f;font-weight:600;">Медосмотры</td>
-              <td style="border:1px solid #d0dcec;padding:9px 14px;color:#111;">да</td>
-            </tr>
-            <tr>
-              <td style="border:1px solid #d0dcec;padding:9px 14px;background:#f8faff;color:#1a3a5f;font-weight:600;">Пункты приказа 29Н</td>
-              <td style="border:1px solid #d0dcec;padding:9px 14px;color:#111;">
-                4.4 — Шум<br>
-                18.1 — Управление наземными ТС (A, B, C)
-              </td>
-            </tr>
+            <tr><td colspan="2" style="background:#e8f2fc;border:1px solid #cfe0f0;padding:10px 14px;font-weight:800;color:#003366;text-transform:uppercase;letter-spacing:0.4px;font-size:13px;">Основные сведения</td></tr>
+            <tr><td style="border:1px solid #d0dcec;padding:9px 14px;background:#f8faff;width:42%;color:#1a3a5f;font-weight:600;">№ рабочего места</td><td style="border:1px solid #d0dcec;padding:9px 14px;color:#111;">3</td></tr>
+            <tr><td style="border:1px solid #d0dcec;padding:9px 14px;background:#f8faff;color:#1a3a5f;font-weight:600;">№ по предыдущей СОУТ</td><td style="border:1px solid #d0dcec;padding:9px 14px;color:#111;">3</td></tr>
+            <tr><td style="border:1px solid #d0dcec;padding:9px 14px;background:#f8faff;color:#1a3a5f;font-weight:600;">Наименование профессии / должности</td><td style="border:1px solid #d0dcec;padding:9px 14px;color:#111;">Охранник-водитель</td></tr>
+            <tr><td style="border:1px solid #d0dcec;padding:9px 14px;background:#f8faff;color:#1a3a5f;font-weight:600;">Код ОК-016</td><td style="border:1px solid #d0dcec;padding:9px 14px;color:#111;">26181</td></tr>
+            <tr><td style="border:1px solid #d0dcec;padding:9px 14px;background:#f8faff;color:#1a3a5f;font-weight:600;">Класс условий труда</td><td style="border:1px solid #d0dcec;padding:9px 14px;color:#111;">3.1 — вредный 1 ст.</td></tr>
+            <tr><td style="border:1px solid #d0dcec;padding:9px 14px;background:#f8faff;color:#1a3a5f;font-weight:600;">Сменность</td><td style="border:1px solid #d0dcec;padding:9px 14px;color:#111;">1/3</td></tr>
+            <tr><td style="border:1px solid #d0dcec;padding:9px 14px;background:#f8faff;color:#1a3a5f;font-weight:600;">Рабочая смена</td><td style="border:1px solid #d0dcec;padding:9px 14px;color:#111;">24 ч</td></tr>
+            <tr><td style="border:1px solid #d0dcec;padding:9px 14px;background:#f8faff;color:#1a3a5f;font-weight:600;">Краткое описание работы</td><td style="border:1px solid #d0dcec;padding:9px 14px;color:#111;">Охрана объекта, обход территории, выезды на служебном автомобиле по заявкам</td></tr>
+            <tr><td colspan="2" style="background:#e8f2fc;border:1px solid #cfe0f0;padding:10px 14px;font-weight:800;color:#003366;text-transform:uppercase;letter-spacing:0.4px;font-size:13px;">Численность</td></tr>
+            <tr><td style="border:1px solid #d0dcec;padding:9px 14px;background:#f8faff;color:#1a3a5f;font-weight:600;">Кол-во работающих</td><td style="border:1px solid #d0dcec;padding:9px 14px;color:#111;">2</td></tr>
+            <tr><td style="border:1px solid #d0dcec;padding:9px 14px;background:#f8faff;color:#1a3a5f;font-weight:600;">Из них женщин</td><td style="border:1px solid #d0dcec;padding:9px 14px;color:#111;">0</td></tr>
+            <tr><td style="border:1px solid #d0dcec;padding:9px 14px;background:#f8faff;color:#1a3a5f;font-weight:600;">Из них несовершеннолетних</td><td style="border:1px solid #d0dcec;padding:9px 14px;color:#111;">0</td></tr>
+            <tr><td style="border:1px solid #d0dcec;padding:9px 14px;background:#f8faff;color:#1a3a5f;font-weight:600;">Из них инвалидов</td><td style="border:1px solid #d0dcec;padding:9px 14px;color:#111;">0</td></tr>
+            <tr><td colspan="2" style="background:#e8f2fc;border:1px solid #cfe0f0;padding:10px 14px;font-weight:800;color:#003366;text-transform:uppercase;letter-spacing:0.4px;font-size:13px;">Рабочие зоны</td></tr>
+            <tr><td style="border:1px solid #d0dcec;padding:9px 14px;background:#f8faff;color:#1a3a5f;font-weight:600;">Зона 1</td><td style="border:1px solid #d0dcec;padding:9px 14px;color:#111;">Пост охраны — 60%</td></tr>
+            <tr><td style="border:1px solid #d0dcec;padding:9px 14px;background:#f8faff;color:#1a3a5f;font-weight:600;">Зона 2</td><td style="border:1px solid #d0dcec;padding:9px 14px;color:#111;">Кабина автомобиля — 40%</td></tr>
+            <tr><td colspan="2" style="background:#e8f2fc;border:1px solid #cfe0f0;padding:10px 14px;font-weight:800;color:#003366;text-transform:uppercase;letter-spacing:0.4px;font-size:13px;">Используемое оборудование</td></tr>
+            <tr><td style="border:1px solid #d0dcec;padding:9px 14px;background:#f8faff;color:#1a3a5f;font-weight:600;">Оборудование</td><td style="border:1px solid #d0dcec;padding:9px 14px;color:#111;">Радиостанция<br>ПЭВМ (персональный компьютер)<br>Автомобиль легковой</td></tr>
+            <tr><td style="border:1px solid #d0dcec;padding:9px 14px;background:#f8faff;color:#1a3a5f;font-weight:600;">Транспортное средство</td><td style="border:1px solid #d0dcec;padding:9px 14px;color:#111;">Лада Гранта, 2020, А 111 АА 77</td></tr>
+            <tr><td colspan="2" style="background:#e8f2fc;border:1px solid #cfe0f0;padding:10px 14px;font-weight:800;color:#003366;text-transform:uppercase;letter-spacing:0.4px;font-size:13px;">Применяемые сырьё и материалы</td></tr>
+            <tr><td style="border:1px solid #d0dcec;padding:9px 14px;background:#f8faff;color:#1a3a5f;font-weight:600;">Материалы</td><td style="border:1px solid #d0dcec;padding:9px 14px;color:#111;">Бензин АИ-95, Дизельное топливо</td></tr>
+            <tr><td colspan="2" style="background:#e8f2fc;border:1px solid #cfe0f0;padding:10px 14px;font-weight:800;color:#003366;text-transform:uppercase;letter-spacing:0.4px;font-size:13px;">Сотрудники на рабочем месте</td></tr>
+            <tr><td style="border:1px solid #d0dcec;padding:9px 14px;background:#f8faff;color:#1a3a5f;font-weight:600;">Сотрудник 1</td><td style="border:1px solid #d0dcec;padding:9px 14px;color:#111;">Иванов Иван Иванович ♂ — 123-456-789 00</td></tr>
+            <tr><td style="border:1px solid #d0dcec;padding:9px 14px;background:#f8faff;color:#1a3a5f;font-weight:600;">Сотрудник 2</td><td style="border:1px solid #d0dcec;padding:9px 14px;color:#111;">Петров Пётр Петрович ♂ — 234-567-890 11</td></tr>
+            <tr><td colspan="2" style="background:#e8f2fc;border:1px solid #cfe0f0;padding:10px 14px;font-weight:800;color:#003366;text-transform:uppercase;letter-spacing:0.4px;font-size:13px;">Гарантии и компенсации</td></tr>
+            <tr><td style="border:1px solid #d0dcec;padding:9px 14px;background:#f8faff;color:#1a3a5f;font-weight:600;">Гарантии отсутствуют</td><td style="border:1px solid #d0dcec;padding:9px 14px;color:#111;">нет</td></tr>
+            <tr><td style="border:1px solid #d0dcec;padding:9px 14px;background:#f8faff;color:#1a3a5f;font-weight:600;">Повышенная оплата труда</td><td style="border:1px solid #d0dcec;padding:9px 14px;color:#111;">да</td></tr>
+            <tr><td style="border:1px solid #d0dcec;padding:9px 14px;background:#f8faff;color:#1a3a5f;font-weight:600;">Дополнительный отпуск</td><td style="border:1px solid #d0dcec;padding:9px 14px;color:#111;">да</td></tr>
+            <tr><td style="border:1px solid #d0dcec;padding:9px 14px;background:#f8faff;color:#1a3a5f;font-weight:600;">Сокращённая продолжительность рабочего времени</td><td style="border:1px solid #d0dcec;padding:9px 14px;color:#111;">нет</td></tr>
+            <tr><td style="border:1px solid #d0dcec;padding:9px 14px;background:#f8faff;color:#1a3a5f;font-weight:600;">Молоко / равноценные пищевые продукты</td><td style="border:1px solid #d0dcec;padding:9px 14px;color:#111;">нет</td></tr>
+            <tr><td style="border:1px solid #d0dcec;padding:9px 14px;background:#f8faff;color:#1a3a5f;font-weight:600;">Лечебно-профилактическое питание</td><td style="border:1px solid #d0dcec;padding:9px 14px;color:#111;">нет</td></tr>
+            <tr><td style="border:1px solid #d0dcec;padding:9px 14px;background:#f8faff;color:#1a3a5f;font-weight:600;">Право на досрочную пенсию</td><td style="border:1px solid #d0dcec;padding:9px 14px;color:#111;">нет</td></tr>
+            <tr><td style="border:1px solid #d0dcec;padding:9px 14px;background:#f8faff;color:#1a3a5f;font-weight:600;">Основание досрочной пенсии</td><td style="border:1px solid #d0dcec;padding:9px 14px;color:#111;">—</td></tr>
+            <tr><td style="border:1px solid #d0dcec;padding:9px 14px;background:#f8faff;color:#1a3a5f;font-weight:600;">Медосмотры</td><td style="border:1px solid #d0dcec;padding:9px 14px;color:#111;">да</td></tr>
+            <tr><td style="border:1px solid #d0dcec;padding:9px 14px;background:#f8faff;color:#1a3a5f;font-weight:600;">Пункты приказа 29Н</td><td style="border:1px solid #d0dcec;padding:9px 14px;color:#111;">4.4 — Шум<br>18.1 — Управление наземными ТС (A, B, C)</td></tr>
           </tbody>
         </table>
       </div>
@@ -851,7 +817,7 @@
     <button class="btn btn-primary" id="saveBtn2">💾 Сохранить</button>
     <button class="btn btn-excel" id="excelBtn2">📊 Excel</button>
     <button class="btn btn-word" id="wordBtn2">📄 Word</button>
-    <button class="btn btn-import" id="importBtn2">📥 Импорт Excel</button>
+    <button class="btn btn-import" id="importBtn2">📥 Импорт перечня</button>
     <button class="btn btn-mail" id="mailBtn2">📧 Менеджеру</button>
   </div>
 </div>
@@ -870,6 +836,72 @@
     <div class="modal-footer">
       <button class="btn btn-ghost" id="dictCancel">Отмена</button>
       <button class="btn btn-primary" id="dictApply">Выбрать</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="importModal">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <h3>📥 Импорт перечня рабочих мест</h3>
+      <button class="btn-icon danger" id="importClose" title="Закрыть">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="importStep1" class="import-step">
+        <div class="import-step-title"><span class="num">1</span> Выберите файл</div>
+        <div class="import-drop" id="importDrop">
+          <input type="file" id="importFileUniversal" accept=".xlsx,.xls,.csv,.json,.txt,.tsv" style="display:none" />
+          <div class="icon">📄</div>
+          <div class="main">Перетащите файл или нажмите для выбора</div>
+          <div class="sub">Excel (.xlsx, .xls), CSV, JSON, текстовый список</div>
+        </div>
+        <div class="import-file-info" id="importFileInfo" style="display:none;">
+          <span>📎</span>
+          <span class="name" id="importFileName"></span>
+          <span class="size" id="importFileSize"></span>
+          <button class="btn-icon danger" id="importFileClear" title="Убрать файл">✕</button>
+        </div>
+        <div class="import-sheet-select" id="importSheetWrap" style="display:none;">
+          <label style="font-size:12.5px;font-weight:700;color:#4a6f8f;text-transform:uppercase;letter-spacing:0.4px;display:block;margin-bottom:4px;">Лист Excel</label>
+          <select id="importSheetSelect"></select>
+        </div>
+      </div>
+
+      <div id="importStep2" class="import-step" style="display:none;">
+        <div class="import-step-title"><span class="num">2</span> Сопоставьте колонки</div>
+        <div class="modal-hint">Мы попробовали определить колонки автоматически. Проверьте и при необходимости исправьте. Объединённые ячейки (например, подразделение только в первой строке группы) заполняются вниз автоматически.</div>
+        <div class="import-map-table-wrap" style="max-height:340px;overflow-y:auto;">
+          <table class="import-map-table">
+            <thead>
+              <tr>
+                <th>Колонка в файле</th>
+                <th>Пример данных</th>
+                <th>Куда импортировать</th>
+              </tr>
+            </thead>
+            <tbody id="importMapBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="importStep3" class="import-step" style="display:none;">
+        <div class="import-step-title"><span class="num">3</span> Предпросмотр</div>
+        <div class="import-preview" id="importPreview"></div>
+        <div class="import-summary" id="importSummary"></div>
+      </div>
+
+      <div id="importStep4" class="import-step" style="display:none;">
+        <div class="import-step-title"><span class="num">4</span> Режим импорта</div>
+        <div class="import-mode">
+          <label><input type="radio" name="importMode" value="append" checked /> Добавить к текущим данным</label>
+          <label><input type="radio" name="importMode" value="replace" /> Заменить все данные</label>
+        </div>
+        <div class="import-warn" id="importWarn" style="display:none;"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="importCancel">Отмена</button>
+      <button class="btn btn-primary" id="importApply" disabled>Импортировать</button>
     </div>
   </div>
 </div>
@@ -1054,7 +1086,6 @@
 </div>
 
 <div class="toast" id="toast"></div>
-<input type="file" id="importFileInput" accept=".xlsx,.xls" style="display:none;" />
 <input type="file" id="importDataFileInput" accept=".json,.sout.json,application/json" style="display:none;" />
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
@@ -1063,8 +1094,8 @@
 /* ============================================================
    КОНСТАНТЫ
    ============================================================ */
-const STORAGE_KEY = 'sout_constructor_v22';
-const USER_DICT_KEY = 'sout_user_dict_v1';
+const STORAGE_KEY = 'sout_constructor_v23';
+const USER_DICT_KEY = 'sout_user_dict_v2';
 const DADATA_API_KEY = 'f94f4386b5ec6bc654487fc994c0fba0fdad788c';
 const SHIFT_OPTIONS = ['1/3', '2/2', '5/2', '1/2', '3/3', '4/2', '1/1', 'другое'];
 const MANAGER_EMAIL_DEFAULT = 'sulima.d@trud-ps.ru';
@@ -1470,12 +1501,6 @@ function migrateWorkplace(wp) {
   }
   delete wp.benefits.medicalExamsOrder29n;
   if (typeof wp.benefits.benefitsAbsent === 'undefined') wp.benefits.benefitsAbsent = false;
-  if (typeof wp.benefits.medicalExamsAbsent !== 'undefined') {
-    if (wp.benefits.medicalExamsAbsent && wp.benefits.medicalExams !== 'yes') {
-      wp.benefits.medicalExams = 'no';
-    }
-    delete wp.benefits.medicalExamsAbsent;
-  }
   if (typeof wp.noFio === 'undefined') wp.noFio = false;
   if (typeof wp.noSnils === 'undefined') wp.noSnils = false;
   if (typeof wp.manualMen === 'undefined') wp.manualMen = null;
@@ -2075,8 +2100,6 @@ function renderWorkplace(wp, deptId, wIdx) {
       if (field === 'women') wp.manualWomen = v;
       if (field === 'disabled') wp.disabled = v || 0;
       if (field === 'minors') wp.minors = v || 0;
-
-      // Синхронизация ручных значений с основными полями карточки
       if (wp.noFio && wp.noSnils) {
         if (wp.manualWorkers != null) {
           wp.workersCount = wp.manualWorkers;
@@ -2089,7 +2112,6 @@ function renderWorkplace(wp, deptId, wIdx) {
           if (wInp) wInp.value = wp.manualWomen;
         }
       }
-
       validateManual(el, wp);
       renderTotals(); scheduleSave();
     });
@@ -2227,7 +2249,6 @@ function renderEmployees(el, wp) {
   if (!empList) return;
   empList.innerHTML = '';
 
-  // Внутренние хелперы для показа/скрытия предупреждения СНИЛС
   function showSnilsWarning(rowEl, digitsCount) {
     let warn = rowEl.querySelector('.snils-warn');
     if (!warn) {
@@ -2280,7 +2301,6 @@ function renderEmployees(el, wp) {
     const snilsInp = row.querySelector('[data-emp="snils"]');
     const genderRadios = row.querySelectorAll('[data-emp-gender]');
 
-    // Первичная проверка СНИЛС при отрисовке (если значение уже есть)
     (function initSnilsState() {
       const res = validateSnils(emp.snils);
       if (res.state === 'invalid') {
@@ -2326,7 +2346,6 @@ function renderEmployees(el, wp) {
 
       if (e.target.value !== formatted) {
         e.target.value = formatted;
-        // восстановить каретку по цифрам
         let pos = 0, count = 0;
         while (pos < formatted.length && count < digitsBefore) {
           if (/\d/.test(formatted[pos])) count++;
@@ -2670,7 +2689,6 @@ function attachPositionAutocomplete(el, wp) {
             const okInp = el.querySelector('[data-field="okCode"]');
             if (okInp) okInp.value = wp.okCode;
 
-            // Сохраняем в userDict, чтобы в модалке справочника тоже был код
             if (it.code) {
               if (!Array.isArray(userDict.positions)) userDict.positions = [];
               const exists = userDict.positions.some(p => p.code === it.code && p.name === it.name);
@@ -2996,13 +3014,10 @@ function runFullValidation() {
           if (!wp.noFio && !(emp.fio || '').trim()) errors.push(`${wpLabel}: сотрудник №${i + 1} — пустое ФИО`);
           if (!wp.noSnils) {
             const s = (emp.snils || '').trim();
-            if (!s) {
-              errors.push(`${wpLabel}: сотрудник №${i + 1} — пустой СНИЛС`);
-            } else {
+            if (!s) errors.push(`${wpLabel}: сотрудник №${i + 1} — пустой СНИЛС`);
+            else {
               const dg = snilsDigits(s);
-              if (dg.length !== 11) {
-                errors.push(`${wpLabel}: сотрудник №${i + 1} — СНИЛС должен содержать 11 цифр (введено ${dg.length})`);
-              }
+              if (dg.length !== 11) errors.push(`${wpLabel}: сотрудник №${i + 1} — СНИЛС должен содержать 11 цифр (введено ${dg.length})`);
             }
           }
           if (!wp.noFio && !emp.gender) errors.push(`${wpLabel}: сотрудник №${i + 1} — не указан пол`);
@@ -3205,12 +3220,7 @@ async function loadFromDadata() {
    ============================================================ */
 function exportSoutData() {
   const payload = {
-    _meta: {
-      app: 'SOUT Constructor',
-      version: 1,
-      exportedAt: new Date().toISOString(),
-      orgShort: state.org.shortName || state.org.fullName || ''
-    },
+    _meta: { app: 'SOUT Constructor', version: 1, exportedAt: new Date().toISOString(), orgShort: state.org.shortName || state.org.fullName || '' },
     state: state
   };
   const json = JSON.stringify(payload, null, 2);
@@ -3231,9 +3241,7 @@ function importSoutData(file) {
     try {
       const parsed = JSON.parse(e.target.result);
       const incoming = parsed.state || parsed;
-      if (!incoming || !incoming.org || !Array.isArray(incoming.departments)) {
-        throw new Error('Неверный формат файла');
-      }
+      if (!incoming || !incoming.org || !Array.isArray(incoming.departments)) throw new Error('Неверный формат файла');
       if (!Array.isArray(incoming.org.manualAddresses)) incoming.org.manualAddresses = [];
       if (typeof incoming.org.singleEmployee === 'undefined') incoming.org.singleEmployee = false;
       if (!Array.isArray(incoming.org.commissionMembers)) incoming.org.commissionMembers = JSON.parse(JSON.stringify(DEFAULT_DATA.org.commissionMembers));
@@ -3246,175 +3254,564 @@ function importSoutData(file) {
       saveState(true);
       render();
       showToast('📂 Данные загружены из файла');
-    } catch (err) {
-      showToast('❌ Ошибка загрузки: ' + err.message, true);
-    }
+    } catch (err) { showToast('❌ Ошибка загрузки: ' + err.message, true); }
   };
   reader.readAsText(file);
 }
 
 /* ============================================================
-   ИМПОРТ EXCEL
+   УНИВЕРСАЛЬНЫЙ ИМПОРТ ПЕРЕЧНЯ
    ============================================================ */
-function importFromExcel(file) {
+const IMPORT_FIELD_LABELS = {
+  skip: '— не импортировать —',
+  num: '№ рабочего места',
+  position: 'Должность / профессия',
+  okCode: 'Код ОК-016',
+  department: 'Подразделение',
+  address: 'Адрес подразделения',
+  shift: 'Сменность',
+  shiftHours: 'Рабочая смена (час)',
+  description: 'Описание работы',
+  workers: 'Кол-во работающих',
+  women: 'Из них женщин',
+  minors: 'Из них несовершеннолетних',
+  disabled: 'Из них инвалидов',
+  zones: 'Рабочие зоны',
+  equipment: 'Оборудование',
+  materials: 'Материалы',
+  fio: 'ФИО сотрудника',
+  snils: 'СНИЛС',
+  higherPay: 'Повышенная оплата труда (да/нет)',
+  extraVacation: 'Дополнительный отпуск (да/нет)',
+  shorterHours: 'Сокращённое время (да/нет)',
+  milk: 'Молоко / ЛПП (да/нет)',
+  therapeuticFood: 'Лечебно-проф. питание (да/нет)',
+  pension: 'Право на досрочную пенсию',
+  pensionBasis: 'Основание досрочной пенсии',
+  medical: 'Медосмотры (да/нет)',
+  order29n: 'Пункты приказа 29Н',
+  classConditions: 'Класс условий труда',
+  prevNum: '№ по предыдущей СОУТ'
+};
+
+const IMPORT_ALIASES = {
+  num:        ['№', 'номер', '№ п/п', 'номер рабочего места', '№ рм', '№ рабочего места'],
+  position:   ['должность', 'профессия', 'наименование профессии', 'специальность', 'наименование должности'],
+  okCode:     ['код', 'ок-016', 'ок 016', 'код ок', 'код профессии', 'код ок-016'],
+  department: ['подразделение', 'структурное подразделение', 'отдел', 'цех', 'участок'],
+  address:    ['адрес', 'адрес проведения', 'фактический адрес', 'адрес места'],
+  shift:      ['сменность', 'режим работы', 'график', 'график работы'],
+  shiftHours: ['смена', 'часов', 'продолжительность смены', 'смена (час)', 'рабочая смена'],
+  description:['описание', 'характер работы', 'краткое описание', 'описание работы'],
+  workers:    ['работающих', 'количество', 'численность', 'всего', 'кол-во', 'кол-во работающих', 'штат'],
+  women:      ['женщин', 'из них женщин', 'женщины'],
+  minors:     ['несовершеннолетних', 'из них несовершеннолетних', 'несовершеннолетние'],
+  disabled:   ['инвалидов', 'из них инвалидов', 'инвалиды'],
+  zones:      ['рабочая зона', 'рабочие зоны', 'зоны', 'зона'],
+  equipment:  ['оборудование', 'используемое оборудование', 'оборудование рабочего места'],
+  materials:  ['материалы', 'сырьё', 'сырье', 'применяемые материалы'],
+  fio:        ['фио', 'фамилия', 'сотрудник', 'работник', 'фамилия имя отчество'],
+  snils:      ['снилс'],
+  higherPay:  ['повышенная оплата', 'доплата', 'повышенная оплата труда'],
+  extraVacation: ['дополнительный отпуск', 'доп. отпуск', 'дополнительный'],
+  shorterHours: ['сокращённая', 'сокращенная продолжительность', 'сокращённое время'],
+  milk:       ['молоко', 'лпп', 'молоко / лпп'],
+  therapeuticFood: ['лечебно-профилактическое', 'лечебно-профилактическое питание', 'лпп'],
+  pension:    ['досрочная пенсия', 'пенсия', 'право на досрочную пенсию'],
+  pensionBasis: ['основание', 'основание пенсии', 'основание досрочной пенсии'],
+  medical:    ['медосмотр', 'медицинский осмотр', 'медосмотры'],
+  order29n:   ['29н', 'пункты приказа', 'пункты 29н', 'приказ 29н'],
+  classConditions: ['класс', 'класс условий', 'класс условий труда'],
+  prevNum:    ['№ по предыдущей', 'предыдущий №', '№ предыдущей соут']
+};
+
+let importState = {
+  fileName: '', fileSize: 0, wb: null, sheets: [], currentSheet: '',
+  headers: [], sampleRows: [], allRows: [], mapping: {}, parsedData: null
+};
+
+function normHeader(s) {
+  return String(s || '').trim().toLowerCase().replace(/\s+/g, ' ').replace(/[«»"']/g, '');
+}
+
+function matchHeaderToField(header) {
+  const h = normHeader(header);
+  if (!h) return 'skip';
+  for (const [field, aliases] of Object.entries(IMPORT_ALIASES)) {
+    for (const a of aliases) { if (h === a.toLowerCase()) return field; }
+  }
+  for (const [field, aliases] of Object.entries(IMPORT_ALIASES)) {
+    for (const a of aliases) { if (h.includes(a.toLowerCase())) return field; }
+  }
+  return 'skip';
+}
+
+function fillMergedCellsDown(rows, colIndexes) {
+  colIndexes.forEach(idx => {
+    let lastVal = '';
+    rows.forEach(r => {
+      const cur = String(r[idx] || '').trim();
+      if (cur) lastVal = cur;
+      else if (lastVal) r[idx] = lastVal;
+    });
+  });
+  return rows;
+}
+
+function openImportModal() {
+  importState = { fileName: '', fileSize: 0, wb: null, sheets: [], currentSheet: '', headers: [], sampleRows: [], allRows: [], mapping: {}, parsedData: null };
+  document.getElementById('importFileInfo').style.display = 'none';
+  document.getElementById('importSheetWrap').style.display = 'none';
+  document.getElementById('importStep2').style.display = 'none';
+  document.getElementById('importStep3').style.display = 'none';
+  document.getElementById('importStep4').style.display = 'none';
+  document.getElementById('importApply').disabled = true;
+  document.getElementById('importSummary').innerHTML = '';
+  document.getElementById('importWarn').style.display = 'none';
+  document.getElementById('importModal').classList.add('open');
+}
+
+function handleImportFile(file) {
+  importState.fileName = file.name;
+  importState.fileSize = file.size;
+  document.getElementById('importFileName').textContent = file.name;
+  document.getElementById('importFileSize').textContent = formatFileSize(file.size);
+  document.getElementById('importFileInfo').style.display = 'flex';
+
+  const ext = (file.name.split('.').pop() || '').toLowerCase();
   const reader = new FileReader();
-  reader.onload = (e) => {
-    try {
-      const data = new Uint8Array(e.target.result);
-      const wb = XLSX.read(data, { type: 'array' });
-      const wsName = wb.SheetNames.find(n => n.toLowerCase() === 'соут') || wb.SheetNames[0];
-      const ws = wb.Sheets[wsName];
-      const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
-      const result = parseImportedRows(rows);
-      if (result.departments.length === 0) { showToast('⚠ В файле не найдено ни одного рабочего места', true); return; }
-      result.departments.forEach(d => state.departments.push(d));
-      render(); scheduleSave();
-      showToast(`📥 Импортировано: ${result.departments.length} подразд., ${result.workplacesCount} раб. мест, ${result.employeesCount} сотрудников`);
-    } catch (err) { showToast('❌ Ошибка импорта: ' + err.message, true); }
-  };
-  reader.readAsArrayBuffer(file);
+
+  if (ext === 'json') {
+    reader.onload = (e) => {
+      try {
+        const data = JSON.parse(e.target.result);
+        const parsed = normalizeFromJSON(data);
+        if (!parsed) throw new Error('JSON не содержит распознаваемых данных');
+        importState.parsedData = parsed;
+        showImportPreview();
+      } catch (err) { showToast('❌ JSON: ' + err.message, true); }
+    };
+    reader.readAsText(file);
+    return;
+  }
+
+  if (ext === 'txt' || ext === 'csv' || ext === 'tsv') {
+    reader.onload = (e) => {
+      try {
+        const text = e.target.result;
+        const firstLine = text.split(/\r?\n/)[0] || '';
+        const delim = firstLine.includes('\t') ? '\t' : (firstLine.includes(';') ? ';' : ',');
+        const hasDelims = firstLine.split(delim).length > 1;
+        if (hasDelims) {
+          const rows = parseDelimited(text, delim);
+          buildFromRows(rows, file.name);
+        } else {
+          buildFromTextList(text);
+        }
+      } catch (err) { showToast('❌ ' + err.message, true); }
+    };
+    reader.readAsText(file);
+    return;
+  }
+
+  if (ext === 'xlsx' || ext === 'xls') {
+    if (typeof XLSX === 'undefined') { showToast('❌ Библиотека XLSX не загружена', true); return; }
+    reader.onload = (e) => {
+      try {
+        const data = new Uint8Array(e.target.result);
+        const wb = XLSX.read(data, { type: 'array' });
+        importState.wb = wb;
+        importState.sheets = wb.SheetNames;
+        importState.currentSheet = wb.SheetNames[0];
+        renderSheetSelect();
+        buildFromExcelSheet();
+      } catch (err) { showToast('❌ Excel: ' + err.message, true); }
+    };
+    reader.readAsArrayBuffer(file);
+    return;
+  }
+
+  showToast('❌ Неподдерживаемый формат: .' + ext, true);
 }
 
-function parseImportedRows(rows) {
-  const result = { departments: [], workplacesCount: 0, employeesCount: 0 };
-  let currentDept = null, currentWp = null;
-  const DEPT_PREFIX = /^структурное\s+подразделение\s*:\s*/i;
-  const DEPT_PREFIX_2 = /^подразделение\s*:\s*/i;
-  const ORG_LINE = /^организация\s*:/i;
+function renderSheetSelect() {
+  const wrap = document.getElementById('importSheetWrap');
+  const sel = document.getElementById('importSheetSelect');
+  if (!wrap || !sel) return;
+  if (importState.sheets.length <= 1) { wrap.style.display = 'none'; return; }
+  wrap.style.display = 'block';
+  sel.innerHTML = importState.sheets.map(s => `<option value="${escAttr(s)}" ${s === importState.currentSheet ? 'selected' : ''}>${escHtml(s)}</option>`).join('');
+  sel.onchange = () => { importState.currentSheet = sel.value; buildFromExcelSheet(); };
+}
 
-  rows.forEach((row, rIdx) => {
-    if (!row || !row.length) return;
-    const cellA = String(row[0] || '').trim();
-    const cellB = String(row[1] || '').trim();
-    const cellN = String(row[13] || '').trim();
-    const cellO = String(row[14] || '').trim();
-    if (rIdx === 0) return;
-    if (/^№\s*п\/п/i.test(cellA) || /наименование профессии/i.test(cellB)) return;
-    if (ORG_LINE.test(cellA)) return;
+function buildFromExcelSheet() {
+  const ws = importState.wb.Sheets[importState.currentSheet];
+  if (!ws) return;
+  const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+  buildFromRows(rows, importState.fileName);
+}
 
-    if (DEPT_PREFIX.test(cellA) || DEPT_PREFIX_2.test(cellA)) {
-      const raw = cellA.replace(DEPT_PREFIX, '').replace(DEPT_PREFIX_2, '').trim();
-      const addrMatch = raw.match(/\(фактический\s+адрес\s*:\s*([^)]+)\)/i);
-      let name = raw, address = '';
-      if (addrMatch) { name = raw.substring(0, raw.indexOf('(')).trim(); address = addrMatch[1].trim(); }
-      currentDept = { id: uid('dept'), name: name || 'Подразделение', address, workplaces: [] };
-      result.departments.push(currentDept);
-      currentWp = null;
-      return;
+function buildFromRows(rows, fileName) {
+  let headerIdx = -1;
+  for (let i = 0; i < Math.min(rows.length, 10); i++) {
+    const r = rows[i];
+    if (!r || !r.length) continue;
+    const nonEmpty = r.filter(c => String(c || '').trim()).length;
+    if (nonEmpty < 2) continue;
+    let matches = 0;
+    r.forEach(c => { if (matchHeaderToField(c) !== 'skip') matches++; });
+    if (matches >= 2) { headerIdx = i; break; }
+  }
+  if (headerIdx === -1) headerIdx = 0;
+
+  const headers = (rows[headerIdx] || []).map(h => String(h || '').trim());
+  let dataRows = rows.slice(headerIdx + 1).filter(r => r && r.some(c => String(c || '').trim()));
+  if (!headers.length || !dataRows.length) { showToast('⚠ Не удалось найти заголовки/данные', true); return; }
+
+  const mergedCols = [];
+  headers.forEach((h, i) => {
+    const f = matchHeaderToField(h);
+    if (f === 'department' || f === 'address' || f === 'position' || f === 'classConditions') mergedCols.push(i);
+  });
+  if (mergedCols.length) dataRows = fillMergedCellsDown(dataRows, mergedCols);
+
+  importState.headers = headers;
+  importState.allRows = dataRows;
+  importState.sampleRows = dataRows.slice(0, 5);
+  importState.mapping = {};
+  headers.forEach((h, i) => { importState.mapping[i] = matchHeaderToField(h); });
+
+  renderMappingTable();
+  document.getElementById('importStep2').style.display = 'block';
+  document.getElementById('importStep3').style.display = 'none';
+  document.getElementById('importStep4').style.display = 'none';
+  document.getElementById('importApply').disabled = true;
+}
+
+function renderMappingTable() {
+  const body = document.getElementById('importMapBody');
+  if (!body) return;
+  const optionsHtml = (selected) => Object.entries(IMPORT_FIELD_LABELS)
+    .map(([v, l]) => `<option value="${v}" ${v === selected ? 'selected' : ''}>${escHtml(l)}</option>`).join('');
+
+  body.innerHTML = importState.headers.map((h, i) => {
+    const sample = importState.sampleRows.map(r => String(r[i] || '').trim()).filter(Boolean).slice(0, 2).join(' / ');
+    const mapped = importState.mapping[i] || 'skip';
+    const cls = mapped === 'skip' ? 'unmatched' : 'matched';
+    return `<tr class="${cls}" data-idx="${i}">
+      <td class="col-source">${escHtml(h || 'Колонка ' + (i + 1))}</td>
+      <td class="col-sample">${escHtml(sample || '—')}</td>
+      <td class="col-target"><select data-idx="${i}">${optionsHtml(mapped)}</select></td>
+    </tr>`;
+  }).join('');
+
+  body.querySelectorAll('select').forEach(sel => {
+    sel.addEventListener('change', () => {
+      const idx = +sel.dataset.idx;
+      importState.mapping[idx] = sel.value;
+      const tr = sel.closest('tr');
+      tr.className = sel.value === 'skip' ? 'unmatched' : 'matched';
+      buildPreview();
+    });
+  });
+  buildPreview();
+}
+
+function buildPreview() {
+  if (typeof XLSX === 'undefined' && !importState.allRows.length) return;
+  try {
+    const parsed = parseRowsToWorkplaces(importState.allRows, importState.mapping, importState.headers);
+    importState.parsedData = parsed;
+    showImportPreview();
+  } catch (err) {
+    console.error(err);
+    showToast('⚠ Ошибка разбора: ' + err.message, true);
+  }
+}
+
+function showImportPreview() {
+  const preview = document.getElementById('importPreview');
+  const summary = document.getElementById('importSummary');
+  const step3 = document.getElementById('importStep3');
+  const step4 = document.getElementById('importStep4');
+  const parsed = importState.parsedData;
+  if (!parsed) return;
+
+  const rows = [];
+  parsed.departments.forEach(d => d.workplaces.forEach(wp => {
+    rows.push({
+      dept: d.name, num: wp.num, position: wp.position, okCode: wp.okCode, shift: wp.shift,
+      workers: wp.workersCount, women: wp.women,
+      fio: (wp.employees || []).map(e => e.fio).filter(Boolean).join(', '),
+      snils: (wp.employees || []).map(e => e.snils).filter(Boolean).join(', ')
+    });
+  }));
+
+  const maxRows = 20;
+  const shown = rows.slice(0, maxRows);
+  preview.innerHTML = `
+    <table>
+      <thead><tr>
+        <th>Подразделение</th><th>№</th><th>Должность</th><th>ОК</th><th>Смен.</th><th>Работающих</th><th>Жен.</th><th>ФИО</th><th>СНИЛС</th>
+      </tr></thead>
+      <tbody>
+        ${shown.map(r => `<tr>
+          <td>${escHtml(r.dept)}</td><td>${escHtml(r.num)}</td><td>${escHtml(r.position)}</td>
+          <td>${escHtml(r.okCode)}</td><td>${escHtml(r.shift)}</td><td>${r.workers}</td><td>${r.women}</td>
+          <td>${escHtml(r.fio)}</td><td>${escHtml(r.snils)}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+    ${rows.length > maxRows ? `<div style="padding:8px 12px;font-size:12.5px;color:#7a94ab;background:#f8faff;">… и ещё ${rows.length - maxRows} строк</div>` : ''}
+  `;
+
+  const totalWp = parsed.departments.reduce((s, d) => s + d.workplaces.length, 0);
+  const totalEmps = parsed.departments.reduce((s, d) => s + d.workplaces.reduce((ss, wp) => ss + (wp.employees?.length || 0), 0), 0);
+  summary.innerHTML = `Распознано: <b>${parsed.departments.length}</b> подразд., <b>${totalWp}</b> раб. мест, <b>${totalEmps}</b> сотрудников.`;
+
+  step3.style.display = 'block';
+  step4.style.display = 'block';
+  document.getElementById('importApply').disabled = totalWp === 0;
+}
+
+function parseRowsToWorkplaces(rows, mapping, headers) {
+  const flat = [];
+  rows.forEach(r => {
+    const get = (field) => {
+      const idx = Object.keys(mapping).find(k => mapping[k] === field);
+      return idx != null ? String(r[idx] || '').trim() : '';
+    };
+    const num = get('num');
+    const position = get('position');
+    const department = get('department') || 'Основное';
+    const address = get('address') || '';
+    const okCode = get('okCode');
+    const shift = get('shift') || '5/2';
+    const shiftHours = parseFloat(get('shiftHours')) || 8;
+    const description = get('description');
+    const workers = parseInt(get('workers'), 10);
+    const women = parseInt(get('women'), 10);
+    const minors = parseInt(get('minors'), 10);
+    const disabled = parseInt(get('disabled'), 10);
+    const zonesRaw = get('zones');
+    const equipmentRaw = get('equipment');
+    const materialsRaw = get('materials');
+    const fioRaw = get('fio');
+    const snilsRaw = get('snils');
+    const higherPay = yesNoFromCell(get('higherPay'));
+    const extraVacation = yesNoFromCell(get('extraVacation'));
+    const shorterHours = yesNoFromCell(get('shorterHours'));
+    const milk = yesNoFromCell(get('milk'));
+    const therapeuticFood = yesNoFromCell(get('therapeuticFood'));
+    const pension = yesNoFromCell(get('pension'));
+    const pensionBasis = get('pensionBasis');
+    const medical = yesNoFromCell(get('medical'));
+    const order29nRaw = get('order29n');
+    const classConditions = get('classConditions');
+    const prevNum = get('prevNum');
+
+    if (!position && !num && !fioRaw && !snilsRaw) return;
+
+    const fioList = splitLines(fioRaw);
+    const snilsList = splitLines(snilsRaw).map(normalizeSnils);
+    const empCount = Math.max(fioList.length, snilsList.length, 1);
+    const employees = [];
+    for (let i = 0; i < empCount; i++) {
+      const fio = fioList[i] || '';
+      const snils = snilsList[i] || '';
+      if (!fio && !snils && empCount > 1) continue;
+      const emp = { fio, snils, gender: '', genderManual: false, disabled: false, minor: false };
+      const det = detectGenderByFIO(fio);
+      if (det.gender) emp.gender = det.gender;
+      employees.push(emp);
     }
 
-    const isNumberA = /^\d+$/.test(cellA);
-    if (isNumberA) {
-      if (!currentDept) { currentDept = { id: uid('dept'), name: 'Импортированные', address: '', workplaces: [] }; result.departments.push(currentDept); }
-      const wp = createEmptyWorkplace();
-      wp.numManual = true; wp.num = cellA;
-      wp.position = cellB;
-      wp.shift = String(row[3] || '5/2').trim() || '5/2';
-      wp.shiftHours = parseFloat(row[4]) || 8;
-      wp.description = String(row[5] || '').trim();
-      wp.workersCount = parseInt(row[6], 10) || 0;
-      wp.women = parseInt(row[7], 10) || 0;
-      wp.minors = parseInt(row[8], 10) || 0;
-      wp.disabled = parseInt(row[9], 10) || 0;
-      wp.wcManual = true; wp.wManual = true; wp.mManual = true; wp.dManual = true;
-      wp.workZones = parseZones(String(row[10] || ''));
-      wp.equipmentList = parseEquipment(String(row[11] || ''));
-      const materialsVal = String(row[12] || '').trim();
-      if (/^отсутству/i.test(materialsVal)) { wp.materialsAbsent = true; wp.materials = ''; }
-      else { wp.materialsAbsent = false; wp.materials = materialsVal; }
-      const fioLines = splitLines(cellN);
-      const snilsLines = splitLines(cellO);
+    flat.push({
+      department, address, num, position, okCode, shift, shiftHours, description,
+      workers: isNaN(workers) ? null : workers,
+      women: isNaN(women) ? null : women,
+      minors: isNaN(minors) ? 0 : minors,
+      disabled: isNaN(disabled) ? 0 : disabled,
+      zonesRaw, equipmentRaw, materialsRaw,
+      employees,
+      higherPay, extraVacation, shorterHours, milk, therapeuticFood,
+      pension, pensionBasis, medical, order29nRaw, classConditions, prevNum
+    });
+  });
+
+  const groups = new Map();
+  flat.forEach(item => {
+    const key = [item.department, item.num, item.position].join('|');
+    if (!groups.has(key)) {
+      groups.set(key, {
+        department: item.department, address: item.address,
+        num: item.num, position: item.position, okCode: item.okCode,
+        shift: item.shift, shiftHours: item.shiftHours, description: item.description,
+        workers: item.workers, women: item.women, minors: item.minors, disabled: item.disabled,
+        zonesRaw: item.zonesRaw, equipmentRaw: item.equipmentRaw, materialsRaw: item.materialsRaw,
+        employees: [],
+        higherPay: item.higherPay, extraVacation: item.extraVacation, shorterHours: item.shorterHours,
+        milk: item.milk, therapeuticFood: item.therapeuticFood,
+        pension: item.pension, pensionBasis: item.pensionBasis, medical: item.medical,
+        order29nRaw: item.order29nRaw, classConditions: item.classConditions, prevNum: item.prevNum
+      });
+    }
+    const g = groups.get(key);
+    item.employees.forEach(e => { if (e.fio || e.snils) g.employees.push(e); });
+  });
+
+  const deptMap = new Map();
+  groups.forEach(g => {
+    const key = g.department || 'Основное';
+    if (!deptMap.has(key)) deptMap.set(key, { id: uid('dept'), name: key, address: g.address || '', workplaces: [] });
+    const dept = deptMap.get(key);
+    if (!dept.address && g.address) dept.address = g.address;
+
+    const wp = createEmptyWorkplace();
+    wp.position = g.position || '';
+    wp.okCode = g.okCode || '';
+    wp.num = g.num || '';
+    wp.numManual = !!g.num;
+    wp.prevNum = g.prevNum || '';
+    wp.shift = g.shift || '5/2';
+    wp.shiftHours = g.shiftHours || 8;
+    wp.description = g.description || '';
+    wp.classConditions = g.classConditions || '';
+
+    if (g.employees.length) {
+      wp.employees = g.employees;
+      const auto = { total: g.employees.length, women: g.employees.filter(e => e.gender === 'female').length };
+      wp.workersCount = g.workers != null ? g.workers : auto.total;
+      wp.women = g.women != null ? g.women : auto.women;
+      wp.wcManual = g.workers != null;
+      wp.wManual = g.women != null;
+    } else {
       wp.employees = [];
-      const maxLen = Math.max(fioLines.length, snilsLines.length);
-      for (let i = 0; i < maxLen; i++) {
-        const fio = fioLines[i] || '';
-        const snils = normalizeSnils(snilsLines[i] || '');
-        if (!fio && !snils) continue;
-        const emp = { fio, snils, gender: '', genderManual: false, disabled: false, minor: false };
-        const det = detectGenderByFIO(fio);
-        if (det.gender) emp.gender = det.gender;
-        wp.employees.push(emp);
-        result.employeesCount++;
-      }
-      const b = wp.benefits;
-      const p16 = String(row[15] || '').trim().toLowerCase();
-      const p17 = String(row[16] || '').trim().toLowerCase();
-      const p18 = String(row[17] || '').trim().toLowerCase();
-      const p19 = String(row[18] || '').trim().toLowerCase();
-      const p20 = String(row[19] || '').trim().toLowerCase();
-      if ([p16,p17,p18,p19,p20].every(x => x === 'нет' || x === 'отсутствует')) b.benefitsAbsent = true;
-      b.higherPay = yesNoFromCell(row[15]);
-      b.extraVacation = yesNoFromCell(row[16]);
-      b.shorterHours = yesNoFromCell(row[17]);
-      b.milk = yesNoFromCell(row[18]);
-      b.therapeuticFood = yesNoFromCell(row[19]);
-      const pens = parsePension(String(row[20] || ''));
-      b.earlyPension = pens.flag;
-      b.earlyPensionBasis = pens.basis;
-      b.medicalExams = yesNoFromCell(row[21]);
-      if (row[22]) {
-        wp.order29nList = splitLines(String(row[22])).filter(Boolean);
-        if (!wp.order29nList.length) wp.order29nList = [''];
-      }
-      currentDept.workplaces.push(wp);
-      result.workplacesCount++;
-      currentWp = wp;
-      return;
+      wp.workersCount = g.workers != null ? g.workers : 0;
+      wp.women = g.women != null ? g.women : 0;
+      wp.wcManual = true; wp.wManual = true;
+    }
+    wp.minors = g.minors || 0;
+    wp.disabled = g.disabled || 0;
+    wp.mManual = true; wp.dManual = true;
+
+    wp.workZones = parseZones(g.zonesRaw || '');
+    wp.equipmentList = parseEquipment(g.equipmentRaw || '');
+    const mat = (g.materialsRaw || '').trim();
+    if (/^отсутству/i.test(mat)) { wp.materialsAbsent = true; wp.materials = ''; }
+    else { wp.materialsAbsent = false; wp.materials = mat; }
+
+    const b = wp.benefits;
+    b.higherPay = g.higherPay; b.extraVacation = g.extraVacation; b.shorterHours = g.shorterHours;
+    b.milk = g.milk; b.therapeuticFood = g.therapeuticFood;
+    b.earlyPension = g.pension || 'no';
+    b.earlyPensionBasis = g.pensionBasis || '';
+    b.medicalExams = g.medical || 'no';
+    b.benefitsAbsent = false;
+
+    if (g.order29nRaw) {
+      wp.order29nList = splitLines(g.order29nRaw).filter(Boolean);
+      if (!wp.order29nList.length) wp.order29nList = [''];
+    } else {
+      wp.order29nList = [''];
     }
 
-    if (!cellA && currentWp && (cellN || cellO)) {
-      const fioLines = splitLines(cellN);
-      const snilsLines = splitLines(cellO);
-      const maxLen = Math.max(fioLines.length, snilsLines.length);
-      for (let i = 0; i < maxLen; i++) {
-        const fio = fioLines[i] || '';
-        const snils = normalizeSnils(snilsLines[i] || '');
-        if (!fio && !snils) continue;
-        const emp = { fio, snils, gender: '', genderManual: false, disabled: false, minor: false };
-        const det = detectGenderByFIO(fio);
-        if (det.gender) emp.gender = det.gender;
-        currentWp.employees.push(emp);
-        result.employeesCount++;
-      }
-    }
+    dept.workplaces.push(wp);
   });
-  return result;
+
+  return { departments: Array.from(deptMap.values()) };
 }
 
-function splitLines(s) { if (!s) return []; return String(s).split(/\r?\n/).map(x => x.trim()).filter(Boolean); }
-function parseZones(s) {
-  if (!s) return [{ name: '', percent: 100 }];
-  const parts = s.split(/;\s*/).map(p => p.trim()).filter(Boolean);
-  if (!parts.length) return [{ name: '', percent: 100 }];
-  const zones = parts.map(p => {
-    const m = p.match(/^(.+?)\s+(\d+)\s*%$/);
-    if (m) return { name: m[1].trim(), percent: parseInt(m[2], 10) || 0 };
-    const m2 = p.match(/^(\d+)\s*%\s*(.+)$/);
-    if (m2) return { name: m2[2].trim(), percent: parseInt(m2[1], 10) || 0 };
-    return { name: p, percent: 0 };
+function parseDelimited(text, delim) {
+  const lines = text.split(/\r?\n/).filter(l => l.trim());
+  const rows = [];
+  lines.forEach(line => {
+    const cells = [];
+    let cur = '', inQuote = false;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (ch === '"') {
+        if (inQuote && line[i + 1] === '"') { cur += '"'; i++; }
+        else inQuote = !inQuote;
+      } else if (ch === delim && !inQuote) { cells.push(cur); cur = ''; }
+      else cur += ch;
+    }
+    cells.push(cur);
+    rows.push(cells);
   });
-  return zones.length ? zones : [{ name: '', percent: 100 }];
+  return rows;
 }
-function parseEquipment(s) {
-  if (!s) return [''];
-  const parts = s.split(/\r?\n/).map(x => x.trim()).filter(Boolean);
-  return parts.length ? parts : [''];
+
+function buildFromTextList(text) {
+  const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+  if (!lines.length) { showToast('⚠ Пустой файл', true); return; }
+  const parsed = { departments: [{ id: uid('dept'), name: 'Основное', address: '', workplaces: [] }] };
+  lines.forEach((line, i) => {
+    const wp = createEmptyWorkplace();
+    wp.position = line;
+    wp.num = String(i + 1);
+    wp.numManual = true;
+    wp.workersCount = 1;
+    wp.wcManual = true;
+    parsed.departments[0].workplaces.push(wp);
+  });
+  importState.parsedData = parsed;
+  importState.headers = ['Строка'];
+  importState.allRows = lines.map(l => [l]);
+  showImportPreview();
+  document.getElementById('importStep2').style.display = 'none';
 }
-function yesNoFromCell(v) {
-  const s = String(v || '').trim().toLowerCase();
-  if (s === 'да' || s === 'yes' || s === '+') return 'yes';
-  if (s === 'нет' || s === 'no' || s === '-' || s === 'отсутствует') return 'no';
-  return 'no';
+
+function normalizeFromJSON(data) {
+  if (data && data.state && Array.isArray(data.state.departments)) return { departments: data.state.departments };
+  if (data && Array.isArray(data.departments)) return { departments: data.departments };
+  if (Array.isArray(data)) {
+    const parsed = { departments: [{ id: uid('dept'), name: 'Основное', address: '', workplaces: [] }] };
+    data.forEach(item => {
+      const wp = createEmptyWorkplace();
+      wp.position = item.position || item.должность || '';
+      wp.num = String(item.num || item['№'] || '');
+      if (wp.num) wp.numManual = true;
+      if (item.workers != null) { wp.workersCount = +item.workers; wp.wcManual = true; }
+      if (item.women != null) { wp.women = +item.women; wp.wManual = true; }
+      if (item.fio) {
+        const emp = { fio: item.fio, snils: normalizeSnils(item.snils || ''), gender: '', genderManual: false, disabled: false, minor: false };
+        const det = detectGenderByFIO(item.fio);
+        if (det.gender) emp.gender = det.gender;
+        wp.employees = [emp];
+      }
+      parsed.departments[0].workplaces.push(wp);
+    });
+    return parsed;
+  }
+  return null;
 }
-function parsePension(s) {
-  const str = String(s || '').trim();
-  if (!str) return { flag: 'no', basis: '' };
-  const lower = str.toLowerCase();
-  if (lower === 'нет' || lower === 'no' || lower === 'отсутствует') return { flag: 'no', basis: '' };
-  if (lower === 'да' || lower === 'yes') return { flag: 'yes', basis: '' };
-  const m = str.match(/^(да|yes)\s*[;,]\s*(.+)$/i);
-  if (m) return { flag: 'yes', basis: m[2].trim() };
-  return { flag: 'yes', basis: str };
+
+function applyImport() {
+  const parsed = importState.parsedData;
+  if (!parsed || !parsed.departments.length) { showToast('Нет данных для импорта', true); return; }
+  const mode = document.querySelector('input[name="importMode"]:checked').value;
+  const totalWp = parsed.departments.reduce((s, d) => s + d.workplaces.length, 0);
+
+  if (mode === 'replace') {
+    state.departments = parsed.departments;
+    state.org.manualAddresses = [];
+  } else {
+    parsed.departments.forEach(newDept => {
+      const existing = state.departments.find(d => d.name.trim().toLowerCase() === newDept.name.trim().toLowerCase());
+      if (existing) {
+        newDept.workplaces.forEach(wp => existing.workplaces.push(wp));
+        if (!existing.address && newDept.address) existing.address = newDept.address;
+      } else {
+        state.departments.push(newDept);
+      }
+    });
+  }
+
+  saveState(true);
+  render();
+  document.getElementById('importModal').classList.remove('open');
+  showToast(`📥 Импортировано: ${parsed.departments.length} подразд., ${totalWp} раб. мест`);
 }
 
 /* ============================================================
@@ -3456,7 +3853,6 @@ function exportExcel() {
 
     const wb = XLSX.utils.book_new();
 
-    // ============ Лист 1: Реквизиты ============
     const reqRows = [
       ['№ п/п', 'Наименование данных', 'Данные организации'],
       [1, 'Полное наименование организации', state.org.fullName || ''],
@@ -3485,7 +3881,6 @@ function exportExcel() {
     setStyleRange(wsReq, 1, 0, reqRows.length - 1, 2, EXCEL_STYLE.cell);
     XLSX.utils.book_append_sheet(wb, wsReq, 'Реквизиты');
 
-    // ============ Лист 2: СОУТ ============
     const headers = [
       '№ п/п (№ рабочего места, по ранее проведённой СОУТ/АРМ)', 'Наименование профессии или должности (специальности)',
       'Код профессии по ОК-016-94 (при наличии)', 'Сменность на рабочем месте (1/3, 2/2, 5/2)', 'Рабочая смена (час)',
@@ -3593,7 +3988,6 @@ function exportExcel() {
 
     const fname = `СОУТ_${(state.org.shortName || 'организация').replace(/[^\wа-яё]/gi, '_')}_${new Date().toISOString().slice(0,10)}.xlsx`;
 
-    // Надёжное скачивание через blob (работает во всех браузерах)
     const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
     const blob = new Blob([wbout], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
     const url = URL.createObjectURL(blob);
@@ -3744,7 +4138,7 @@ function exportWord() {
 }
 
 /* ============================================================
-   ПРИКАЗ ПОД ГОСТ
+   ПРИКАЗ
    ============================================================ */
 function buildOrderHTML() {
   const o = state.org;
@@ -3786,10 +4180,7 @@ function buildOrderHTML() {
       <h3 style="margin-top:20px;font-size:12pt;">Приложение № 1. График проведения СОУТ</h3>
       <table>
         <colgroup>
-          <col style="width:38%">
-          <col style="width:15%">
-          <col style="width:32%">
-          <col style="width:15%">
+          <col style="width:38%"><col style="width:15%"><col style="width:32%"><col style="width:15%">
         </colgroup>
         <thead>
           <tr>
@@ -3800,48 +4191,13 @@ function buildOrderHTML() {
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>I этап. Создание комиссии по проведению СОУТ и графика проведения СОУТ.</td>
-            <td>Работодатель</td>
-            <td>Приказ о проведении СОУТ</td>
-            <td>Согласно договору</td>
-          </tr>
-          <tr>
-            <td>II этап. Сбор информации для проведения СОУТ. Подготовка и утверждение перечня рабочих мест, на которых будет проводиться специальная оценка условий труда, с указанием аналогичных рабочих мест. Подготовка материалов, справок и иной документации для организации – исполнителя по каждому рабочему месту и организации в целом.</td>
-            <td>Работодатель</td>
-            <td>Согласно приложения к договору</td>
-            <td>Согласно договору</td>
-          </tr>
-          <tr>
-            <td>III этап. Изучение документов, предоставленных организацией Заказчика для целей проведения СОУТ. Идентификация потенциально вредных и (или) опасных факторов производственной среды и трудового процесса.</td>
-            <td>Организация, проводящая СОУТ</td>
-            <td>Заполненный перечень рабочих мест в отчете о проведении СОУТ</td>
-            <td>Согласно договору</td>
-          </tr>
-          <tr>
-            <td>IV этап. Исследования (испытания), измерения, оценка потенциально вредных и (или) опасных производственных факторов.</td>
-            <td>Организация, проводящая СОУТ</td>
-            <td>Протоколы проведения исследований (испытаний) и измерений ОПФ в отчете о проведении СОУТ</td>
-            <td>Согласно договору</td>
-          </tr>
-          <tr>
-            <td>V этап. Отнесение условий труда на рабочих местах к классам (подклассам) условий труда по степени вредности или опасности по результатам проведения исследований (испытаний) и измерений вредных и (или) опасных производственных факторов.</td>
-            <td>Организация, проводящая СОУТ</td>
-            <td>Карты СОУТ в отчете о проведении СОУТ</td>
-            <td>Согласно договору</td>
-          </tr>
-          <tr>
-            <td>VI этап. Оформление результатов проведения специальной оценки условий труда.</td>
-            <td>Организация, проводящая СОУТ</td>
-            <td>Готовый отчет о проведении СОУТ</td>
-            <td>Согласно договору</td>
-          </tr>
-          <tr>
-            <td>VII этап. Рассмотрение и утверждение отчета о проведении специальной оценки условий труда. Ознакомление работников с результатами проведения специальной оценки условий труда.</td>
-            <td>Работодатель</td>
-            <td>Приказ об окончании СОУТ</td>
-            <td>Согласно договору</td>
-          </tr>
+          <tr><td>I этап. Создание комиссии по проведению СОУТ и графика проведения СОУТ.</td><td>Работодатель</td><td>Приказ о проведении СОУТ</td><td>Согласно договору</td></tr>
+          <tr><td>II этап. Сбор информации для проведения СОУТ. Подготовка и утверждение перечня рабочих мест, на которых будет проводиться специальная оценка условий труда, с указанием аналогичных рабочих мест. Подготовка материалов, справок и иной документации для организации – исполнителя по каждому рабочему месту и организации в целом.</td><td>Работодатель</td><td>Согласно приложения к договору</td><td>Согласно договору</td></tr>
+          <tr><td>III этап. Изучение документов, предоставленных организацией Заказчика для целей проведения СОУТ. Идентификация потенциально вредных и (или) опасных факторов производственной среды и трудового процесса.</td><td>Организация, проводящая СОУТ</td><td>Заполненный перечень рабочих мест в отчете о проведении СОУТ</td><td>Согласно договору</td></tr>
+          <tr><td>IV этап. Исследования (испытания), измерения, оценка потенциально вредных и (или) опасных производственных факторов.</td><td>Организация, проводящая СОУТ</td><td>Протоколы проведения исследований (испытаний) и измерений ОПФ в отчете о проведении СОУТ</td><td>Согласно договору</td></tr>
+          <tr><td>V этап. Отнесение условий труда на рабочих местах к классам (подклассам) условий труда по степени вредности или опасности по результатам проведения исследований (испытаний) и измерений вредных и (или) опасных производственных факторов.</td><td>Организация, проводящая СОУТ</td><td>Карты СОУТ в отчете о проведении СОУТ</td><td>Согласно договору</td></tr>
+          <tr><td>VI этап. Оформление результатов проведения специальной оценки условий труда.</td><td>Организация, проводящая СОУТ</td><td>Готовый отчет о проведении СОУТ</td><td>Согласно договору</td></tr>
+          <tr><td>VII этап. Рассмотрение и утверждение отчета о проведении специальной оценки условий труда. Ознакомление работников с результатами проведения специальной оценки условий труда.</td><td>Работодатель</td><td>Приказ об окончании СОУТ</td><td>Согласно договору</td></tr>
         </tbody>
       </table>
     </div>
@@ -3894,7 +4250,7 @@ function printOrder() {
 }
 
 /* ============================================================
-   НАПОМИНАНИЕ О СВОДНОЙ ВЕДОМОСТИ
+   НАПОМИНАНИЕ
    ============================================================ */
 function needsPrevSoutReminder() {
   let need = false;
@@ -3903,9 +4259,7 @@ function needsPrevSoutReminder() {
     if ((wp.prevNum || '').trim()) { need = true; return; }
     const b = wp.benefits || {};
     if (b.benefitsAbsent) return;
-    if (['higherPay','extraVacation','shorterHours','milk','therapeuticFood','earlyPension'].some(k => b[k] === 'yes')) {
-      need = true;
-    }
+    if (['higherPay','extraVacation','shorterHours','milk','therapeuticFood','earlyPension'].some(k => b[k] === 'yes')) need = true;
   }));
   return need;
 }
@@ -3919,7 +4273,7 @@ function showSaveInfoModal() {
 }
 
 /* ============================================================
-   ОТПРАВКА МЕНЕДЖЕРУ (Вариант C — гибрид)
+   ОТПРАВКА МЕНЕДЖЕРУ
    ============================================================ */
 let mailFiles = [];
 
@@ -3945,30 +4299,19 @@ function renderMailFiles() {
       <span class="mf-size">${formatFileSize(f.size)}</span>
       <button class="mf-del" data-idx="${i}" title="Удалить">✕</button>
     `;
-    row.querySelector('.mf-del').addEventListener('click', () => {
-      mailFiles.splice(i, 1);
-      renderMailFiles();
-    });
+    row.querySelector('.mf-del').addEventListener('click', () => { mailFiles.splice(i, 1); renderMailFiles(); });
     list.appendChild(row);
   });
 }
 
 function addMailFiles(files) {
   Array.from(files).forEach(file => {
-    if (file.size > 20 * 1024 * 1024) {
-      showToast(`Файл «${file.name}» больше 20 МБ и пропущен`, true);
-      return;
-    }
+    if (file.size > 20 * 1024 * 1024) { showToast(`Файл «${file.name}» больше 20 МБ и пропущен`, true); return; }
     mailFiles.push({ name: file.name, size: file.size, blob: file });
   });
   renderMailFiles();
 }
-
-function clearMailFiles() {
-  mailFiles = [];
-  renderMailFiles();
-}
-
+function clearMailFiles() { mailFiles = []; renderMailFiles(); }
 function downloadMailFiles() {
   if (!mailFiles.length) return;
   mailFiles.forEach((f, i) => {
@@ -3981,7 +4324,6 @@ function downloadMailFiles() {
     }, i * 250);
   });
 }
-
 function openMailModal() {
   document.getElementById('mailTo').value = MANAGER_EMAIL_DEFAULT;
   document.getElementById('mailComment').value = '';
@@ -4031,17 +4373,10 @@ function sendMail() {
   const to = document.getElementById('mailTo').value.trim();
   if (!to) { showToast('Укажите email получателя', true); return; }
   if (!document.getElementById('mailPrivacy').checked) { showToast('Подтвердите согласие с политикой', true); return; }
-
-  if (mailFiles.length) {
-    downloadMailFiles();
-    showToast('📎 Файлы скачиваются — прикрепите их к письму вручную', false);
-  }
-
+  if (mailFiles.length) { downloadMailFiles(); showToast('📎 Файлы скачиваются — прикрепите их к письму вручную', false); }
   const subject = encodeURIComponent('Данные СОУТ — ' + (state.org.shortName || state.org.fullName || 'организация'));
   const body = encodeURIComponent(buildMailBody());
-  setTimeout(() => {
-    window.location.href = `mailto:${to}?subject=${subject}&body=${body}`;
-  }, mailFiles.length ? 700 : 0);
+  setTimeout(() => { window.location.href = `mailto:${to}?subject=${subject}&body=${body}`; }, mailFiles.length ? 700 : 0);
   showToast('📧 Открываем почтовый клиент...');
 }
 async function copyMailBody() {
@@ -4062,28 +4397,48 @@ function escHtml(s) {
   return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
 function escAttr(s) { return escHtml(s); }
+function splitLines(s) { if (!s) return []; return String(s).split(/\r?\n/).map(x => x.trim()).filter(Boolean); }
+function parseZones(s) {
+  if (!s) return [{ name: '', percent: 100 }];
+  const parts = s.split(/;\s*/).map(p => p.trim()).filter(Boolean);
+  if (!parts.length) return [{ name: '', percent: 100 }];
+  const zones = parts.map(p => {
+    const m = p.match(/^(.+?)\s+(\d+)\s*%$/);
+    if (m) return { name: m[1].trim(), percent: parseInt(m[2], 10) || 0 };
+    const m2 = p.match(/^(\d+)\s*%\s*(.+)$/);
+    if (m2) return { name: m2[2].trim(), percent: parseInt(m2[1], 10) || 0 };
+    return { name: p, percent: 0 };
+  });
+  return zones.length ? zones : [{ name: '', percent: 100 }];
+}
+function parseEquipment(s) {
+  if (!s) return [''];
+  const parts = s.split(/\r?\n/).map(x => x.trim()).filter(Boolean);
+  return parts.length ? parts : [''];
+}
+function yesNoFromCell(v) {
+  const s = String(v || '').trim().toLowerCase();
+  if (s === 'да' || s === 'yes' || s === '+') return 'yes';
+  if (s === 'нет' || s === 'no' || s === '-' || s === 'отсутствует') return 'no';
+  return 'no';
+}
 
 /* ============================================================
-   ИНИЦИАЛИЗАЦИЯ (БЕЗОПАСНАЯ)
+   ИНИЦИАЛИЗАЦИЯ
    ============================================================ */
 document.addEventListener('DOMContentLoaded', function() {
   loadUserDict();
   state = loadState();
   render();
 
-  // Проверка загрузки XLSX
   if (typeof XLSX === 'undefined') {
     console.warn('⚠ XLSX не загружен — экспорт в Excel работать не будет');
     ['excelBtn', 'excelBtn2'].forEach(id => {
       const b = document.getElementById(id);
-      if (b) {
-        b.style.opacity = '0.5';
-        b.title = 'Библиотека XLSX не загружена — проверьте интернет';
-      }
+      if (b) { b.style.opacity = '0.5'; b.title = 'Библиотека XLSX не загружена — проверьте интернет'; }
     });
   }
 
-  // Безопасная функция: не падает, если элемента нет
   function on(id, event, handler) {
     const el = document.getElementById(id);
     if (el) el.addEventListener(event, handler);
@@ -4103,19 +4458,11 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
-  on('singleEmpToggle', 'change', (e) => {
-    state.org.singleEmployee = e.target.checked;
-    updateCommissionVisibility();
-    scheduleSave();
-  });
-
+  on('singleEmpToggle', 'change', (e) => { state.org.singleEmployee = e.target.checked; updateCommissionVisibility(); scheduleSave(); });
   on('dadataBtn', 'click', loadFromDadata);
   on('dadataQuery', 'keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); loadFromDadata(); } });
 
-  on('addAddrBtn', 'click', () => {
-    state.org.manualAddresses.push({ id: uid('addr'), address: '' });
-    renderAddresses(); scheduleSave();
-  });
+  on('addAddrBtn', 'click', () => { state.org.manualAddresses.push({ id: uid('addr'), address: '' }); renderAddresses(); scheduleSave(); });
   on('addCommBtn', 'click', () => { state.org.commissionMembers.push({ id: uid('cm'), position: '', fio: '' }); renderCommission(); scheduleSave(); });
 
   const addDept = () => {
@@ -4152,25 +4499,36 @@ document.addEventListener('DOMContentLoaded', function() {
   const importDataInput = document.getElementById('importDataFileInput');
   const handleImportDataClick = () => importDataInput && importDataInput.click();
   if (importDataInput) {
-    importDataInput.addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      if (file) importSoutData(file);
-      e.target.value = '';
-    });
+    importDataInput.addEventListener('change', (e) => { const file = e.target.files[0]; if (file) importSoutData(file); e.target.value = ''; });
   }
   on('saveInfoImport', 'click', handleImportDataClick);
 
-  const importFileInput = document.getElementById('importFileInput');
-  const handleImportClick = () => importFileInput && importFileInput.click();
-  on('importBtn', 'click', handleImportClick);
-  on('importBtn2', 'click', handleImportClick);
-  if (importFileInput) {
-    importFileInput.addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      if (file) importFromExcel(file);
-      e.target.value = '';
-    });
+  // Универсальный импорт
+  on('importBtn', 'click', openImportModal);
+  on('importBtn2', 'click', openImportModal);
+
+  const importUniversalInput = document.getElementById('importFileUniversal');
+  const importDrop = document.getElementById('importDrop');
+  if (importDrop && importUniversalInput) {
+    importDrop.addEventListener('click', () => importUniversalInput.click());
+    ['dragenter','dragover'].forEach(ev => importDrop.addEventListener(ev, (e) => { e.preventDefault(); e.stopPropagation(); importDrop.classList.add('dragover'); }));
+    ['dragleave','drop'].forEach(ev => importDrop.addEventListener(ev, (e) => { e.preventDefault(); e.stopPropagation(); importDrop.classList.remove('dragover'); }));
+    importDrop.addEventListener('drop', (e) => { if (e.dataTransfer && e.dataTransfer.files.length) handleImportFile(e.dataTransfer.files[0]); });
+    importUniversalInput.addEventListener('change', (e) => { const f = e.target.files[0]; if (f) handleImportFile(f); e.target.value = ''; });
   }
+  on('importClose', 'click', () => document.getElementById('importModal').classList.remove('open'));
+  on('importCancel', 'click', () => document.getElementById('importModal').classList.remove('open'));
+  on('importModal', 'click', (e) => { if (e.target.id === 'importModal') e.currentTarget.classList.remove('open'); });
+  on('importFileClear', 'click', () => {
+    importState = { fileName: '', fileSize: 0, wb: null, sheets: [], currentSheet: '', headers: [], sampleRows: [], allRows: [], mapping: {}, parsedData: null };
+    document.getElementById('importFileInfo').style.display = 'none';
+    document.getElementById('importSheetWrap').style.display = 'none';
+    document.getElementById('importStep2').style.display = 'none';
+    document.getElementById('importStep3').style.display = 'none';
+    document.getElementById('importStep4').style.display = 'none';
+    document.getElementById('importApply').disabled = true;
+  });
+  on('importApply', 'click', applyImport);
 
   on('mailBtn', 'click', openMailModal);
   on('mailBtn2', 'click', openMailModal);
@@ -4185,24 +4543,13 @@ document.addEventListener('DOMContentLoaded', function() {
   const mailFilesInput = document.getElementById('mailFilesInput');
   on('mailFilesBtn', 'click', () => mailFilesInput && mailFilesInput.click());
   if (mailFilesInput) {
-    mailFilesInput.addEventListener('change', (e) => {
-      addMailFiles(e.target.files);
-      e.target.value = '';
-    });
+    mailFilesInput.addEventListener('change', (e) => { addMailFiles(e.target.files); e.target.value = ''; });
   }
   const drop = document.getElementById('mailFilesDrop');
   if (drop) {
-    ['dragenter', 'dragover'].forEach(ev => drop.addEventListener(ev, (e) => {
-      e.preventDefault(); e.stopPropagation();
-      drop.classList.add('dragover');
-    }));
-    ['dragleave', 'drop'].forEach(ev => drop.addEventListener(ev, (e) => {
-      e.preventDefault(); e.stopPropagation();
-      drop.classList.remove('dragover');
-    }));
-    drop.addEventListener('drop', (e) => {
-      if (e.dataTransfer && e.dataTransfer.files.length) addMailFiles(e.dataTransfer.files);
-    });
+    ['dragenter', 'dragover'].forEach(ev => drop.addEventListener(ev, (e) => { e.preventDefault(); e.stopPropagation(); drop.classList.add('dragover'); }));
+    ['dragleave', 'drop'].forEach(ev => drop.addEventListener(ev, (e) => { e.preventDefault(); e.stopPropagation(); drop.classList.remove('dragover'); }));
+    drop.addEventListener('drop', (e) => { if (e.dataTransfer && e.dataTransfer.files.length) addMailFiles(e.dataTransfer.files); });
   }
 
   on('saveInfoClose', 'click', () => document.getElementById('saveInfoModal').classList.remove('open'));
@@ -4231,10 +4578,7 @@ document.addEventListener('DOMContentLoaded', function() {
   on('dictCancel', 'click', () => document.getElementById('dictModal').classList.remove('open'));
   on('dictModal', 'click', (e) => { if (e.target.id === 'dictModal') e.currentTarget.classList.remove('open'); });
   on('dictSearch', 'input', (e) => {
-    if (dictCurrentField === '__list__') {
-      if (window._dictLastList) renderDictContentFromList(window._dictLastList, e.target.value);
-      return;
-    }
+    if (dictCurrentField === '__list__') { if (window._dictLastList) renderDictContentFromList(window._dictLastList, e.target.value); return; }
     renderDictContent(e.target.value);
   });
   on('dictApply', 'click', () => {
@@ -4243,15 +4587,10 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!picked) { showToast('Выберите значение из списка', true); return; }
     const field = dictCurrentField;
     let item;
-    if (field === '__list__') {
-      item = { name: picked.dataset.name || '' };
-    } else if (field === 'order29n' || field === 'pensions') {
-      item = { code: picked.dataset.code || '', name: picked.dataset.name || '' };
-    } else if (field === 'positions') {
-      item = { code: picked.dataset.code || '', name: picked.dataset.name || '' };
-    } else {
-      item = { name: picked.dataset.name || '' };
-    }
+    if (field === '__list__') item = { name: picked.dataset.name || '' };
+    else if (field === 'order29n' || field === 'pensions') item = { code: picked.dataset.code || '', name: picked.dataset.name || '' };
+    else if (field === 'positions') item = { code: picked.dataset.code || '', name: picked.dataset.name || '' };
+    else item = { name: picked.dataset.name || '' };
     if (item && dictCallback) dictCallback(item);
     document.getElementById('dictModal').classList.remove('open');
   });
