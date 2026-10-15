@@ -2821,6 +2821,15 @@ function exportExcel() {
     setStyleRange(wsReq, 0, 0, 0, 2, EXCEL_STYLE.headerReq);
     setStyleRange(wsReq, 1, 0, reqRows.length - 1, 2, EXCEL_STYLE.cell);
     XLSX.utils.book_append_sheet(wb, wsReq, 'Реквизиты');
+js
+    if (onlyOrgCard) {
+      const fname = `СОУТ_карточка_${(state.org.shortName || 'организация').replace(/[^\wа-яё]/gi, '_')}_${new Date().toISOString().slice(0,10)}.xlsx`;
+      const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+      const blob = new Blob([wbout], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      downloadBlobOrDataUrl(blob, fname, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      showToast('📊 Excel (только карточка организации) сохранён');
+      return;
+    }
 
     const headers = [
       '№ п/п (№ рабочего места, по ранее проведённой СОУТ/АРМ)', 'Наименование профессии или должности (специальности)',
