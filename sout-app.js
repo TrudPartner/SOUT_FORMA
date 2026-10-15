@@ -2820,8 +2820,9 @@ function exportExcel() {
     wsReq['!cols'] = [{ wch: 8 }, { wch: 55 }, { wch: 70 }];
     setStyleRange(wsReq, 0, 0, 0, 2, EXCEL_STYLE.headerReq);
     setStyleRange(wsReq, 1, 0, reqRows.length - 1, 2, EXCEL_STYLE.cell);
+     
     XLSX.utils.book_append_sheet(wb, wsReq, 'Реквизиты');
-js
+     
     if (onlyOrgCard) {
       const fname = `СОУТ_карточка_${(state.org.shortName || 'организация').replace(/[^\wа-яё]/gi, '_')}_${new Date().toISOString().slice(0,10)}.xlsx`;
       const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
