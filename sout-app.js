@@ -2777,12 +2777,19 @@ function exportExcel() {
       return;
     }
 
-    const errors = runFullValidation();
-    if (errors.length) {
-      showValidationErrors(errors);
-      const firstErr = document.querySelector('.err');
-      if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      return;
+    const totalWorkplaces = (state.departments || []).reduce(
+      (sum, d) => sum + ((d.workplaces || []).length), 0
+    );
+    const onlyOrgCard = totalWorkplaces === 0;
+
+    if (!onlyOrgCard) {
+      const errors = runFullValidation();
+      if (errors.length) {
+        showValidationErrors(errors);
+        const firstErr = document.querySelector('.err');
+        if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
     }
 
     const wb = XLSX.utils.book_new();
@@ -2935,9 +2942,18 @@ function exportExcel() {
    ЭКСПОРТ WORD
    ============================================================ */
 function exportWord() {
-  const errors = runFullValidation();
-  if (errors.length) { showValidationErrors(errors); return; }
+  const totalWorkplaces = (state.departments || []).reduce(
+    (sum, d) => sum + ((d.workplaces || []).length), 0
+  );
+  const onlyOrgCard = totalWorkplaces === 0;
+
+  if (!onlyOrgCard) {
+    const errors = runFullValidation();
+    if (errors.length) { showValidationErrors(errors); return; }
+  }
+
   const t = calcTotals();
+
   let html = `
   <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
   <head><meta charset="utf-8"><title>СОУТ</title>
@@ -2979,7 +2995,10 @@ function exportWord() {
     <tr><td>20</td><td>Приказ о СОУТ</td><td>${escHtml(state.org.order)}</td></tr>
     <tr><td>21</td><td>Председатель комиссии</td><td>${escHtml(state.org.commissionChair)}</td></tr>
     <tr><td>22</td><td>Члены комиссии</td><td>${state.org.singleEmployee ? '— (ИП / 1 сотрудник)' : state.org.commissionMembers.map(m => escHtml((m.position||'') + (m.fio ? ' — ' + m.fio : ''))).join('<br>')}</td></tr>
-  </table>
+  </table>`;
+
+  if (!onlyOrgCard) {
+    html += `
   <h2>2. Сводная таблица</h2>
   <table>
     <thead><tr>
@@ -2988,52 +3007,53 @@ function exportWord() {
       <th>Рабочие зоны</th><th>Оборудование</th><th>Материалы</th>
       <th>Сотрудники</th>
       <th>Повыш. оплата</th><th>Доп. отпуск</th><th>Сокращ. время</th><th>Молоко/ЛПП</th><th>Леч.-проф.</th><th>Досроч. пенсия</th><th>Медосмотры</th><th>Пункты 29Н</th>
-    </tr></thead><tbody>
-  `;
-  state.departments.forEach(dept => {
-    html += `<tr><td colspan="22" class="dept">${escHtml(dept.name)}${dept.address ? ' — ' + escHtml(dept.address) : ''}</td></tr>`;
-    dept.workplaces.forEach(wp => {
-      const noBoth = wp.noFio && wp.noSnils;
-      const emp = noBoth
-        ? `<i>Отказ от предоставления ФИО и СНИЛС</i><br><span class="small">Всего: ${wp.manualWorkers || 0}, мужчин: ${wp.manualMen || 0}, женщин: ${wp.manualWomen || 0}</span>`
-        : wp.employees.map(e => {
-            const g = e.gender === 'male' ? '♂' : e.gender === 'female' ? '♀' : '?';
-            const flags = [e.disabled ? 'инв' : '', e.minor ? 'несов' : ''].filter(Boolean).join(', ');
-            return `${escHtml(e.fio)} ${g}${flags ? ' ['+flags+']' : ''}<br><span class="small">${escHtml(e.snils)}</span>`;
-          }).join('<hr>');
-      const zones = (wp.workZones || []).map(z => `${escHtml(z.name)} — ${z.percent}%`).join('<br>');
-      const equipLines = (wp.equipmentList || []).filter(Boolean).map(eq => escHtml(eq));
-      if (wp.hasVehicle) {
-        const veh = [wp.vehicleBrand, wp.vehicleYear, wp.vehiclePlate].filter(Boolean).join(', ');
-        if (veh) equipLines.push('Транспортное средство: ' + escHtml(veh));
-      }
-      const equip = equipLines.join('<br>');
-      const order29n = (wp.benefits.medicalExams === 'yes') ? (wp.order29nList || []).filter(Boolean).map(o => escHtml(o)).join('<br>') : '';
-      const b = wp.benefits;
-      const y = v => v === 'yes' ? 'да' : 'нет';
-      const bAbsent = b.benefitsAbsent;
-      const pens = bAbsent ? 'нет' : (b.earlyPension === 'yes' ? ('да' + (b.earlyPensionBasis ? '<br><span class="small">' + escHtml(b.earlyPensionBasis) + '</span>' : '')) : 'нет');
-      const shiftOut = wp.shift === 'другое' && wp.shiftCustom ? wp.shiftCustom : wp.shift;
-      const workersOut = noBoth ? (wp.manualWorkers || 0) : wp.workersCount;
-      const womenOut = noBoth ? (wp.manualWomen || 0) : wp.women;
-      html += `<tr>
-        <td class="center">${wp.num}</td><td>${escHtml(wp.position)}</td><td class="center">${escHtml(wp.okCode || '—')}</td>
-        <td class="center">${escHtml(shiftOut)}</td><td class="center">${wp.shiftHours}</td><td>${escHtml(wp.description)}</td>
-        <td class="center">${workersOut}</td><td class="center">${womenOut}</td><td class="center">${wp.minors}</td><td class="center">${wp.disabled}</td>
-        <td>${zones}</td><td>${equip}</td><td>${wp.materialsAbsent ? 'отсутствуют' : escHtml(wp.materials)}</td>
-        <td>${emp}</td>
-        <td class="center">${bAbsent ? 'нет' : y(b.higherPay)}</td>
-        <td class="center">${bAbsent ? 'нет' : y(b.extraVacation)}</td>
-        <td class="center">${bAbsent ? 'нет' : y(b.shorterHours)}</td>
-        <td class="center">${bAbsent ? 'нет' : y(b.milk)}</td>
-        <td class="center">${bAbsent ? 'нет' : y(b.therapeuticFood)}</td>
-        <td class="center">${pens}</td>
-        <td class="center">${y(b.medicalExams)}</td>
-        <td>${order29n}</td>
-      </tr>`;
+    </tr></thead><tbody>`;
+
+    state.departments.forEach(dept => {
+      html += `<tr><td colspan="22" class="dept">${escHtml(dept.name)}${dept.address ? ' — ' + escHtml(dept.address) : ''}</td></tr>`;
+      dept.workplaces.forEach(wp => {
+        const noBoth = wp.noFio && wp.noSnils;
+        const emp = noBoth
+          ? `<i>Отказ от предоставления ФИО и СНИЛС</i><br><span class="small">Всего: ${wp.manualWorkers || 0}, мужчин: ${wp.manualMen || 0}, женщин: ${wp.manualWomen || 0}</span>`
+          : wp.employees.map(e => {
+              const g = e.gender === 'male' ? '♂' : e.gender === 'female' ? '♀' : '?';
+              const flags = [e.disabled ? 'инв' : '', e.minor ? 'несов' : ''].filter(Boolean).join(', ');
+              return `${escHtml(e.fio)} ${g}${flags ? ' ['+flags+']' : ''}<br><span class="small">${escHtml(e.snils)}</span>`;
+            }).join('<hr>');
+        const zones = (wp.workZones || []).map(z => `${escHtml(z.name)} — ${z.percent}%`).join('<br>');
+        const equipLines = (wp.equipmentList || []).filter(Boolean).map(eq => escHtml(eq));
+        if (wp.hasVehicle) {
+          const veh = [wp.vehicleBrand, wp.vehicleYear, wp.vehiclePlate].filter(Boolean).join(', ');
+          if (veh) equipLines.push('Транспортное средство: ' + escHtml(veh));
+        }
+        const equip = equipLines.join('<br>');
+        const order29n = (wp.benefits.medicalExams === 'yes') ? (wp.order29nList || []).filter(Boolean).map(o => escHtml(o)).join('<br>') : '';
+        const b = wp.benefits;
+        const y = v => v === 'yes' ? 'да' : 'нет';
+        const bAbsent = b.benefitsAbsent;
+        const pens = bAbsent ? 'нет' : (b.earlyPension === 'yes' ? ('да' + (b.earlyPensionBasis ? '<br><span class="small">' + escHtml(b.earlyPensionBasis) + '</span>' : '')) : 'нет');
+        const shiftOut = wp.shift === 'другое' && wp.shiftCustom ? wp.shiftCustom : wp.shift;
+        const workersOut = noBoth ? (wp.manualWorkers || 0) : wp.workersCount;
+        const womenOut = noBoth ? (wp.manualWomen || 0) : wp.women;
+        html += `<tr>
+          <td class="center">${wp.num}</td><td>${escHtml(wp.position)}</td><td class="center">${escHtml(wp.okCode || '—')}</td>
+          <td class="center">${escHtml(shiftOut)}</td><td class="center">${wp.shiftHours}</td><td>${escHtml(wp.description)}</td>
+          <td class="center">${workersOut}</td><td class="center">${womenOut}</td><td class="center">${wp.minors}</td><td class="center">${wp.disabled}</td>
+          <td>${zones}</td><td>${equip}</td><td>${wp.materialsAbsent ? 'отсутствуют' : escHtml(wp.materials)}</td>
+          <td>${emp}</td>
+          <td class="center">${bAbsent ? 'нет' : y(b.higherPay)}</td>
+          <td class="center">${bAbsent ? 'нет' : y(b.extraVacation)}</td>
+          <td class="center">${bAbsent ? 'нет' : y(b.shorterHours)}</td>
+          <td class="center">${bAbsent ? 'нет' : y(b.milk)}</td>
+          <td class="center">${bAbsent ? 'нет' : y(b.therapeuticFood)}</td>
+          <td class="center">${pens}</td>
+          <td class="center">${y(b.medicalExams)}</td>
+          <td>${order29n}</td>
+        </tr>`;
+      });
     });
-  });
-  html += `</tbody></table>
+
+    html += `</tbody></table>
   <h2>3. Итоги</h2>
   <table class="totals" style="width:auto;">
     <tr><td>Рабочих мест</td><td class="num">${t.workplaces}</td></tr>
@@ -3049,12 +3069,20 @@ function exportWord() {
     <tr><td>Лечебно-профилактическое питание</td><td class="num">${t.therapeuticFood}</td></tr>
     <tr><td>Досрочная пенсия</td><td class="num">${t.earlyPension}</td></tr>
     <tr><td>Медосмотры</td><td class="num">${t.medicalExams}</td></tr>
-  </table>
+  </table>`;
+  }
+
+  html += `
   </body></html>`;
+
   const blob = new Blob(['\ufeff' + html], { type: 'application/msword' });
-  const fname = `СОУТ_${(state.org.shortName || 'организация').replace(/[^\wа-яё]/gi, '_')}_${new Date().toISOString().slice(0,10)}.doc`;
+  const baseName = (state.org.shortName || 'организация').replace(/[^\wа-яё]/gi, '_');
+  const dateStr = new Date().toISOString().slice(0,10);
+  const fname = onlyOrgCard
+    ? `СОУТ_карточка_${baseName}_${dateStr}.doc`
+    : `СОУТ_${baseName}_${dateStr}.doc`;
   downloadBlobOrDataUrl(blob, fname, 'application/msword');
-  showToast('📄 Word сохранён');
+  showToast(onlyOrgCard ? '📄 Word (только карточка организации) сохранён' : '📄 Word сохранён');
 }
 
 /* ============================================================
